@@ -80,6 +80,18 @@ class Feedback(models.Model):
         return str(self.rating)
     
 
+"""This model for user Profile"""
+class Profile(models.Model):
+    user= models.ForeignKey(User, on_delete=models.CASCADE)
+    userlocation= gis_point.PointField(
+        "Location in Map", geography=True, blank=True, null=True,
+        srid=4326, help_text="Point(longitude latitude)")
+    
+    def __str__(self):
+        return str(self.user.phone)
+    
+    
+
 
 
 
