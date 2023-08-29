@@ -49,13 +49,12 @@ class PlaceBooking(models.Model):
 
 # @receiver(post_save, sender=PlaceBooking)
 # def create_booking(sender, instance, created, **kwargs):
-    
 #     if created:
-#         booking= PlaceBooking.objects.create(user=instance)
-#         booking.save()
-#         print(f"data saved:{booking}")
+#         PlaceBooking.objects.create(user=instance)
 
-
+# @receiver(post_save, sender=PlaceBooking)
+# def save_booking(sender, instance, **kwargs):
+#     instance.Placebooking.save()
 
 
 class Invoice(models.Model):

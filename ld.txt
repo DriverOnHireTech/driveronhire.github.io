@@ -100,6 +100,28 @@ class MyBookingList(APIView):
 
             return distance
 
+        def get(self, request):
+            client_latitude = request.query_params.get('client_latitude')
+            client_longitude = request.query_params.get('client_longitude')
+            if not client_latitude or not client_longitude:
+                return Response([])
+
+            client_latitude = float(client_latitude)
+            client_longitude = float(client_longitude)
+
+            # Filter drivers within 3 km from the client location.
+            drivers = AddDriver.objects.all()
+            filtered_drivers = []
+
+            for driver in drivers:
+                distance = self.haversine_distance(
+                    client_latitude, client_longitude, driver.latitude, driver.longitude
+                )
+                if distance <= 3:
+                    filtered_drivers.append(driver)
+
+            serializer = DriverSerializer(filtered_drivers, many=True)
+        
         if serializer.is_valid():
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
@@ -115,7 +137,6 @@ class MyBookingList(APIView):
         user = request.user.id
         booking=PlaceBooking.objects.all()
         serializer = PlacebookingSerializer(booking, many=True)
-        
         return Response(serializer.data)
     
 
@@ -124,7 +145,7 @@ class BookingListWithId(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
     def get(self, request, id):
-        user= request.user
+        # user = User.objects.get(request.user)
         booking = PlaceBooking.objects.get(id=id)
         serializer = PlacebookingSerializer(booking)
         return Response(serializer.data)

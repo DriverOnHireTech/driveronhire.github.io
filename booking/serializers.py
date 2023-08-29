@@ -1,12 +1,15 @@
 from rest_framework import serializers
 from .models import  *
 from driver_management.models import AddDriver
+from driver_management.models import Driverlocation
 from driver_management.serializers import MyDriverSerializer
 from user_master.models import Zone
 from .models import bookinguser, Invoice
 from authentication.serializers import NewUserSerializer
 
 from authentication.models import  User
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import Point
 
 class ClientregistrationSerializer(serializers.ModelSerializer):
     
@@ -18,6 +21,7 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
 class PlacebookingSerializer(serializers.ModelSerializer):
     #user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
     user = NewUserSerializer()
+    # driver = serializers.SerializerMethodField()
     class Meta:
         model = PlaceBooking
         
@@ -28,6 +32,13 @@ class PlacebookingSerializer(serializers.ModelSerializer):
     def get_user(self, obj):
         return obj.user.phone
 
+    # def get_driver(self, obj):
+    #     currunt_location = obj.currunt_location or None
+    #     if currunt_location is None:
+    #         return None
+    #     driver =Driverlocation.objects.all().annotate(
+    #         distance = Distance('driverlocation', Point(currunt_location.coords[0], currunt_location.coords, srid=currunt_location.sid))
+    #     ).filter(distance__lt=D(km=3))
 
 
 class DriverSerializer(serializers.ModelSerializer):
