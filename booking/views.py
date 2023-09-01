@@ -67,6 +67,7 @@ class MyBookingList(APIView):
         if serializer.is_valid():
 
                 currant_location = serializer.validated_data.get('currant_location')
+                print("Checking location ", currant_location)
 
                 driver_type=serializer.validated_data.get('driver_type')
 
@@ -75,6 +76,15 @@ class MyBookingList(APIView):
                 transmission_type=serializer.validated_data.get('transmission_type')
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
+
+                # if currant_location:
+                #     # Convert current_location to a Point object
+                #     latitude, longitude = currant_location.get('latitude'), currant_location.get('longitude')
+                #     user_location = Point(longitude, latitude, srid=4326)
+            
+                #      # Filter drivers based on distance using Distance lookup
+                #     drivers = Driverlocation.objects.annotate(distance=Distance('driverlocation', user_location)).filter(distance__lt=D(km=3000000))
+                
 
                 if driver.exists():
                      # Send notification using FCM
@@ -93,7 +103,7 @@ class MyBookingList(APIView):
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
                 print(serializer.data)
-                return Response({'data':serializer.data,"drivers":driver.data}, status=status.HTTP_201_CREATED)
+                return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
