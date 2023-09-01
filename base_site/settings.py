@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "fcm_django",
     "rest_framework.authtoken",
     "storages",
+    "rest_framework_gis"
    
    
 ]

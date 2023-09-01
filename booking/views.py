@@ -75,7 +75,7 @@ class MyBookingList(APIView):
                 transmission_type=serializer.validated_data.get('transmission_type')
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
-
+                
                 if driver.exists():
                      # Send notification using FCM
                     message = messaging.Message(

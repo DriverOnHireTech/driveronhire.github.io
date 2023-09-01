@@ -41,9 +41,7 @@ class PlaceBooking(models.Model):
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     from_date = models.DateField()
     to_date = models.DateField()
-    currant_location = gis_point.PointField(
-         geography=True, blank=True, null=True,
-        srid=4326, help_text="Point(longitude latitude)")
+    currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
     car_type=models.CharField(max_length=100, null=True)
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=100, null=True)
