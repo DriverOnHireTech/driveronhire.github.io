@@ -76,14 +76,6 @@ class MyBookingList(APIView):
                 transmission_type=serializer.validated_data.get('transmission_type')
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
-
-                # if currant_location:
-                #     # Convert current_location to a Point object
-                #     latitude, longitude = currant_location.get('latitude'), currant_location.get('longitude')
-                #     user_location = Point(longitude, latitude, srid=4326)
-            
-                #      # Filter drivers based on distance using Distance lookup
-                #     drivers = Driverlocation.objects.annotate(distance=Distance('driverlocation', user_location)).filter(distance__lt=D(km=3000000))
                 
 
                 if driver.exists():
@@ -99,11 +91,22 @@ class MyBookingList(APIView):
                     # Send the message
                     response = messaging.send(message)
                     print("Notification sent:", response) 
+
+                    # Save Booking
+                    if PlaceBooking.status == 'accept':
+                        return Response({'msg':'Booking accepted'})
                     
-                serializer.validated_data['user_id'] = user.id
-                serializer.save()
-                print(serializer.data)
-                return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
+                    elif PlaceBooking.status == 'decline':
+                        return Response({'msg':'Booking accepted'})
+                    
+                    serializer.validated_data['user_id'] = user.id
+                    serializer.save()
+                    print(serializer.data)
+                    return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
+                
+                   
+                    
+                
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
