@@ -77,7 +77,7 @@ class AddDriver(models.Model):
     heavy_vehicle = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, null=True,blank=True)
     car_transmission = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury")), max_length=10)
     start_doh_date = models.DateField()
-    end_doh_date = models.DateField()
+    end_doh_date = models.DateField(null=True, blank=True)
 
     # Car Details
     car_company_name = models.CharField(max_length=15, null=True,blank=True)
@@ -125,7 +125,7 @@ class AddDriver(models.Model):
     driving_test_date = models.DateField()
     driving_status = models.CharField(choices=(("Approve", "Approve"), ("Reject", "Reject")), max_length=10)
     is_approval_done = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10)
-    police_verification = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10)
+    police_verification = models.CharField(choices=(("Processing", "Processing"), ("Certified", "Certified"), ("Rejected", "Rejected")), max_length=10)
     week_off = models.CharField(choices=(("Monday", "Monday"), ("Tuesday", "Tuesday"), ("Wednesday", "Wednesday"),
                                          ("Thursday", "Thursday"), ("Friday", "Friday"), ("Saturday", "Saturday"), ("Sunday", "Sunday")),
                                 max_length=10)
