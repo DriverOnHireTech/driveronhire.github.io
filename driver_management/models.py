@@ -77,7 +77,7 @@ class AddDriver(models.Model):
     heavy_vehicle = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, null=True,blank=True)
     car_transmission = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury")), max_length=10)
     start_doh_date = models.DateField()
-    end_doh_date = models.DateField(null=True, blank=True)
+    # end_doh_date = models.DateField(null=True, blank=True)
 
     # Car Details
     car_company_name = models.CharField(max_length=15, null=True,blank=True)
