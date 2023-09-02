@@ -66,6 +66,15 @@ class driverlocation(APIView):
         
         except Driverlocation.DoesNotExist:
             return Response({'msg':'No driver location avalaible', 'data':loc_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def put(self, request, id):
+        dlocation = Driverlocation.objects.get(id=id)
+        serializer = Driverlocationserializer(dlocation, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"msg":"location updated", "data":serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+       
 
     
 
@@ -76,9 +85,7 @@ class MyDriverList(generics.ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
 
-        
-
-
+    
 
 class Driversearch(ListAPIView):
     try:

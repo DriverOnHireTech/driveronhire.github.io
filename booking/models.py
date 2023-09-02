@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.gis.db import models as gis_point
+from django.contrib.gis.geos import Point
 from django.conf import settings
 from authentication.models import User
 from client_management.models import AddClient
@@ -31,30 +32,27 @@ class bookinguser(models.Model):
     
   
 class PlaceBooking(models.Model):
+    STATUS=(
+        ('accept','accept'),
+        ('decline', 'decline'),
+        ('pending', 'pending')
+    )
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     from_date = models.DateField()
     to_date = models.DateField()
-    currunt_location = gis_point.PointField(srid=453, null=True, blank=True)
+    currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
     car_type=models.CharField(max_length=100, null=True)
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=100, null=True)
     drop_location=models.CharField(max_length=100, null=True)
+    status =  models.CharField(max_length=20, choices=STATUS, default='pending')
+    accepted_driver=  models.ForeignKey(User, on_delete=models.CASCADE, related_name='accepted_driver')
     booking_time=models.DateTimeField(auto_now_add=True)
    
-
     def __str__(self):
         return self.trip_type
     
-
-# @receiver(post_save, sender=PlaceBooking)
-# def create_booking(sender, instance, created, **kwargs):
-#     if created:
-#         PlaceBooking.objects.create(user=instance)
-
-# @receiver(post_save, sender=PlaceBooking)
-# def save_booking(sender, instance, **kwargs):
-#     instance.Placebooking.save()
 
 
 class Invoice(models.Model):

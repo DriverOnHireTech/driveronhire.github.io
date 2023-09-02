@@ -7,9 +7,10 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.authtoken.models import Token
 from .models import *
 from .serializers import *
-from driver_management.models import AddDriver
+from driver_management.models import AddDriver, Driverlocation
 from driver_management.serializers import *
 from authentication.models import  User
+from firebase_admin import messaging
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -55,7 +56,6 @@ class Userlogin(APIView):
         
 
 class MyBookingList(APIView):
-    # authentication_classes=[BasicAuthentication]
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
     def post(self, request, format=None): 
@@ -63,48 +63,50 @@ class MyBookingList(APIView):
         data=request.data
 
         serializer=PlacebookingSerializer(data=data)
-       
-        driver_type=request.data.get('driver_type')
-
-        #driver_rating=request.data.get('driver_rating')
-
-        car_type=request.data.get('car_type')
-
-        transmission_type=request.data.get('transmission_type')
-
-        driver=AddDriver.objects.all()
-
-        if driver_type:
-            driver=driver.filter(driver_type=driver_type)
         
-        # if driver_rating:
-        #     driver=driver.filter(driver_rating=driver_rating)
-
-        if car_type:
-            driver=driver.filter(car_type=car_type)
-        
-        if transmission_type:
-            driver=driver.filter(transmission_type=transmission_type)
-        
-        def haversine_distance(self, lat1, lon1, lat2, lon2):
-        # Convert latitude and longitude from degrees to radians
-            lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-
-            # Haversine formula
-            dlat = lat2 - lat1
-            dlon = lon2 - lon1
-            a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-            c = 2 * atan2(sqrt(a), sqrt(1 - a))
-            radius = 6371  # Earth's radius in kilometers
-            distance = radius * c
-
-            return distance
-
         if serializer.is_valid():
-                serializer.validated_data['user_id'] = user.id
-                serializer.save()
-                print(serializer.data)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+                currant_location = serializer.validated_data.get('currant_location')
+                print("Checking location ", currant_location)
+
+                driver_type=serializer.validated_data.get('driver_type')
+
+                car_type= serializer.validated_data.get('car_type')
+
+                transmission_type=serializer.validated_data.get('transmission_type')
+    
+                driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
+                
+
+                if driver.exists():
+                     # Send notification using FCM
+                    message = messaging.Message(
+                        notification=messaging.Notification(
+                            title="New Booking",
+                            body="A new booking is available!"
+                        ),
+                        topic="Driver Booking"  # Replace with the appropriate FCM topic
+                    )
+
+                    # Send the message
+                    response = messaging.send(message)
+                    print("Notification sent:", response) 
+
+                    # Save Booking
+                    if PlaceBooking.status == 'accept':
+                        return Response({'msg':'Booking accepted'})
+                    
+                    elif PlaceBooking.status == 'decline':
+                        return Response({'msg':'Booking accepted'})
+                    
+                    serializer.validated_data['user_id'] = user.id
+                    serializer.save()
+                    print(serializer.data)
+                    return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
+                
+                   
+                    
+                
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -113,12 +115,11 @@ class MyBookingList(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request):
         user = request.user.id
-        booking=PlaceBooking.objects.all()
+        booking=PlaceBooking.objects.all().order_by('id')
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data)
     
-
 
 class BookingListWithId(APIView):
     authentication_classes=[TokenAuthentication]

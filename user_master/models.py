@@ -18,7 +18,7 @@ class Country(models.Model):
 
 
 class State(models.Model):
-    state_code = models.CharField(max_length=5, primary_key=True)
+    state_code = models.CharField(max_length=30, primary_key=True)
     state = models.CharField(max_length=30, unique=True)
     country = models.ForeignKey(Country, to_field='country_code', on_delete=models.CASCADE)
     status = models.BooleanField(default=True)

@@ -46,7 +46,7 @@ class AddDriver(models.Model):
     driver_type = models.CharField(choices=(('Part Time', 'Part Time'), ('Full Time', 'Full Time')), default="Temporary", max_length=10)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True,blank=True)
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, null=True,blank=True)
-    language = models.CharField(choices=(('Hindi', 'Hindi'), ('English', 'English'), ('Bhojpuri', 'Bhojpuri')), default="Hindi", max_length=10)
+    language = models.CharField(choices=(('Hindi', 'Hindi'), ('English', 'English'), ('Bhojpuri', 'Bhojpuri')), default="Hindi", max_length=100)
 
     # Address
     t_address = models.CharField(max_length=200)
@@ -77,11 +77,11 @@ class AddDriver(models.Model):
     heavy_vehicle = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, null=True,blank=True)
     car_transmission = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury")), max_length=10)
     start_doh_date = models.DateField()
-    end_doh_date = models.DateField()
+    
 
     # Car Details
     car_company_name = models.CharField(max_length=15, null=True,blank=True)
-    transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury")), max_length=10)
+    transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('Both', 'Both')), max_length=10)
     car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),
                                          ("MPV", "MPV"), ("MUV", "MUV")),
                                 max_length=10)
@@ -125,7 +125,7 @@ class AddDriver(models.Model):
     driving_test_date = models.DateField()
     driving_status = models.CharField(choices=(("Approve", "Approve"), ("Reject", "Reject")), max_length=10)
     is_approval_done = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10)
-    police_verification = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10)
+    police_verification = models.CharField(choices=(("Processing", "Processing"), ("Certified", "Certified"), ("Rejected", "Rejected")), max_length=10)
     week_off = models.CharField(choices=(("Monday", "Monday"), ("Tuesday", "Tuesday"), ("Wednesday", "Wednesday"),
                                          ("Thursday", "Thursday"), ("Friday", "Friday"), ("Saturday", "Saturday"), ("Sunday", "Sunday")),
                                 max_length=10)
