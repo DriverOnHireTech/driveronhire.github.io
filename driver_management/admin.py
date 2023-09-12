@@ -48,8 +48,7 @@ from .models import *
 #                        ('police_verification', 'week_off', 'scheme_type', 'driver_status'))
 #         })
 #     )
-
-
+admin.site.register(BasicDetails)
 admin.site.register(ViewDriver)
 admin.site.register(AddDriver)
 admin.site.register(DriverHistory)

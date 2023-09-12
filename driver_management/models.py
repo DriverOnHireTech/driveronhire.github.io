@@ -8,6 +8,46 @@ from user_master.models import region
 
 from django.conf import settings
 
+
+class BasicDetails(models.Model):
+    image_upload = models.ImageField(upload_to='media', default=None)
+
+    def img_preview(self):
+        return mark_safe(f'<img src = "{self.image_upload.url}" '
+                         f'width = "100" height = "100" style = "border-radius: 50%"/>')
+    
+    first_name = models.CharField(max_length=20, default=None)
+    middle_name = models.CharField(max_length=20, blank=True, null=True)
+    last_name = models.CharField(max_length=20, blank=True, null=True)
+    gender = models.CharField(max_length=20, null=True, blank=True, default="Male")
+    date_of_birth = models.DateField()
+    mobile = models.CharField(max_length=15)
+    alt_mobile = models.CharField(max_length=15, blank=True, null=True)
+    email = models.EmailField(null=True, blank=True)
+    marital_status = models.CharField(max_length=20, null=True, blank=True)
+    religion = models.CharField(max_length=30, null=True, blank=True)
+    qualification = models.CharField(default="SS", max_length=20, null=True, blank=True)
+    language = models.CharField(default="Hindi", max_length=100, null=True, blank=True)
+      # Address
+    temp_address = models.CharField(max_length=200)
+    permanent_address = models.CharField(max_length=200)
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10, null=True,blank=True)
+    aggrement_expiry_date = models.DateField(null=True, blank=True)
+
+    # Licence Information
+    licence_no = models.CharField(max_length=20)
+    licence_issued_from = models.CharField(max_length=20)
+    licence_type = models.CharField(max_length=20, null=True, blank=True)
+    date_of_issue = models.DateField()
+    date_of_expiry = models.DateField()
+
+    def __str__(self):
+        return self.first_name
+    
+
 class AddDriver(models.Model):
     image_upload = models.ImageField(upload_to='media', default=None)
 

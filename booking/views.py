@@ -75,7 +75,16 @@ class MyBookingList(APIView):
                 transmission_type=serializer.validated_data.get('transmission_type')
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
-                
+
+                if currant_location:
+                    # currant_location = obj.currant_location or None
+                    if currant_location is None:
+                        return None
+                    driver =Driverlocation.objects.all().annotate(
+                            distance = Distance('driverlocation', currant_location)
+                            ).filter(distance__lte=D(km=3))
+                    
+                                
 
                 if driver.exists():
                      # Send notification using FCM
