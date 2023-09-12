@@ -173,7 +173,7 @@ REST_FRAMEWORK = {
 
 #Setup for push notification with firebase
 FIREBASE_APP = initialize_app()
-cred_path = os.path.join(BASE_DIR, "serviceaccountkey.json")
+cred_path = os.path.join(BASE_DIR, "notification.json")
 cred = credentials.Certificate(cred_path)
 # firebase_admin.initialize_app(cred)
 FCM_DJANGO_SETTINGS = {
