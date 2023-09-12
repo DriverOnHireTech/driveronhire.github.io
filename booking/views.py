@@ -67,7 +67,6 @@ class MyBookingList(APIView):
         if serializer.is_valid():
 
                 currant_location = serializer.validated_data.get('currant_location')
-                print("Checking location ", currant_location)
 
                 driver_type=serializer.validated_data.get('driver_type')
 
@@ -96,12 +95,8 @@ class MyBookingList(APIView):
                     if PlaceBooking.status == 'accept':
                         return Response({'msg':'Booking accepted'})
                     
-                    elif PlaceBooking.status == 'decline':
-                        return Response({'msg':'Booking accepted'})
-                    
-                    serializer.validated_data['user_id'] = user.id
-                    serializer.save()
-                    print(serializer.data)
+                serializer.validated_data['user_id'] = user.id
+                serializer.save()
                 return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
                         
         else:

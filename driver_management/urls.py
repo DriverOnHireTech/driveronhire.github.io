@@ -19,7 +19,5 @@ urlpatterns = [
 
     path('api/search/', Driversearch.as_view(), name='search_driver'),
 
-    
-
     path('api/driverleave/', Driverleaveapi.as_view(), name='driver_leave'),
 ]
