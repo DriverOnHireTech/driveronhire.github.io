@@ -50,6 +50,7 @@ from .models import *
 #     )
 
 
+admin.site.register(BasicDetails)
 admin.site.register(ViewDriver)
 admin.site.register(AddDriver)
 admin.site.register(DriverHistory)

@@ -8,6 +8,52 @@ from user_master.models import region
 
 from django.conf import settings
 
+
+class BasicDetails(models.Model):
+    image_upload = models.ImageField(upload_to='media', default=None)
+
+    def img_preview(self):
+        return mark_safe(f'<img src = "{self.image_upload.url}" '
+                         f'width = "100" height = "100" style = "border-radius: 50%"/>')
+    
+    first_name = models.CharField(max_length=20, default=None)
+    middle_name = models.CharField(max_length=20, blank=True, null=True)
+    last_name = models.CharField(max_length=20, blank=True, null=True)
+    sex = models.CharField(choices=(('Male', "Male"), ('Female', "Female")), max_length=10, default="Male")
+    date_of_birth = models.DateField()
+    mobile = models.CharField(max_length=15)
+    alt_mobile = models.CharField(max_length=15, blank=True, null=True)
+    email = models.EmailField(null=True, blank=True)
+    marital_status = models.CharField(choices=(('Married', 'Married'), ('Single', 'Single')),
+                                      max_length=10)
+    religion = models.CharField(choices=(('Hindu', 'Hindu'), ('Muslim', 'Muslim'),
+                                         ('Christian', 'Christian'), ('Sikh', 'Sikh')),
+                                max_length=10)
+    qualification = models.CharField(choices=(('SSC', 'SSC'), ('HSC', 'HSC'),
+                                              ('Below SSC', 'Below SSC'), ('Below HSC', 'Below HSC'),
+                                               ('Graduate', 'Graduate')),
+                                     default="SS", max_length=10)
+    language = models.CharField(choices=(('Hindi', 'Hindi'), ('English', 'English'), ('Marathi', 'Marathi'), ('Bhojpuri', 'Bhojpuri')), default="Hindi", max_length=100)
+      # Address
+    t_address = models.CharField(max_length=200)
+    p_address = models.CharField(max_length=200)
+    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=10, null=True,blank=True)
+    aggrement_expiry_date = models.DateField(null=True, blank=True)
+
+    # Licence Information
+    licence_no = models.CharField(max_length=20)
+    licence_issued_from = models.CharField(max_length=20)
+    licence_type = models.CharField(choices=(('LMV-TR', 'LMV-TR'), ('LMV-NT', 'LMV-NT')), default="TR", max_length=10)
+    date_of_issue = models.DateField()
+    date_of_expiry = models.DateField()
+
+    def __str__(self):
+        return self.first_name
+    
+
 class AddDriver(models.Model):
     image_upload = models.ImageField(upload_to='media', default=None)
 

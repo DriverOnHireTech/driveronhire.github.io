@@ -76,14 +76,15 @@ class MyBookingList(APIView):
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
 
-                # if currant_location:
-                #     # Convert current_location to a Point object
-                #     latitude, longitude = currant_location.get('latitude'), currant_location.get('longitude')
-                #     user_location = Point(longitude, latitude, srid=4326)
-            
-                #      # Filter drivers based on distance using Distance lookup
-                #     drivers = Driverlocation.objects.annotate(distance=Distance('driverlocation', user_location)).filter(distance__lt=D(km=3000000))
-                
+                if currant_location:
+                    # currant_location = obj.currant_location or None
+                    if currant_location is None:
+                        return None
+                    driver =Driverlocation.objects.all().annotate(
+                            distance = Distance('driverlocation', currant_location)
+                            ).filter(distance__lte=D(km=3))
+                    
+                                
 
                 if driver.exists():
                      # Send notification using FCM

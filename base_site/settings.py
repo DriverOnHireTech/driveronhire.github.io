@@ -172,7 +172,7 @@ REST_FRAMEWORK = {
 }
 
 #Setup for push notification with firebase
-#FIREBASE_APP = initialize_app()
+FIREBASE_APP = initialize_app()
 cred_path = os.path.join(BASE_DIR, "serviceaccountkey.json")
 cred = credentials.Certificate(cred_path)
 # firebase_admin.initialize_app(cred)
