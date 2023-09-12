@@ -102,11 +102,8 @@ class MyBookingList(APIView):
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
                     print(serializer.data)
-                    return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
-                
-                   
-                    
-                
+                return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
+                        
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
