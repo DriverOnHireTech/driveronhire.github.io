@@ -67,7 +67,6 @@ class MyBookingList(APIView):
         if serializer.is_valid():
 
                 currant_location = serializer.validated_data.get('currant_location')
-                print("Checking location ", currant_location)
 
                 driver_type=serializer.validated_data.get('driver_type')
 
@@ -102,7 +101,6 @@ class MyBookingList(APIView):
                     
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
-                print(serializer.data)
                 return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

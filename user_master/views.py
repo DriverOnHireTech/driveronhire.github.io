@@ -42,7 +42,6 @@ class MyCountryGetList(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [BasicAuthentication]
     try:
-
         def get(self, request, pk):
             try:
                 country = Country.objects.get(pk=pk)

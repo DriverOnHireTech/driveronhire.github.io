@@ -149,18 +149,14 @@ class ReferDriver(models.Model):
     pass
 
 
-
 class Driverleave(models.Model):
     reason=models.CharField(max_length=100, null=True, blank=True)
     leave_from_date=models.DateField()
-
     leave_to_date=models.DateField()
     total_days_of_leave= models.IntegerField()
 
-
     def __str__(self):
         return self.reason
-
 
 
 class DriverBalance(models.Model):
@@ -175,3 +171,4 @@ class Driverlocation(models.Model):
 
     def __str__(self):
         return str(self.driver) 
+    
