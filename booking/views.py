@@ -11,6 +11,7 @@ from driver_management.models import AddDriver, Driverlocation
 from driver_management.serializers import *
 from authentication.models import  User
 from firebase_admin import messaging
+from django.contrib.gis.geos import GEOSGeometry
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -61,7 +62,6 @@ class MyBookingList(APIView):
     def post(self, request, format=None): 
         user=request.user
         data=request.data
-
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -76,13 +76,14 @@ class MyBookingList(APIView):
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
 
-                if currant_location:
-                    # currant_location = obj.currant_location or None
-                    if currant_location is None:
-                        return None
-                    driver =Driverlocation.objects.all().annotate(
-                            distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=3))
+                # if currant_location:
+                #     # currant_location = obj.currant_location or None
+                #     if currant_location is None:
+                #         return None
+                #     currant_location_geom = GEOSGeometry(f'POINT({currant_location["longitude"]} {currant_location["latitude"]})')
+                #     driver =Driverlocation.objects.all().annotate(
+                #             distance = Distance('driverlocation', currant_location)
+                #             ).filter(distance__lte=D(km=3))
                     
                                 
 
@@ -93,7 +94,7 @@ class MyBookingList(APIView):
                             title="New Booking",
                             body="A new booking is available!"
                         ),
-                        topic="Driver Booking"  # Replace with the appropriate FCM topic
+                        topic="Driver_Booking"  # Replace with the appropriate FCM topic
                     )
 
                     # Send the message
@@ -103,10 +104,18 @@ class MyBookingList(APIView):
                     # Save Booking
                     if PlaceBooking.status == 'accept':
                         return Response({'msg':'Booking accepted'})
-                    
+
+                driver_data = [
+                    {
+                        "driverlocation": driver_obj.driverlocation,  # Replace with actual fields
+                        # Add other fields you want to include here
+                    }
+                    for driver_obj in driver
+                ]
+
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
-                return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
+                return Response({'data':serializer.data,"drivers":driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
