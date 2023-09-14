@@ -4,10 +4,10 @@ from .models import *
 from user_master.serializers import *
 
 
-# class BasicDetailsSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = BasicDetails
-#         fields = '__all__'
+class BasicDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BasicDetails
+        fields = '__all__'
 
 
 class DriversignupSerializer(serializers.ModelSerializer):

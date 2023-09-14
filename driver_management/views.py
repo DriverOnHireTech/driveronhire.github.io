@@ -60,7 +60,7 @@ class driverlocation(APIView):
     def get(self, request):
         try:
 
-            alllocation = Driverlocation.objects.all()
+            alllocation = Driverlocation.objects.all().order_by('driver')
             loc_seri =Driverlocationserializer(alllocation, many=True)
             return Response({'msg': 'All Location List', 'data':loc_seri.data}, status=status.HTTP_200_OK)
         
@@ -76,9 +76,9 @@ class driverlocation(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
        
 
-# class BasicDetailsView(generics.ListCreateAPIView):
-#     queryset = BasicDetails.objects.all().order_by('id').reverse()
-#     serializer_class = BasicDetailsSerializer
+class BasicDetailsView(generics.ListCreateAPIView):
+    queryset = BasicDetails.objects.all().order_by('id').reverse()
+    serializer_class = BasicDetailsSerializer
 
 
 

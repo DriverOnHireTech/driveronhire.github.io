@@ -210,5 +210,4 @@ class Driverlocation(models.Model):
         srid=4326, help_text="Point(longitude latitude)")
 
     def __str__(self):
-        return str(self.driver) 
-    
+        return str(self.driver.phone) 

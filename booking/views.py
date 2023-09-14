@@ -102,7 +102,8 @@ class MyBookingList(APIView):
 
                     # Save Booking
                     if PlaceBooking.status == 'accept':
-                        return Response({'msg':'Booking accepted'})
+                        accepted=AddDriver.objects.get(id=id)
+                        return Response({'msg':'Booking accepted', 'driver':accepted})
                     
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
