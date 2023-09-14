@@ -76,9 +76,9 @@ class driverlocation(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
        
 
-class BasicDetailsView(generics.ListCreateAPIView):
-    queryset = BasicDetails.objects.all().order_by('id').reverse()
-    serializer_class = BasicDetailsSerializer
+class BasicDetailView(generics.ListCreateAPIView):
+    queryset = BasicDetail.objects.all().order_by('id').reverse()
+    serializer_class = BasicDetailSerializer
 
 
 

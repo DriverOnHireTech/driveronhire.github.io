@@ -11,6 +11,12 @@ from driver_management.models import AddDriver, Driverlocation
 from driver_management.serializers import *
 from authentication.models import  User
 from firebase_admin import messaging
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import Point
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D
+from django.db.models import F
+from django.http import JsonResponse
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -58,20 +64,16 @@ class Userlogin(APIView):
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
+
     def post(self, request, format=None): 
         user=request.user
         data=request.data
-
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
-
                 currant_location = serializer.validated_data.get('currant_location')
-
                 driver_type=serializer.validated_data.get('driver_type')
-
                 car_type= serializer.validated_data.get('car_type')
-
                 transmission_type=serializer.validated_data.get('transmission_type')
     
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
@@ -79,12 +81,21 @@ class MyBookingList(APIView):
                 if currant_location:
                     # currant_location = obj.currant_location or None
                     if currant_location is None:
-                        return None
+                        return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =Driverlocation.objects.all().annotate(
                             distance = Distance('driverlocation', currant_location)
                             ).filter(distance__lte=D(km=3))
                     
-                                
+                driver_data = []
+                for driver_obj in driver:
+                    driver_location = driver_obj.driverlocation
+                    if driver_location:
+                        location_dict = {
+                            "id": driver_obj.id,
+                            "longitude": driver_location.x,
+                            "latitude": driver_location.y,
+                        }
+                        driver_data.append(location_dict)                
 
                 if driver.exists():
                      # Send notification using FCM
@@ -93,21 +104,46 @@ class MyBookingList(APIView):
                             title="New Booking",
                             body="A new booking is available!"
                         ),
-                        topic="Driver Booking"  # Replace with the appropriate FCM topic
+                        topic="Driver_Booking"  # Replace with the appropriate FCM topic
                     )
 
                     # Send the message
                     response = messaging.send(message)
                     print("Notification sent:", response) 
 
+<<<<<<< HEAD
                     # Save Booking
                     if PlaceBooking.status == 'accept':
                         accepted=AddDriver.objects.get(id=id)
                         return Response({'msg':'Booking accepted', 'driver':accepted})
+=======
+>>>>>>> 425542cd1856126e520ba227d59d16bc1ec1c031
                     
+
+                
+
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
-                return Response({'data':serializer.data,"drivers":driver}, status=status.HTTP_201_CREATED)
+
+                # Check if the driver has accepted the booking
+                driver_id = driver[0].id
+                booking = PlaceBooking.objects.create(
+                    currant_location=currant_location,
+                    # accepted_driver= accepted_drive_id,
+                    user_id=user.id,
+                )
+                booking.status = 'pending'
+                booking.save()
+
+                # If the driver has accepted the booking, save the booking in the database with the driver's name
+                if booking.status == 'accept':
+                    booking.driver_name = driver[0].name
+                    booking.save()
+
+                # Save Booking
+                # if PlaceBooking.status == 'accept':
+                #     return Response({'msg':'Booking accepted'})
+                return Response({'data':serializer.data,"drivers":driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -205,6 +241,7 @@ class InvoiceGenerate(APIView):
         
         except Invoice.DoesNotExist:
             raise serializers.ValidationError("No Data Found")
+  
         
 class FeedbackApi(APIView):
     authentication_classes=[BasicAuthentication]
@@ -225,7 +262,6 @@ class FeedbackApi(APIView):
         get_feedback = Feedback.objects.all()
         serializer = Feedbackserializer(get_feedback, many=True)
         return Response({'msg': 'All feedback list', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-
 
 
 class userprofile(APIView):  

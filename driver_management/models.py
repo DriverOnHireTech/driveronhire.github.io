@@ -8,14 +8,8 @@ from user_master.models import region
 
 from django.conf import settings
 
-
-class BasicDetails(models.Model):
+class BasicDetail(models.Model):
     image_upload = models.ImageField(upload_to='media', default=None)
-
-    def img_preview(self):
-        return mark_safe(f'<img src = "{self.image_upload.url}" '
-                         f'width = "100" height = "100" style = "border-radius: 50%"/>')
-    
     first_name = models.CharField(max_length=20, default=None)
     middle_name = models.CharField(max_length=20, blank=True, null=True)
     last_name = models.CharField(max_length=20, blank=True, null=True)

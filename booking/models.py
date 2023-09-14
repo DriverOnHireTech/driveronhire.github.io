@@ -8,8 +8,6 @@ from authentication.models import User
 from client_management.models import AddClient
 from driver_management.models import AddDriver
 
- 
-
 
 class bookinguser(models.Model):
     cities=(
@@ -35,7 +33,8 @@ class PlaceBooking(models.Model):
     STATUS=(
         ('accept','accept'),
         ('decline', 'decline'),
-        ('pending', 'pending')
+        ('pending', 'pending'),
+        ('completed', 'completed')
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
@@ -54,7 +53,6 @@ class PlaceBooking(models.Model):
         return self.trip_type
     
 
-
 class Invoice(models.Model):
     user =  models.ForeignKey(bookinguser, on_delete=models.CASCADE)
     driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE)
@@ -64,8 +62,7 @@ class Invoice(models.Model):
 
     def __str__(self):
         return self.user.full_name
-
-    
+  
 
 class Feedback(models.Model):
     user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -86,11 +83,3 @@ class Profile(models.Model):
     
     def __str__(self):
         return str(self.user.phone)
-    
-    
-
-
-
-
-
-

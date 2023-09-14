@@ -173,24 +173,16 @@ REST_FRAMEWORK = {
 
 #Setup for push notification with firebase
 FIREBASE_APP = initialize_app()
-cred_path = os.path.join(BASE_DIR, "notification.json")
-cred = credentials.Certificate(cred_path)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
+# cred_path = os.path.join(BASE_DIR, "notification.json")
+# cred = credentials.Certificate(cred_path)
 # firebase_admin.initialize_app(cred)
 FCM_DJANGO_SETTINGS = {
-     # an instance of firebase_admin.App to be used as default for all fcm-django requests
-     # default: None (the default Firebase app)
-    "DEFAULT_FIREBASE_APP": None,
-     # default: _('FCM Django')
-    "APP_VERBOSE_NAME": "django_fcm",
-     # Your firebase API KEY
-    "FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
-     # true if you want to have only one active device per registered user at a time
-     # default: False
-    "ONE_DEVICE_PER_USER": False,
 
-     # devices to which notifications cannot be sent,
-     # are deleted upon receiving error response from FCM
-     # default: False
+    "DEFAULT_FIREBASE_APP": None,
+    "APP_VERBOSE_NAME": "django_fcm",
+    "FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
+    "ONE_DEVICE_PER_USER": False,
     "DELETE_INACTIVE_DEVICES": True,
 }
 
@@ -204,8 +196,8 @@ FCM_DJANGO_SETTINGS = {
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_HEADER_NAME = "X-CSRFToken"
 
-# GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
-# GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
+GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
+GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
 
 
 # AWS Bucket for images storage

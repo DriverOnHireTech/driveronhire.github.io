@@ -4,9 +4,9 @@ from .models import *
 from user_master.serializers import *
 
 
-class BasicDetailsSerializer(serializers.ModelSerializer):
+class BasicDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BasicDetails
+        model = BasicDetail
         fields = '__all__'
 
 
