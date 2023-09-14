@@ -22,24 +22,24 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
 class PlacebookingSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
     
-    drivers = serializers.SerializerMethodField()
+    # drivers = serializers.SerializerMethodField()
     class Meta:
         model = PlaceBooking
         
-        fields= ['id','user','trip_type', 'from_date', 'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status', 'accepted_driver', 'drivers']
+        fields= ['id','user','trip_type', 'from_date', 'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status', 'accepted_driver']
 
-    def get_drivers(self, obj):
-        currant_location = obj.currant_location or None
-        if currant_location is None:
-            return None
-        driver =Driverlocation.objects.all().annotate(
-              distance = Distance('driverlocation', currant_location)
-              ).filter(distance__lte=D(km=3))
+    # def get_drivers(self, obj):
+    #     currant_location = obj.currant_location or None
+    #     if currant_location is None:
+    #         return None
+    #     driver =Driverlocation.objects.all().annotate(
+    #           distance = Distance('driverlocation', currant_location)
+    #           ).filter(distance__lte=D(km=3))
         
                      
-        if not driver.exists():
-            return {"not found"}
-        return driver.values("driver")
+    #     if not driver.exists():
+    #         return {"not found"}
+    #     return driver.values("driver")
     
     def get_user(self, obj):
         return {'user':obj.user.username}
