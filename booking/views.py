@@ -82,7 +82,7 @@ class MyBookingList(APIView):
                     # currant_location = obj.currant_location or None
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
-                    driver =Driverlocation.objects.all().annotate(
+                    driver =Driverlocation.objects.filter(driver_id=request.user.id).annotate(
                             distance = Distance('driverlocation', currant_location)
                             ).filter(distance__lte=D(km=3))
                     
@@ -110,39 +110,10 @@ class MyBookingList(APIView):
                     # Send the message
                     response = messaging.send(message)
                     print("Notification sent:", response) 
-
-<<<<<<< HEAD
-                    # Save Booking
-                    if PlaceBooking.status == 'accept':
-                        accepted=AddDriver.objects.get(id=id)
-                        return Response({'msg':'Booking accepted', 'driver':accepted})
-=======
->>>>>>> 425542cd1856126e520ba227d59d16bc1ec1c031
-                    
-
                 
-
                 serializer.validated_data['user_id'] = user.id
                 serializer.save()
 
-                # Check if the driver has accepted the booking
-                driver_id = driver[0].id
-                booking = PlaceBooking.objects.create(
-                    currant_location=currant_location,
-                    # accepted_driver= accepted_drive_id,
-                    user_id=user.id,
-                )
-                booking.status = 'pending'
-                booking.save()
-
-                # If the driver has accepted the booking, save the booking in the database with the driver's name
-                if booking.status == 'accept':
-                    booking.driver_name = driver[0].name
-                    booking.save()
-
-                # Save Booking
-                # if PlaceBooking.status == 'accept':
-                #     return Response({'msg':'Booking accepted'})
                 return Response({'data':serializer.data,"drivers":driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
