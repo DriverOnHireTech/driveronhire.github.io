@@ -11,11 +11,11 @@ urlpatterns=[
 
     path('userbooking/<int:id>/', views.BookingListWithId.as_view(), name='booking-id'),
 
-    path('search_drivers/', views.SearchDriverWithinRadius.as_view(), name='search_drivers'),
-
     path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
 
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
     path('userprofile/', views.userprofile.as_view(), name='userprofile'),
+
+    path('pendingbookings/', views.PendingBooking.as_view(), name='pendingbookings')
 ]

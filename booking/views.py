@@ -160,43 +160,7 @@ class BookingListWithId(APIView):
       
 
 
-class SearchDriverWithinRadius(APIView):
-    def haversine_distance(self, lat1, lon1, lat2, lon2):
-        # Convert latitude and longitude from degrees to radians
-        lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
 
-        # Haversine formula
-        dlat = lat2 - lat1
-        dlon = lon2 - lon1
-        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-        c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        radius = 6371  # Earth's radius in kilometers
-        distance = radius * c
-
-        return distance
-
-    def get(self, request):
-        client_latitude = request.query_params.get('client_latitude')
-        client_longitude = request.query_params.get('client_longitude')
-        if not client_latitude or not client_longitude:
-            return Response([])
-
-        client_latitude = float(client_latitude)
-        client_longitude = float(client_longitude)
-
-        # Filter drivers within 3 km from the client location.
-        drivers = AddDriver.objects.all()
-        filtered_drivers = []
-
-        for driver in drivers:
-            distance = self.haversine_distance(
-                client_latitude, client_longitude, driver.latitude, driver.longitude
-            )
-            if distance <= 3:
-                filtered_drivers.append(driver)
-
-        serializer = DriverSerializer(filtered_drivers, many=True)
-        return Response(serializer.data)
     
 
 class InvoiceGenerate(APIView):
@@ -262,3 +226,23 @@ class userprofile(APIView):
         
         except Profile.DoesNotExist:
             return Response({'msg':'No Profile avalaible', 'data':pro_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+class PendingBooking(APIView):
+    # authentication_classes=[TokenAuthentication]
+    # permission_classes=[IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            data=request.data
+            user=request.user
+            booking_status= request.query_params.get('status')
+            print(booking_status)
+
+            #Fetching pending records
+            if booking_status:
+                pending_booking=PlaceBooking.objects.filter(bookingstatus=booking_status)
+
+            serializer = PlacebookingSerializer(pending_booking, many=True)
+            return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+        
+        except :
+            return Response({'msg':'no record found'}, status=status.HTTP_404_NOT_FOUND)
