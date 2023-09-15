@@ -82,7 +82,7 @@ class MyBookingList(APIView):
                     # currant_location = obj.currant_location or None
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
-                    driver =Driverlocation.objects.filter(driver_id=request.user.id).annotate(
+                    driver =Driverlocation.objects.all().annotate(
                             distance = Distance('driverlocation', currant_location)
                             ).filter(distance__lte=D(km=3))
                     
@@ -110,9 +110,17 @@ class MyBookingList(APIView):
                     # Send the message
                     response = messaging.send(message)
                     print("Notification sent:", response) 
+
+                #for booking accept 
+                if PlaceBooking.status == "accept":
+                    return Response({'msg':'booking is accepted'})
+                
+                #for booking decline 
+                elif PlaceBooking.status == "decline":
+                    return Response({'msg':'booking is decline'})
                 
                 serializer.validated_data['user_id'] = user.id
-                serializer.save()
+                serializer.save(status="accept")
 
                 return Response({'data':serializer.data,"drivers":driver_data}, status=status.HTTP_201_CREATED)
                         
