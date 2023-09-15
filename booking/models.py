@@ -86,3 +86,17 @@ class Profile(models.Model):
     
     def __str__(self):
         return str(self.user.phone)
+    
+class Bookingstatus(models.Model):
+    STATUS=(
+        ('accept','accept'),
+        ('decline', 'decline'),
+        ('pending', 'pending'),
+        ('completed', 'completed')
+    )
+    booking_details = models.OneToOneField(PlaceBooking, on_delete=models.CASCADE)
+    drivername= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    booking_status= models.CharField(choices=STATUS,max_length=50, null=True, blank=True)
+
+    def __str__(self):
+        return  self.booking_status
