@@ -228,21 +228,24 @@ class userprofile(APIView):
             return Response({'msg':'No Profile avalaible', 'data':pro_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class PendingBooking(APIView):
-    # authentication_classes=[TokenAuthentication]
-    # permission_classes=[IsAuthenticated]
     def get(self, request, *args, **kwargs):
         try:
             data=request.data
             user=request.user
-            booking_status= request.query_params.get('status')
+            booking_status= request.GET.get('status', None)
             print(booking_status)
 
             #Fetching pending records
-            if booking_status:
-                pending_booking=PlaceBooking.objects.filter(bookingstatus=booking_status)
+            if booking_status is not None:
+                pending_booking=PlaceBooking.objects.filter(status=booking_status).count()
+                serializer = PlacebookingSerializer(pending_booking, many=True)
+                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+            else:
+                bookings = PlaceBooking.objects.all()
 
-            serializer = PlacebookingSerializer(pending_booking, many=True)
-            return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+                serializer = PlacebookingSerializer(bookings, many=True)
+                return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_200_OK)
         
-        except :
-            return Response({'msg':'no record found'}, status=status.HTTP_404_NOT_FOUND)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No Data found', 'data':serializer.data})
+            
