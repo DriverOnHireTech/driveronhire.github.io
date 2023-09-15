@@ -7,6 +7,7 @@ from django.utils.html import mark_safe
 from django.contrib.gis.db import models as gis_point
 from user_master.models import region
 
+
 from django.conf import settings
 
 class BasicDetail(models.Model):
@@ -176,16 +177,7 @@ class ViewDriver(models.Model):
     pass
 
 
-class Bookingstatus(models.Model):
-    STATUS=(
-        ('accept','accept'),
-        ('decline', 'decline'),
-        ('pending', 'pending'),
-        ('completed', 'completed')
-    )
-    #booking_details = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE)
-    drivername= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    booking_status= models.CharField(choices=STATUS, max_length=50, null=True, blank=True)
+
 
 
 class ReferDriver(models.Model):
