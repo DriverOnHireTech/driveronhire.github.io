@@ -17,5 +17,7 @@ urlpatterns=[
 
     path('userprofile/', views.userprofile.as_view(), name='userprofile'),
 
-    path('pendingbookings/', views.PendingBooking.as_view(), name='pendingbookings')
+    path('pendingbookings/', views.PendingBooking.as_view(), name='pendingbookings'),
+
+    path('userprofile/<int:id>/', views.UserProfileWithId.as_view(), name='user-id'),
 ]

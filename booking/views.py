@@ -225,7 +225,20 @@ class userprofile(APIView):
         
         except Profile.DoesNotExist:
             return Response({'msg':'No Profile avalaible', 'data':pro_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+
+class UserProfileWithId(APIView):
+    def get(self, request, id):
+        try:
+            user = Profile.objects.get(id=id)
+            serializer = Profileserializer(user)
+            return Response(serializer.data)
+
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 class PendingBooking(APIView):
     def get(self, request, *args, **kwargs):
         try:
