@@ -232,12 +232,12 @@ class PendingBooking(APIView):
         try:
             data=request.data
             user=request.user
-            booking_status= request.GET.get('status', None)
-            print(booking_status)
+            booking_status= request.GET.get('booking_status')
+            print("booking status", booking_status)
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status).count()
+                pending_booking=PlaceBooking.objects.filter(status=booking_status)
                 serializer = PlacebookingSerializer(pending_booking, many=True)
                 return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
             else:
