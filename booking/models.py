@@ -41,6 +41,7 @@ class PlaceBooking(models.Model):
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
+    packege= models.CharField(max_length=100, null=True, blank=True)
     from_date = models.DateField()
     to_date = models.DateField()
     currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)

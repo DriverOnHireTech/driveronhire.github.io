@@ -26,7 +26,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceBooking
         
-        fields= ['id','user','trip_type', 'from_date', 'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','accepted_driver']
+        fields= ['id','user','trip_type', 'from_date', 'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','accepted_driver','packege']
 
     # def get_drivers(self, obj):
     #     currant_location = obj.currant_location or None

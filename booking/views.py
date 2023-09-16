@@ -79,10 +79,9 @@ class MyBookingList(APIView):
                 driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
 
                 if currant_location:
-                    # currant_location = obj.currant_location or None
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
-                    driver =Driverlocation.objects.all().annotate(
+                    driver =Driverlocation.objects.filter(driver_id=request.user.id).annotate(
                             distance = Distance('driverlocation', currant_location)
                             ).filter(distance__lte=D(km=3))
                     
@@ -238,13 +237,15 @@ class PendingBooking(APIView):
             #Fetching pending records
             if booking_status is not None:
                 pending_booking=PlaceBooking.objects.filter(status=booking_status)
+                number_of_booking= pending_booking.count()
+                
                 serializer = PlacebookingSerializer(pending_booking, many=True)
                 return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
             else:
                 bookings = PlaceBooking.objects.all()
 
                 serializer = PlacebookingSerializer(bookings, many=True)
-                return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
         
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data})
