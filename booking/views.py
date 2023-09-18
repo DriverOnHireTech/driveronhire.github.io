@@ -75,8 +75,10 @@ class MyBookingList(APIView):
                 driver_type=serializer.validated_data.get('driver_type')
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('transmission_type')
-    
-                driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
+
+                
+                if car_type is None:
+                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
 
                 if currant_location:
                     if currant_location is None:
