@@ -286,6 +286,10 @@ class AddDriver(models.Model):
     driver_status = models.CharField(choices=(("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected"), ("Suspended", "Suspended")),max_length=10)
     driver_rating= models.PositiveBigIntegerField()
 
+    driverlocation = gis_point.PointField(
+        "Location in Map", geography=True, blank=True, null=True,
+        srid=4326, help_text="Point(longitude latitude)")
+
     def __str__(self):
         return self.first_name
 
@@ -331,6 +335,7 @@ class Driverlocation(models.Model):
     driverlocation = gis_point.PointField(
         "Location in Map", geography=True, blank=True, null=True,
         srid=4326, help_text="Point(longitude latitude)")
+    # driver_details = models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return str(self.driver.phone)

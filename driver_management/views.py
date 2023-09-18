@@ -15,9 +15,6 @@ from django.contrib.auth import authenticate, login
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
-
-
-
 from datetime import date, datetime
 from .utils import leavecalcu
 
@@ -35,6 +32,7 @@ class Driversignup(APIView):   # For Driver signup
             return Response({'msg':'Driver signup is done', 'data':Dri_serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response ({'msg':'Some thing wrong', 'data':Dri_serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 # Driver Login
 class Driverlogin(APIView): 
     def post(self, request):
@@ -47,6 +45,8 @@ class Driverlogin(APIView):
         return Response({'msg': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
  # for Driver location update   
+
+
 class driverlocation(APIView):  
     def post(self, request):
         user=request.user
@@ -88,8 +88,6 @@ class MyDriverList(generics.ListCreateAPIView):
     serializer_class = MyDriverSerializer
     parser_classes = [MultiPartParser, FormParser]
 
-
-    
 
 class Driversearch(ListAPIView):
     try:
