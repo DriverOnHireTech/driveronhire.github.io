@@ -75,22 +75,16 @@ class MyBookingList(APIView):
                 driver_type=serializer.validated_data.get('driver_type')
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('transmission_type')
-<<<<<<< HEAD
 
-                
-                if car_type is None:
-                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
-=======
->>>>>>> 0a73b8fdb26f0683283bb6dc332ebde03e5b8c75
-
+                 
                 if car_type is None :    
-                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
+                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type, driver_type='Full Time')
 
                 elif currant_location:
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
-                    driver = driver.filter(car_type=car_type)
+                    driver = driver.filter(car_type=car_type,driver_type=driver_type)
                     print("Driver Details",driver)
                     
                     driver=driver.annotate(
