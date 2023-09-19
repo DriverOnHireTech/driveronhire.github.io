@@ -275,7 +275,6 @@ class PendingBooking(APIView):
 class UpcomingBooking(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            data=request.data
             user=request.user
             current_datetime = datetime.now()
 
