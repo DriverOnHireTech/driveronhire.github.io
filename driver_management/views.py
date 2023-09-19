@@ -89,15 +89,28 @@ class MyDriverList(generics.ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
 
-class Driversearch(APIView):
-        def get(self, request):
-            pagination_class=cutomepegination
+class Driversearch(ListAPIView):
+        try:
+
+            # pagination_class=cutomepegination
             model_data= AddDriver.objects.all()
-            serializer_class = MyDriverSerializer(model_data, many=True) 
+            serializer_class = MyDriverSerializer 
             filter_backends = [DjangoFilterBackend]
-            filterset_fields = ['id','mobile','driver_type', 'first_name', 'driver_status', 'branch']
-            return Response({'msg':'Driver searched list', 'data':serializer_class.data})
-        
+            filterset_fields = ['mobile','driver_type', 'first_name', 'driver_status', 'branch']
+            
+            def get_queryset(self):
+                queryset = AddDriver.objects.all()
+
+            # You can further filter the queryset based on request parameters if needed
+            # Example: filter by 'driver_type' from the request query parameters
+                mobile = self.request.query_params.get('mobile')
+                if mobile:
+                    queryset =queryset.filter (mobile=mobile)
+
+                return queryset
+        except AddDriver.DoesNotExist:
+            Response({'msg':'No Record Founf'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 # Driver profile
