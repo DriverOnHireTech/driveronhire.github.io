@@ -94,7 +94,6 @@ class MyDriverList(generics.ListCreateAPIView):
 class Driversearch(ListAPIView):
     try:
         pagination_class=cutomepegination
-        queryset = AddDriver.objects.all()
         serializer_class = MyDriverSerializer
         filter_backends = [DjangoFilterBackend]
 
