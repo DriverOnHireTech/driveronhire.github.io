@@ -92,11 +92,10 @@ class MyDriverList(generics.ListCreateAPIView):
 class Driversearch(ListAPIView):
     try:
         pagination_class=cutomepegination
-        queryset = AddDriver.objects.all()
         serializer_class = MyDriverSerializer
         filter_backends = [DjangoFilterBackend]
 
-        filterset_fields = ['driver_type', 'first_name', 'driver_status', 'branch']
+        filterset_fields = ['mobile', 'driver_type', 'first_name', 'driver_status', 'branch']
     except AddDriver.DoesNotExist:
         pass
 
