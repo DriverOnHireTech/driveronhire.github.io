@@ -7,15 +7,13 @@ from .serializers import *
 from .paginations import cutomepegination
 from rest_framework import status
 from rest_framework import filters
-# from django_filters.rest_framework import DjangoFilterBackend
-# from dateutil.relativedelta import relativedelta
+#
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
-from datetime import date, datetime
 from .utils import leavecalcu
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
@@ -51,7 +49,7 @@ class Driverlogin(APIView):
 
 class driverlocation(APIView):  
     def post(self, request):
-        user=request.user
+        user=self.request.user
         serializer= Driverlocationserializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -91,15 +89,15 @@ class MyDriverList(generics.ListCreateAPIView):
     parser_classes = [MultiPartParser, FormParser]
 
 
-class Driversearch(ListAPIView):
-    try:
-        pagination_class=cutomepegination
-        serializer_class = MyDriverSerializer
-        filter_backends = [DjangoFilterBackend]
-
-        filterset_fields = ['mobile','driver_type', 'first_name', 'driver_status', 'branch']
-    except AddDriver.DoesNotExist:
-       print("No Data Found")
+class Driversearch(APIView):
+        def get(self, request):
+            pagination_class=cutomepegination
+            model_data= AddDriver.objects.all()
+            serializer_class = MyDriverSerializer(model_data, many=True) 
+            filter_backends = [DjangoFilterBackend]
+            filterset_fields = ['id','mobile','driver_type', 'first_name', 'driver_status', 'branch']
+            return Response({'msg':'Driver searched list', 'data':serializer_class.data})
+        
 
 
 # Driver profile
@@ -119,6 +117,7 @@ class Driverprofile(APIView):
 # Driver Leave API
 class Driverleaveapi(APIView):
     def post(self, request):
+        user= self.request.user
         data=request.data
         serializer=DriverleaveSerializer(data=data)
         if serializer.is_valid():
@@ -132,12 +131,12 @@ class Driverleaveapi(APIView):
 class Bookingreports(APIView):
     def get(self, request,*args, **kwargs):
         try:
-            user=request.user
+            user=self.request.user
             booking_time= request.GET.get('booking_time')
 
             #filter record between the dates
             if booking_filter:
-                booking_filter= PlaceBooking.objects.filter(booking_time__range=[booking_time])
+                booking_filter= PlaceBooking.objects.filter(booking_time__range=[booking_time], user=user.id)
                 result_serializer=PlacebookingSerializer(booking_filter, many=True)
                 return Response({'msg':'Your Booking Records', 'data':result_serializer.data}, status=status.HTTP_202_ACCEPTED)
             
