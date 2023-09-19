@@ -98,9 +98,9 @@ class Driversearch(ListAPIView):
         serializer_class = MyDriverSerializer
         filter_backends = [DjangoFilterBackend]
 
-        filterset_fields = ['driver_type', 'first_name', 'driver_status', 'branch']
+        filterset_fields = ['mobile','driver_type', 'first_name', 'driver_status', 'branch']
     except AddDriver.DoesNotExist:
-        pass
+       print("No Data Found")
 
 
 # Driver profile
