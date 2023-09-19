@@ -17,6 +17,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
 from datetime import date, datetime
 from .utils import leavecalcu
+from booking.models import PlaceBooking
+from booking.serializers import PlacebookingSerializer
 
 class Driversignup(APIView):   # For Driver signup
     def post(self, request):
@@ -126,43 +128,20 @@ class Driverleaveapi(APIView):
             return Response({'msg':'may be you missed some field'}, status=status.HTTP_400_BAD_REQUEST) 
 
 
+"""Endpoint for filter booking between 2 dates"""
+class Bookingreports(APIView):
+    def get(self, request,*args, **kwargs):
+        try:
+            user=request.user
+            booking_time= request.GET.get('booking_time')
+
+            #filter record between the dates
+            if booking_filter:
+                booking_filter= PlaceBooking.objects.filter(booking_time__range=[booking_time])
+                result_serializer=PlacebookingSerializer(booking_filter, many=True)
+                return Response({'msg':'Your Booking Records', 'data':result_serializer.data}, status=status.HTTP_202_ACCEPTED)
+            
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No Records Found', 'data':result_serializer.errors})
 
 
-
-
-
-
-
-
-
-
-# class MyDriverGetList(APIView):
-#     def get(self, request, id):
-#         try:
-#             driver = AddDriver.objects.get(id=id)
-#             serializer = MyDriverSerializer(driver)
-#             return Response(serializer.data)
-#         except AddDriver.DoesNotExist:
-#             return Response({'error': 'Driver not found'}, status=status.HTTP_404_NOT_FOUND)
-
-#     serializer_class = MyDriverSerializer
-
-#     def put(self, request, id):
-#         try:
-#             driver = AddDriver.objects.get(id=id)
-#             serializer = MyDriverSerializer(driver, data=request.data, partial=True)
-#             if serializer.is_valid():
-#                 serializer.save()
-#                 return Response(request.data)
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#         except AddDriver.DoesNotExist:
-#             Response({'msg': 'Search value not present in database'}, status=status.HTTP_417_EXPECTATION_FAILED)
-#             return Response({'error': 'Driver not found'}, status=status.HTTP_404_NOT_FOUND)
-
-#     def delete(self, request, id):
-#         try:
-#             driver = AddDriver.objects.get(id=id)
-#             driver.delete()
-#             return Response({'message': 'Object Deleted'}, status=status.HTTP_204_NO_CONTENT)
-#         except AddDriver.DoesNotExist:
-#             return Response({'error': 'Driver not found'}, status=status.HTTP_404_NOT_FOUND)
