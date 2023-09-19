@@ -17,6 +17,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from django.db.models import F
 from django.http import JsonResponse
+from datetime import datetime
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -78,13 +79,13 @@ class MyBookingList(APIView):
 
                  
                 if car_type is None :    
-                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type, driver_type='Full Time')
+                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
 
                 elif currant_location:
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
-                    driver = driver.filter(car_type=car_type,driver_type=driver_type)
+                    driver = driver.filter(car_type=car_type, driver_type="Full Time", car_transmission='Manual')
                     print("Driver Details",driver)
                     
                     driver=driver.annotate(
@@ -266,6 +267,28 @@ class PendingBooking(APIView):
                 serializer = PlacebookingSerializer(bookings, many=True)
                 return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
         
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No Data found', 'data':serializer.data})
+            
+
+
+class UpcomingBooking(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            data=request.data
+            user=request.user
+            current_datetime = datetime.now()
+
+
+            upcoming_booking=PlaceBooking.objects.filter(booking_time__lt=current_datetime)
+            result = upcoming_booking.order_by('booking_time').first()
+                
+            if result is not None:
+                serializer = PlacebookingSerializer(result)
+                return Response({'msg':'Upcoming bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+            else:
+                return Response({'msg': 'No upcoming bookings'}, status=status.HTTP_200_OK)
+    
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data})
             

@@ -234,7 +234,7 @@ class AddDriver(models.Model):
 
     # Car Details
     car_company_name = models.CharField(max_length=15, null=True,blank=True)
-    transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('Both', 'Both')), max_length=10)
+    transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All')), max_length=10)
     car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),
                                          ("MPV", "MPV"), ("MUV", "MUV")),
                                 max_length=10)
