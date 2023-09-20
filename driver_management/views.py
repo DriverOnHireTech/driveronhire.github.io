@@ -7,6 +7,8 @@ from .serializers import *
 from .paginations import cutomepegination
 from rest_framework import status
 from rest_framework import filters
+from django.utils import timezone
+from datetime import datetime
 #
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
@@ -146,14 +148,17 @@ class Bookingreports(APIView):
         try:
             user=self.request.user
             booking_time= request.GET.get('booking_time')
+            end_date_time = request.GET.get('end_date_time')
+
+
 
             #filter record between the dates
-            if booking_filter:
-                booking_filter= PlaceBooking.objects.filter(booking_time__range=[booking_time], user=user.id)
+            if booking_time:
+                booking_filter= PlaceBooking.objects.filter(booking_time__range=[booking_time, end_date_time])
+                print("Number of booking",booking_filter.count())
                 result_serializer=PlacebookingSerializer(booking_filter, many=True)
                 return Response({'msg':'Your Booking Records', 'data':result_serializer.data}, status=status.HTTP_202_ACCEPTED)
             
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Records Found', 'data':result_serializer.errors})
-
-
+        return Response("Error")
