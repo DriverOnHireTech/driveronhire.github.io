@@ -9,7 +9,6 @@ from rest_framework import status
 from rest_framework import filters
 from django.utils import timezone
 from datetime import datetime
-#
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
@@ -19,6 +18,7 @@ from rest_framework.authentication import BasicAuthentication
 from .utils import leavecalcu
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
+
 
 class Driversignup(APIView):   # For Driver signup
     def post(self, request):
@@ -34,6 +34,7 @@ class Driversignup(APIView):   # For Driver signup
             return Response({'msg':'Driver signup is done', 'data':Dri_serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response ({'msg':'Some thing wrong', 'data':Dri_serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # Driver Login
 class Driverlogin(APIView): 
@@ -76,12 +77,11 @@ class driverlocation(APIView):
             serializer.save()
             return Response({"msg":"location updated", "data":serializer.data})
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
-       
+
 
 class BasicDetailView(generics.ListCreateAPIView):
     queryset = BasicDetail.objects.all().order_by('id').reverse()
     serializer_class = BasicDetailSerializer
-
 
 
 class MyDriverList(generics.ListCreateAPIView):
@@ -114,7 +114,6 @@ class Driversearch(ListAPIView):
             Response({'msg':'No Record Founf'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 # Driver profile
 class Driverprofile(APIView):
     authentication_classes = [BasicAuthentication]
@@ -127,15 +126,20 @@ class Driverprofile(APIView):
         
         except AddDriver.DoesNotExist:
             return Response({'msg': 'No profile was found'})    
-        
+
 
 # Driver Leave API
 class Driverleaveapi(APIView):
     def post(self, request):
         user= self.request.user
         data=request.data
+        leave_from_date=request.GET.get('leave_from_date')
+        leave_to_date=request.GET.get('leave_to_date')
+
         serializer=DriverleaveSerializer(data=data)
         if serializer.is_valid():
+            no_of_days = leavecalcu.get_difference(leave_from_date, leave_to_date)
+            data['total_days_of_leave'] = no_of_days
             serializer.save()
             return Response({'msg':'Driver Leave save'}, status=status.HTTP_201_CREATED)
         else:

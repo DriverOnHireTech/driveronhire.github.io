@@ -15,10 +15,12 @@ class DriversignupSerializer(serializers.ModelSerializer):
         model= User
         fields= '__all__'
 
+
 class Driverlocationserializer(serializers.ModelSerializer):
     class Meta:
         model= Driverlocation
         fields= '__all__'
+
 
 class MyDriverSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,15 +28,7 @@ class MyDriverSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-    
 class DriverleaveSerializer(serializers.ModelSerializer):
     class Meta:
         model=Driverleave
         fields=('drivername', 'reason', 'leave_from_date', 'leave_to_date', 'total_days_of_leave')
-    
-
-
-
-
-
-
