@@ -133,22 +133,27 @@ class Driverleaveapi(APIView):
     def post(self, request):
         user= self.request.user
         data=request.data
-        leave_from_date=request.data['leave_from_date']
-        new_leave_date = datetime.strptime(leave_from_date, "%Y-%m-%d")
-        print("leave from date:", leave_from_date)
-        leave_to_date=request.data['leave_to_date']
-        new_leave_date1 = datetime.strptime(leave_to_date, "%Y-%m-%d")
-        print("Leave to date:", leave_to_date)
+        leave_from_date = data.get('leave_from_date')
+        leave_to_date = data.get('leave_to_date')
 
-        serializer=DriverleaveSerializer(data=data)
-        if serializer.is_valid():
-            no_of_days = leavecalcu.get_difference(new_leave_date, new_leave_date1)
-            data['total_days_of_leave'] = no_of_days
-            print("Total number of days", data )
-            serializer.save()
-            return Response({'msg':'Driver Leave save'}, status=status.HTTP_201_CREATED)
+        if leave_from_date and leave_to_date:
+            try:
+                leave_from_date = datetime.strptime(leave_from_date, "%Y-%m-%d").date()
+                leave_to_date = datetime.strptime(leave_to_date, "%Y-%m-%d").date()
+
+                no_of_days = leavecalcu.get_difference(leave_from_date, leave_to_date)
+
+                serializer = DriverleaveSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.validated_data['total_days_of_leave'] = no_of_days
+                    serializer.save()
+                    return Response({'msg': 'Driver Leave saved'}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'msg': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+            except ValueError:
+                return Response({'msg': 'Invalid date format'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'msg':'may be you missed some field'}, status=status.HTTP_400_BAD_REQUEST) 
+            return Response({'msg': 'Missing date fields'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 """Endpoint for filter booking between 2 dates"""
