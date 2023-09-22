@@ -14,7 +14,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from .utils import leavecalcu
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
@@ -130,8 +130,10 @@ class Driverprofile(APIView):
 
 # Driver Leave API
 class Driverleaveapi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def post(self, request):
-        user= self.request.user
+        user=self.request.user
         data=request.data
         leave_from_date = data.get('leave_from_date')
         leave_to_date = data.get('leave_to_date')
@@ -145,7 +147,9 @@ class Driverleaveapi(APIView):
 
                 serializer = DriverleaveSerializer(data=data)
                 if serializer.is_valid():
+
                     serializer.validated_data['total_days_of_leave'] = no_of_days
+                    serializer.validated_data['driver_name_id'] = user.id
                     serializer.save()
                     return Response({'msg': 'Driver Leave saved'}, status=status.HTTP_201_CREATED)
                 else:

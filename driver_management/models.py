@@ -316,6 +316,7 @@ class ReferDriver(models.Model):
 
 class Driverleave(models.Model):
     """Driver leave class"""
+    driver_name = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     reason=models.CharField(max_length=100, null=True, blank=True)
     leave_from_date=models.DateField()
     leave_to_date=models.DateField()
