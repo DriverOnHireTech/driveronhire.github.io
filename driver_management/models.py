@@ -10,7 +10,6 @@ from user_master.models import region
 from django.conf import settings
 from user_master.models import State, City, Branch, Zone, Location
 
-
 # from user_master.models import region
 # from booking.models import PlaceBooking
 
@@ -316,11 +315,15 @@ class ReferDriver(models.Model):
 
 class Driverleave(models.Model):
     """Driver leave class"""
+    STATUS_CHOICES = (('Pending', 'Pending'),('Accepted', 'Accepted'),('Rejected', 'Rejected'),
+    )
+
     driver_name = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     reason=models.CharField(max_length=100, null=True, blank=True)
     leave_from_date=models.DateField()
     leave_to_date=models.DateField()
     total_days_of_leave= models.IntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending') 
 
     def __str__(self):
         return f'{self.reason}'

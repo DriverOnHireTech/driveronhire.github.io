@@ -3,26 +3,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import BasicAuthentication, TokenAuthentication
 from rest_framework.authtoken.models import Token
 from .models import *
 from .serializers import *
-from driver_management.models import AddDriver, Driverlocation
+from driver_management.models import AddDriver
 from driver_management.serializers import *
 from authentication.models import  User
 from firebase_admin import messaging
-from django.contrib.gis.geos import GEOSGeometry
-from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
-from django.db.models import F
 from django.http import JsonResponse
 from datetime import datetime
+from rest_framework.pagination import PageNumberPagination
 
 # from geopy.geocoders import Nominatim
 # import geocoder
-
-from math import sin, radians, cos, sqrt, atan2
 
 
 class userregistration(APIView):
@@ -42,7 +38,7 @@ class userregistration(APIView):
         user = bookinguser.objects.all().order_by('full_name').reverse()
         serializer = ClientregistrationSerializer(user, many=True)
         return Response(serializer.data)
-    
+
 
 class Userlogin(APIView):
     def post(self, request):
@@ -60,7 +56,7 @@ class Userlogin(APIView):
                 'msg':'user not login for book driver',
                 'status':status.HTTP_400_BAD_REQUEST
             })
-        
+
 
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
@@ -139,10 +135,12 @@ class MyBookingList(APIView):
     def get(self, request):
         user = request.user.id
         booking=PlaceBooking.objects.all().order_by('id')
-        serializer = PlacebookingSerializer(booking, many=True)
+        paginator = PageNumberPagination()
+        page = paginator.paginate_queryset(booking, request)
+        serializer = PlacebookingSerializer(page, many=True)
         
-        return Response(serializer.data)
-    
+        return paginator.get_paginated_response(serializer.data)
+
 
 class BookingListWithId(APIView):
     authentication_classes=[TokenAuthentication]
@@ -162,12 +160,7 @@ class BookingListWithId(APIView):
             serializer.save()
             return Response(request.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
-       
-      
 
-
-
-    
 
 class InvoiceGenerate(APIView):
     def post(self, request):
@@ -190,8 +183,8 @@ class InvoiceGenerate(APIView):
         
         except Invoice.DoesNotExist:
             raise serializers.ValidationError("No Data Found")
-  
-        
+
+
 class FeedbackApi(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -247,7 +240,6 @@ class UserProfileWithId(APIView):
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 class PendingBooking(APIView):
     def get(self, request, *args, **kwargs):
         try:
@@ -271,7 +263,6 @@ class PendingBooking(APIView):
         
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data})
-            
 
 
 class UpcomingBooking(APIView):
@@ -292,4 +283,3 @@ class UpcomingBooking(APIView):
     
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data})
-            

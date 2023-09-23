@@ -147,7 +147,6 @@ class Driverleaveapi(APIView):
 
                 serializer = DriverleaveSerializer(data=data)
                 if serializer.is_valid():
-
                     serializer.validated_data['total_days_of_leave'] = no_of_days
                     serializer.validated_data['driver_name_id'] = user.id
                     serializer.save()
