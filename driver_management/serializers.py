@@ -31,4 +31,4 @@ class MyDriverSerializer(serializers.ModelSerializer):
 class DriverleaveSerializer(serializers.ModelSerializer):
     class Meta:
         model=Driverleave
-        fields=('reason', 'leave_from_date', 'leave_to_date')
+        fields=('reason', 'leave_from_date', 'leave_to_date', 'status')
