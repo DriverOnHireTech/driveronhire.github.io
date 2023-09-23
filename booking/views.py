@@ -15,6 +15,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from django.http import JsonResponse
 from datetime import datetime
+from rest_framework.pagination import PageNumberPagination
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -134,9 +135,11 @@ class MyBookingList(APIView):
     def get(self, request):
         user = request.user.id
         booking=PlaceBooking.objects.all().order_by('id')
-        serializer = PlacebookingSerializer(booking, many=True)
+        paginator = PageNumberPagination()
+        page = paginator.paginate_queryset(booking, request)
+        serializer = PlacebookingSerializer(page, many=True)
         
-        return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class BookingListWithId(APIView):
