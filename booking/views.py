@@ -92,7 +92,7 @@ class MyBookingList(APIView):
                     driver_location = driver_obj.driverlocation
                     if driver_location:
                         location_dict = {
-                            "id": driver_obj.id,
+                            "id": driver_obj.id, 
                             "longitude": driver_location.x,
                             "latitude": driver_location.y,
                         }
@@ -183,7 +183,7 @@ class InvoiceGenerate(APIView):
 
 
 class FeedbackApi(APIView):
-    authentication_classes=[BasicAuthentication]
+    authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
     def post(self, request):
         data = request.data
@@ -195,7 +195,7 @@ class FeedbackApi(APIView):
              return Response({'msg': 'Unable to generate', 'data':FeedBack_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
             
-    authentication_classes=[BasicAuthentication]
+    authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
     def get(self, request):
         get_feedback = Feedback.objects.all()
@@ -204,6 +204,8 @@ class FeedbackApi(APIView):
 
 
 class userprofile(APIView):  
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
         user=request.user
         serializer= Profileserializer(data=request.data)
