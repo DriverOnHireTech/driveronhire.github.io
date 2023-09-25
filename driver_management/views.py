@@ -179,3 +179,20 @@ class Bookingreports(APIView):
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Records Found', 'data':result_serializer.errors})
         return Response("Error")
+
+
+class DriverreferView(APIView):
+    def post(self, request):
+        try:
+            data = request.data
+            serializer= DriverReferserializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'Driver Refer is saved', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({'msg':'unable to save', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        driver_ref_data= ReferDriver.objects.all()
+        Driver_ref_serialzer= DriverReferserializer(driver_ref_data, many=True)
+        return Response({'msg':'All Driver Refrence list', 'data':driver_ref_data}, status=status.HTTP_200_OK)

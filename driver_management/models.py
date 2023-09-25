@@ -311,6 +311,17 @@ class ViewDriver(models.Model):
 
 class ReferDriver(models.Model):
     """Refer driver class"""
+    referdrivername= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name= models.CharField(max_length=100, null=True, blank=True)
+    mobile = models.PositiveBigIntegerField()
+    location= models.CharField(max_length=200, null=True, blank=True)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+
+    def save(self):
+        pass
+
+    def __str__(self):
+        return self.name
 
 
 class Driverleave(models.Model):

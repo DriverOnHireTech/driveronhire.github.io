@@ -16,7 +16,7 @@ from django.contrib.gis.measure import D
 from django.http import JsonResponse
 from datetime import datetime
 from rest_framework.pagination import PageNumberPagination
-
+ 
 # from geopy.geocoders import Nominatim
 # import geocoder
 

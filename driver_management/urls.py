@@ -24,4 +24,6 @@ urlpatterns = [
     path('api/driverleave/', Driverleaveapi.as_view(), name='driver_leave'),
 
     path('api/booking_report/', Bookingreports.as_view(), name="booking_report"),
+
+    path('api/driverrefer', DriverreferView.as_view(), name='driver_refer'), 
 ]

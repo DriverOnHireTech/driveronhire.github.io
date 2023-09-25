@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import *
 from user_master.serializers import *
+from authentication.serializers import NewUserSerializer
 
 
 class BasicDetailSerializer(serializers.ModelSerializer):
@@ -32,3 +33,10 @@ class DriverleaveSerializer(serializers.ModelSerializer):
     class Meta:
         model=Driverleave
         fields=('reason', 'leave_from_date', 'leave_to_date', 'status')
+
+
+class DriverReferserializer(serializers.ModelSerializer):
+    driver = NewUserSerializer
+    class Meta:
+        model = ReferDriver
+        fields= "__all__"
