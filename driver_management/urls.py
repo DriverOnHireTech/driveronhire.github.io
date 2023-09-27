@@ -11,9 +11,7 @@ urlpatterns = [
 
     path('api/driver/', MyDriverList.as_view(), name='driver-list'),
 
-    path('api/driver_location/', driverlocation.as_view(), name= 'driver-locationupdate'),
-
-    path('api/driver_location/<int:id>/', driverlocation.as_view()),
+    path('api/driver_location', driverlocation.as_view(), name= 'driver-locationupdate'),
 
     path('api/driverprofile/', Driverprofile.as_view(), name='driverprofile'),
 

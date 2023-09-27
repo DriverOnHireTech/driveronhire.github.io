@@ -221,15 +221,13 @@ class AddDriver(models.Model):
     expected_salary = models.FloatField()
     pan_card_no = models.CharField(max_length=15, blank=True, null=True)
     aadhar_card_no = models.CharField(max_length=20)
-    blood_group = models.CharField(choices=(("O+", "O+"), ("O-", "O-"), ("A+", "A+"), ("A-", "A-"), ("B+", "B+"),
-                                            ("B-", "B-"), ("AB+", "AB+"), ("AB-", "AB-")),
-                                   max_length=10)
+    blood_group = models.CharField(choices=(("O+", "O+"), ("O-", "O-"), ("A+", "A+"), ("A-", "A-"), ("B+", "B+"),("B-", "B-"), ("AB+", "AB+"), ("AB-", "AB-")), max_length=10)
     passport = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10,null=True,blank=True)
     passport_no = models.CharField(max_length=20, null=True, blank=True)
     heavy_vehicle = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, null=True,blank=True)
     car_transmission = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury")), max_length=10)
     start_doh_date = models.DateField()
-    # end_doh_date = models.DateField(null=True, blank=True)
+    
 
     # Car Details
     car_company_name = models.CharField(max_length=15, null=True,blank=True)
