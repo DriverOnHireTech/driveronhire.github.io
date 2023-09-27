@@ -7,10 +7,6 @@ class NewUserSerializer(serializers.ModelSerializer):
         model = User
         # fields = "__all__"
         fields= ['phone', 'usertype', 'password']
-<<<<<<< HEAD
-=======
-
->>>>>>> a746310934a817f311e62a89a4026b54fecfac37
 
     def create(self, validated_data):
         user = super().create(validated_data)
