@@ -6,7 +6,11 @@ class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # fields = "__all__"
+<<<<<<< HEAD
         fields = ['phone', 'password']
+=======
+        fields= ['phone', 'usertype', 'password']
+>>>>>>> 7a75edf39bf3040a65f0802dd4c93e522c362be9
 
     def create(self, validated_data):
         user = super().create(validated_data)

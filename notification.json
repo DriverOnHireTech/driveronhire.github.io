@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "obey-jobs-gmail-setup",
+  "private_key_id": "2878c2968246439ab32688e1b6bdbb59e88a5bfd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCqn4upO2ZUP3Fs\nSvtmCqO05AG0lrj/iYfPR+tzdaDvAButK3UX1fiCKh1aT0gESFeuRntk59k4ct/9\nDGQ0r2KVCyBz8LuQgU9Y0WbaLYpzzRUHx6mKxWQ84hYPLl9sp/mg/s5YvCBjdlPp\nRXKU01otTghzZsI5zQuIwpmRXiFWLoznjT4f/fqIaVYuA99RZtvK1Hq8J0ZCTM02\nWzvamEqvl8WxZ7oa66LiwA1Ysya2kbJjgcrOseUMty0+yZVbXvJ3ZqN8PIa26RN3\nwQ6Edi5NkIGpphE3ye9uNYeANLWW+NNf9twuetYHz5mibfW7IWJb7Rr8+jVmN3yr\nuBfK+N27AgMBAAECggEATWpRfGoKnmwgwvFsipqGN7OCQJVof+0/VSG9J2h2KirC\n4/oFSVjYxfpk0g6JzwOh4N1y7FAz42Rf09lU+AChup1PTrup5sF9Jn/wakrieHNT\nOPHzL5crSWKNfrrcKhk27sDeEC3fhjFwljVf7T3OOyMeO3oi4wXxV05wTiBHAOok\nZyRHtLYTTxVjgiwAQynJalkNBYM3EE9kcPLxmCgD7wBYwkQAeVjRw/oOCT7ITw0/\ndGLa7WSnkOHtKJKuwzEqksWu8cNm27+fD9R5H8/9tVTO8wkyju0KXdS7dntyEE9J\nOGYiXulgzdaldoH6PEDfv30Xl2HPN54AEhW0iOmUqQKBgQDoQwXdS58iqrMa5bad\nqay9R/I6DS2DyXvG+O1ZiHXt3xWtdE8CNMCFuHSeZy6GV+vcFGykRw4ZvhzkbdU+\nibIkWh4h9fqiZUugKNBjv1SgCc4q0+OKd5X+JA38tBTAQWjPTRldbv7FcSrXEMYD\n02DX8aMuUPS4yqCVK9n/5YS9mQKBgQC8D8osoKXnWTFD8VtktekLDIY3e+Y3TarZ\nTi8NsGMhC3HSK+FQ2z682vznctsxHkaqkHD4Ois8LIBlZzixj73lgH1Uk3lRLVGU\nLuM6e0nk5YxQVhwDqCgM+C9fwggC54z7HCFILHMZyRpO156Y9y7oJA5UpncLyeRz\nTMPZ8pCCcwKBgHvlxOsXu/wyMvjWMWRJbuxJxN1SykTS5kRt5a8tLDuIFXhB4yO6\nIDk0/IDDaf4gSKFOA+ZeQRdaYu8359lEetMJf6l+HgUjJAR7wS50kiANGv2dqnPi\n9xBrC0sShT9JpS9wYWeGHkIU7FVtjTPdPnvzWqkKZoFtFdx9V/054mWBAoGBAKIx\nVAKNQsh2akDYxiPjp+u5j4AGwZRsza7A+V/rAnObdTz4T0j27fLfQ0MyEc0Y+YVd\nMbFEKcmp78qE7aZl/DcVTAJHdlgGp9cPYTYs4pwhRZR7z4lv26rj2afSpiorHbHs\nnt+qRlK02JWq7MOsW64mep2TPBTUuMygJkGwK+X1AoGBANziecMg48QjVOVOWsOy\nUKTDuszWbHtjLWhSzR96XhbdD/O0nYeITVkTayUQUxI1ftEmxz8FL/WI6auBfgak\nZd7HmJSfo7JsZ/1ZWwLArbYUxYg5m7oDRjNYiAPdXPsi3FuCklova1CuC7NQasFq\nMWnFYwIWGjsftU4AWuRU038i\n-----END PRIVATE KEY-----\n",
+  "client_email": "obeyjobs@obey-jobs-gmail-setup.iam.gserviceaccount.com",
+  "client_id": "114025595012871162102",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/obeyjobs%40obey-jobs-gmail-setup.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

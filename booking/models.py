@@ -1,14 +1,15 @@
+"""
+This is booking models
+"""
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
 from django.contrib.gis.db import models as gis_point
-from django.contrib.gis.geos import Point
+# from django.contrib.gis.geos import Point
 from django.conf import settings
 from authentication.models import User
-from client_management.models import AddClient
+# from client_management.models import AddClient
 from driver_management.models import AddDriver
-
- 
 
 
 class bookinguser(models.Model):
@@ -35,10 +36,12 @@ class PlaceBooking(models.Model):
     STATUS=(
         ('accept','accept'),
         ('decline', 'decline'),
-        ('pending', 'pending')
+        ('pending', 'pending'),
+        ('completed', 'completed')
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
+    packege= models.CharField(max_length=100, null=True, blank=True)
     from_date = models.DateField()
     to_date = models.DateField()
     currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
@@ -47,13 +50,12 @@ class PlaceBooking(models.Model):
     pickup_location=models.CharField(max_length=100, null=True)
     drop_location=models.CharField(max_length=100, null=True)
     status =  models.CharField(max_length=20, choices=STATUS, default='pending')
-    accepted_driver=  models.ForeignKey(User, on_delete=models.CASCADE, related_name='accepted_driver')
+    accepted_driver =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='accepted_driver')
     booking_time=models.DateTimeField(auto_now_add=True)
    
     def __str__(self):
         return self.trip_type
     
-
 
 class Invoice(models.Model):
     user =  models.ForeignKey(bookinguser, on_delete=models.CASCADE)
@@ -64,8 +66,7 @@ class Invoice(models.Model):
 
     def __str__(self):
         return self.user.full_name
-
-    
+  
 
 class Feedback(models.Model):
     user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -87,10 +88,16 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user.phone)
     
-    
+class Bookingstatus(models.Model):
+    STATUS=(
+        ('accept','accept'),
+        ('decline', 'decline'),
+        ('pending', 'pending'),
+        ('completed', 'completed')
+    )
+    booking_details = models.OneToOneField(PlaceBooking, on_delete=models.CASCADE)
+    drivername= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    booking_status= models.CharField(choices=STATUS,max_length=50, null=True, blank=True)
 
-
-
-
-
-
+    def __str__(self):
+        return  self.booking_status

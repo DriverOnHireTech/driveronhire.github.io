@@ -54,8 +54,7 @@ class User(AbstractUser):
     
 
 
-
-class registeruser(models.Model):
+class registeruser(models.Model): 
     name = models.CharField(max_length=100, null=True, blank=True)
 
 

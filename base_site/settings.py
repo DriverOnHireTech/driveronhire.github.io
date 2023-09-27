@@ -162,35 +162,27 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #STATICFILES_DIRS=[os.path.join(BASE_DIR, 'dohfrontend/build/static')]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication' ],
+    
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 5,
+     
+   
 }
 
 #Setup for push notification with firebase
-#FIREBASE_APP = initialize_app()
-cred_path = os.path.join(BASE_DIR, "serviceaccountkey.json")
-cred = credentials.Certificate(cred_path)
+FIREBASE_APP = initialize_app()
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
+# cred_path = os.path.join(BASE_DIR, "notification.json")
+# cred = credentials.Certificate(cred_path)
 # firebase_admin.initialize_app(cred)
 FCM_DJANGO_SETTINGS = {
-     # an instance of firebase_admin.App to be used as default for all fcm-django requests
-     # default: None (the default Firebase app)
-    "DEFAULT_FIREBASE_APP": None,
-     # default: _('FCM Django')
-    "APP_VERBOSE_NAME": "django_fcm",
-     # Your firebase API KEY
-    "FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
-     # true if you want to have only one active device per registered user at a time
-     # default: False
-    "ONE_DEVICE_PER_USER": False,
 
-     # devices to which notifications cannot be sent,
-     # are deleted upon receiving error response from FCM
-     # default: False
+    "DEFAULT_FIREBASE_APP": None,
+    "APP_VERBOSE_NAME": "django_fcm",
+    "FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
+    "ONE_DEVICE_PER_USER": False,
     "DELETE_INACTIVE_DEVICES": True,
 }
 
