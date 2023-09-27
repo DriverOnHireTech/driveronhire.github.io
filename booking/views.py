@@ -81,13 +81,21 @@ class MyBookingList(APIView):
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
+<<<<<<< HEAD
                     
                     driver = driver.filter(car_type=car_type, driver_type="Part Time", car_transmission='Manual')
                     print("Driver Details",driver)
+=======
+                    if driver:
+                        driver = driver.filter(car_type=car_type, driver_type="Full Time", car_transmission='Luxury')
+                        print("Driver Details",driver)
+                    else:
+                        driver = driver.filter(car_type=car_type, driver_type="Part Time", car_transmission='Luxury')
+>>>>>>> a746310934a817f311e62a89a4026b54fecfac37
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=300))
+                            ).filter(distance__lte=D(km=3))
                     
                 driver_data = []
                 for driver_obj in driver:

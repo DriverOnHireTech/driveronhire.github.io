@@ -7,8 +7,3 @@ admin.site.register(Invoice)
 admin.site.register(Feedback)
 admin.site.register(Profile)
 
-
-
-class Bookingstatusadmin(admin.ModelAdmin):
-    list_display= ['booking_details', 'drivername', 'booking_status']
-admin.site.register(Bookingstatus, Bookingstatusadmin)
