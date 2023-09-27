@@ -182,17 +182,23 @@ class Bookingreports(APIView):
 
 
 class DriverreferView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def post(self, request):
-        try:
-            data = request.data
-            serializer= DriverReferserializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'msg':'Driver Refer is saved', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-        except:
-            return Response({'msg':'unable to save', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        user=self.request.user
+        drefserializer= DriverReferserializer(data=request.data)
+        if drefserializer.is_valid():
+            drefserializer.validated_data['referdrivername_id'] = user.id
+            drefserializer.save()
+            return Response({'msg':'Driver Refer is saved', 'data':drefserializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'msg':'unable to save', 'data':drefserializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         driver_ref_data= ReferDriver.objects.all()
-        Driver_ref_serialzer= DriverReferserializer(driver_ref_data, many=True)
-        return Response({'msg':'All Driver Refrence list', 'data':driver_ref_data}, status=status.HTTP_200_OK)
+
+        if driver_ref_data: # Checking Driver Refrense in Databases
+            Driver_ref_serialzer= DriverReferserializer(driver_ref_data, many=True)
+            return Response({'msg':'All Driver Refrence list', 'data':Driver_ref_serialzer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'msg':'No Data Found'}, status=status.HTTP_424_FAILED_DEPENDENCY)

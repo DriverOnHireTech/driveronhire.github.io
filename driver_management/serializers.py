@@ -36,7 +36,6 @@ class DriverleaveSerializer(serializers.ModelSerializer):
 
 
 class DriverReferserializer(serializers.ModelSerializer):
-    driver = NewUserSerializer
     class Meta:
         model = ReferDriver
-        fields= "__all__"
+        fields= ('name', 'mobile', 'location', 'branch')
