@@ -196,8 +196,8 @@ FCM_DJANGO_SETTINGS = {
 CSRF_COOKIE_NAME = "csrftoken"
 CSRF_HEADER_NAME = "X-CSRFToken"
 
-# GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
-# GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
+GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
+GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
 
 
 # AWS Bucket for images storage
@@ -209,3 +209,9 @@ AWS_S3_FILE_OVERWRITE=False
 AWS_DEFAULT_ACL=None
 AWS_S3_VERUFY=True
 DFAULT_FILE_STORAGE='storage.backends.s3boto3.S3BotoStorage'
+
+# Twilio account settings
+
+TWILIO_ACCOUNT_SID = 'SID Number'
+TWILIO_AUTH_TOKEN = 'Auth Token'
+TWILIO_PHONE_NUMBER = 'Twilio number'
