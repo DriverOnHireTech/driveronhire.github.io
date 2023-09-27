@@ -86,7 +86,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=300))
+                            ).filter(distance__lte=D(km=3))
                     
                 driver_data = []
                 for driver_obj in driver:
