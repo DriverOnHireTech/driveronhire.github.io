@@ -17,11 +17,7 @@ urlpatterns = [
 
     # path('api/driver/<int:id>/', MyDriverGetList.as_view(), name='driver-list-id'),
 
-<<<<<<< HEAD
-    path('api/search/', Driversearch.as_view(), name='search_driver'),
-=======
     path('api/search_driver/', Driversearch.as_view(), name='search_driver'),
->>>>>>> 7a75edf39bf3040a65f0802dd4c93e522c362be9
 
     path('api/driverleave/', Driverleaveapi.as_view(), name='driver_leave'),
 
