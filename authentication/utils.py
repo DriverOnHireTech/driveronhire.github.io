@@ -1,9 +1,8 @@
 import random
 
-def username_gene(user_name):
-    phone_digit= 1234567890
-    generate=random.random(phone_digit)
+def username_gene():
+    generate=random.randint(0,1234567)
     return generate
 
-result= username_gene(1235466)
+result= username_gene()
 print(f"Random number generate:{result}")
