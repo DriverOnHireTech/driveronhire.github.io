@@ -22,6 +22,7 @@ class Adduser(APIView):
         serailizer=NewUserSerializer(data=data)
         if serailizer.is_valid():
             serailizer.save()
+            print("Serializer Data:",serailizer.data)
             return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
         
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
