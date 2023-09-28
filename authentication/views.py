@@ -11,6 +11,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
+from .utils import username_gene
 
 
 # Create your views here.
@@ -21,6 +22,7 @@ class Adduser(APIView):
         data= request.data
         serailizer=NewUserSerializer(data=data)
         if serailizer.is_valid():
+            serailizer.validated_data['username'] = username_gene()
             serailizer.save()
             print("Serializer Data:",serailizer.data)
             return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
