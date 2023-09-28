@@ -85,6 +85,7 @@ class MyBookingList(APIView):
                     parttime_driver = driver.filter(driver_type="Part Time")
                     if fulltime_drivers:
                         driver = driver.filter(car_type=car_type, transmission_type=gear_type)
+                        
                     if parttime_driver:
                         driver = driver.filter(car_type=car_type, transmission_type=gear_type)
                     
