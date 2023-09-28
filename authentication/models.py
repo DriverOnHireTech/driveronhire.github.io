@@ -40,7 +40,7 @@ class User(AbstractUser):
     usertype = models.CharField(choices=user_type, max_length=100, null=True, blank=True)
 
     USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = ['usertype', "username"]
+    REQUIRED_FIELDS = ['usertype']
 
     db_table = "User"
 
