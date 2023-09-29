@@ -212,6 +212,6 @@ DFAULT_FILE_STORAGE='storage.backends.s3boto3.S3BotoStorage'
 
 # Twilio account settings
 
-TWILIO_ACCOUNT_SID = 'SID Number'
-TWILIO_AUTH_TOKEN = 'Auth Token'
-TWILIO_PHONE_NUMBER = 'Twilio number'
+TWILIO_ACCOUNT_SID = 'AC6131c8aa6b776f8b0cfb9c05bd1af0dc'
+TWILIO_AUTH_TOKEN = 'b893c17c59715ee9b35a29f12c7772c3'
+TWILIO_PHONE_NUMBER = '+13203616540'
