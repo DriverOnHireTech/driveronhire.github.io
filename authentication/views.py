@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from django.contrib.auth.hashers import make_password
 from .models import User
 from .serializers import NewUserSerializer, UserLoginserializer
 import random
@@ -24,7 +25,7 @@ class Adduser(APIView):
         if serailizer.is_valid():
             serailizer.validated_data['username'] = username_gene()
             serailizer.save()
-            print("Serializer Data:",serailizer.data)
+    
             return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
         
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
@@ -34,6 +35,30 @@ class Adduser(APIView):
         serializer= NewUserSerializer(all_user, many=True)
         return Response({'msg':'Here is your data', 'data':serializer.data}, status=status.HTTP_200_OK)
     
+    def patch(self, request, id):
+        data = request.data
+        phone = data.get('phone')
+        new_password = data.get('password')  # Change to 'password'
+
+        try:
+            user = User.objects.get(id=id)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the provided phone matches the user's phone
+        if user.phone != phone:
+            return Response({'error': 'Phone number does not match the user'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the user's password
+        user.password = make_password(new_password)
+        user.save()
+
+        serializer = NewUserSerializer(user)
+
+        return Response({'msg': 'User password is updated', 'data': serializer.data}, status=status.HTTP_200_OK)
+
+
+       
 
 class LoginView(APIView):
     def post(self, request):
@@ -117,3 +142,6 @@ class ValidateOTP(APIView):
                             status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid OTP. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+

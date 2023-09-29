@@ -3,9 +3,9 @@ from .models import User
 
 
 class NewUserSerializer(serializers.ModelSerializer):
+    phone= serializers.IntegerField(max_value=12, min_value=10)
     class Meta:
         model = User
-        # fields = "__all__"
         fields= ['phone', 'usertype', 'password']
 
     def create(self, validated_data):
@@ -13,6 +13,7 @@ class NewUserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+    
 
 class UserLoginserializer(serializers.ModelSerializer):
     class Meta:

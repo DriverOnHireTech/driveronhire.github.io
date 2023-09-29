@@ -6,4 +6,3 @@ def username_gene(phone):
     return generate
 
 result= username_gene(12365478)
-print(f"Random number generate:{result}")

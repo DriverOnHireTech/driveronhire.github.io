@@ -81,19 +81,9 @@ class MyBookingList(APIView):
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
-<<<<<<< HEAD
-                    fulltime_drivers = driver.filter(driver_type="Full Time")
-                    parttime_driver = driver.filter(driver_type="Part Time")
-                    if fulltime_drivers:
-                        driver = driver.filter(car_type=car_type, transmission_type=gear_type)
-                        
-                    if parttime_driver:
-                        driver = driver.filter(car_type=car_type, transmission_type=gear_type)
-=======
                     if driver:
                         driver = driver.filter(car_type=car_type, driver_type="Part Time", transmission_type=transmission_type)
                         print("Driver Details",driver)
->>>>>>> parent of 83422158 (filtering driver in booking)
                     
                     
                     driver=driver.annotate(
