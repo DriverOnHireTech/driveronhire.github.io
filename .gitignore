@@ -1,7 +1,16 @@
+base_site/__pycache__/
+booking/__pycache__/
+authentication/__pycache__/
+driver_management/__pycache__/
+client_management/__pycache__/
+enquiry/__pycache__/
+user_master/__pycache__/
+
 # Django #
 *.log
 *.pot
 *.pyc
-__pycache__
+migrations/
+__pycache__/
 
 media
