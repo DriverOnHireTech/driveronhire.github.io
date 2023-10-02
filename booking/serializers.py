@@ -20,21 +20,20 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
 
         
 class PlacebookingSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
+    #user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
     # add_driver = serializers.PrimaryKeyRelatedField(queryset=AddDriver.objects.all(), many=False, read_only=False)
 
     # drivers = serializers.SerializerMethodField()
     class Meta:
         model = PlaceBooking
         
-        fields= ['id','user','trip_type', 'from_date',
-                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege']
+        fields= ['id','trip_type', 'from_date',
+                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'accepted_driver', 'mobile']
 
     # def get_drivers(self, obj):
     #     return {'driver':obj.drivers.car_type}
 
-    def get_user(self, obj):
-        return {'user':obj.user.username}
+   
     
 
 class DriverSerializer(serializers.ModelSerializer):

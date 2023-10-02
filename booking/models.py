@@ -40,6 +40,7 @@ class PlaceBooking(models.Model):
         ('completed', 'completed')
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE)
+    mobile= models.PositiveBigIntegerField()
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     packege= models.CharField(max_length=100, null=True, blank=True)
     from_date = models.DateField()
