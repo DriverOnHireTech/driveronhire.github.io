@@ -110,11 +110,7 @@ DATABASES = {
         'PASSWORD': env('DATABASE_PASSWORD'),
         'HOST': env('DATABASE_HOST'),
         'PORT':env('DATABASE_PORT'),
-        # "NAME": "doh2",
-        # 'USER': 'postgres',
-        # 'PASSWORD': 'doh12345',
-        # 'HOST': 'doh2.cz1w19zdjwjh.us-east-2.rds.amazonaws.com',
-        # 'PORT':5432
+        
     }
 }
 

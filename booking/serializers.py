@@ -28,7 +28,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         model = PlaceBooking
         
         fields= ['id','user','trip_type', 'from_date',
-                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','accepted_driver','packege']
+                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege']
 
     # def get_drivers(self, obj):
     #     return {'driver':obj.drivers.car_type}
