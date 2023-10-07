@@ -21,12 +21,21 @@ from .utils import username_gene
 class Adduser(APIView):
     def post(self, request):
         data= request.data
+        phone = request.data.get('phone')
         serailizer=NewUserSerializer(data=data)
         if serailizer.is_valid():
+            otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+            serailizer.validated_data['otp'] = otp
             serailizer.validated_data['username'] = username_gene()
+            client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+            message = client.messages.create(
+                body=f"Your OTP is: {otp}",
+                from_=settings.TWILIO_PHONE_NUMBER,
+                to=phone
+            )
             serailizer.save()
     
-            return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
+            return Response({'msg':'Data is saved', 'data': serailizer.data, 'message':"Otp has been sent."}, status=status.HTTP_201_CREATED)
         
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
        
@@ -66,10 +75,9 @@ class LoginView(APIView):
 
         phone = data.get('phone')
         password = data.get('password')
-       
-           
-        user = authenticate(phone=phone, password=password)
-        if user is not None:
+        otp = data.get('otp')
+        user = User.objects.filter(phone=phone).first()
+        if (str(otp) == user.otp):
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
             return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK)
@@ -91,30 +99,20 @@ class Logoutapi(APIView):
 
 class GenerateOTP(APIView):
     def post(self, request):
-        mobile_number = request.data.get('mobile_number')
+        phone = request.data.get('phone')
 
-        if not mobile_number:
+        if not phone:
             return Response({"message": "Mobile number is required."}, status=status.HTTP_400_BAD_REQUEST)
-
+        user = User.objects.filter(phone=phone).first()
         # Generate a 4-digit OTP
-        otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
-        # print(otp)
-
-        # Clear the previous session data
-        request.session.flush()
-        # print(mobile_number)
-        # print(otp)
-
-        # Save the OTP in the session for validation later
-        request.session['generated_otp'] = otp
-        request.session['mobile_number'] = mobile_number
+        otp = user.otp
 
         # Here, you should send the OTP to the provided mobile number using an SMS gateway or a library like twilio
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         message = client.messages.create(
             body=f"Your OTP is: {otp}",
             from_=settings.TWILIO_PHONE_NUMBER,
-            to=mobile_number
+            to=phone
         )
 
         return Response({"message": "OTP generated and sent successfully."}, status=status.HTTP_200_OK)
