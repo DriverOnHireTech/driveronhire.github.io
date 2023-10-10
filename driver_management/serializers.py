@@ -26,7 +26,9 @@ class Driverlocationserializer(serializers.ModelSerializer):
 class MyDriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddDriver
-        fields = "__all__"
+        fields = ('first_name', 'sex', 'date_of_birth', 'driver_type', 'branch', 'zone', 't_address', 'p_address','mobile',
+                  'driving_licence','licence_no', 'licence_issued_from', 
+                  'licence_type', 'date_of_issue', 'date_of_expiry', 'present_salary', 'start_doh_date')
 
 
 class DriverleaveSerializer(serializers.ModelSerializer):
