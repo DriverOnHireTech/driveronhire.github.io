@@ -6,7 +6,6 @@ from .serializers import NewUserSerializer, UserLoginserializer
 import random
 from twilio.rest import Client
 from base_site import settings
-
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
@@ -136,12 +135,58 @@ class ValidateOTP(APIView):
         if entered_otp == generated_otp:
             # Clear the session data after successful OTP validation
             request.session.flush()
-            # If the entered OTP is valid, redirect to the home page
-            request.session['otp_validated'] = True
-            return Response({"message": "OTP validated successfully. Redirecting to home page."},
+           
+            try:
+                user = User.objects.get(phone=mobile_number)
+                # Update the phone number if it exists
+                user.phone = mobile_number
+            except User.DoesNotExist:
+                # Create a new user if the phone number doesn't exist
+                user = User(username=mobile_number, phone=mobile_number, usertype="Customer")
+
+            user.save()
+
+            return Response({"message": "OTP validated successfully and user updated/created."},
                             status=status.HTTP_200_OK)
         else:
             return Response({"message": "Invalid OTP. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+# # Login with OTP
+# class LoginWithOTP(APIView):
+#     def post(self, request):
+#         phone = request.data.get('phone', '')
+#         # try:
+#         #     user = User.objects.get(phone=phone)
+#         # except User.DoesNotExist:
+#         #     return Response({'error': 'User with this phone number does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+#         otp = generate_otp()
+#         user.otp = otp
+#         user.save()
+
+#         send_otp_phone(phone, otp)
+
+#         return Response({'message': 'OTP has been sent to your phone.'}, status=status.HTTP_200_OK)
 
 
+# # Validate OTP
+# class ValidateOTP(APIView):
+#     def post(self, request):
+#         phone = request.data.get('phone', '')
+#         otp = request.data.get('otp', '')
+
+#         try:
+#             user = User.objects.get(phone=phone)
+#         except User.DoesNotExist:
+#             return Response({'error': 'User with this phone number does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+#         if user.otp == otp:
+#             user.otp = None  # Reset the OTP field after successful validation
+#             user.save()
+
+#             # Authenticate the user and create or get an authentication token
+#             token, _ = Token.objects.get_or_create(user=user)
+
+#             return Response({'token': token.key}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)

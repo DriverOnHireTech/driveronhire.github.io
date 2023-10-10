@@ -208,6 +208,17 @@ DFAULT_FILE_STORAGE='storage.backends.s3boto3.S3BotoStorage'
 
 # Twilio account settings
 
-TWILIO_ACCOUNT_SID = 'AC6131c8aa6b776f8b0cfb9c05bd1af0dc'
-TWILIO_AUTH_TOKEN = 'b893c17c59715ee9b35a29f12c7772c3'
-TWILIO_PHONE_NUMBER = '+13203616540'
+TWILIO_ACCOUNT_SID = 'AC5c39741c6c06ec1915938a3065465e46'
+TWILIO_AUTH_TOKEN = 'a1715dfe516b118117334960626c30ca'
+TWILIO_PHONE_NUMBER = '+12107141446'
+
+
+#Email Send setup
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'martech@driveronhire.com'
+EMAIL_HOST_PASSWORD = 'User@doh2527'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
