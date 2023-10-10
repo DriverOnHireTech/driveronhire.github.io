@@ -38,8 +38,10 @@ class User(AbstractUser):
     )
     phone = models.BigIntegerField(unique=True)
     usertype = models.CharField(choices=user_type, max_length=100, null=True, blank=True)
-    USERNAME_FIELD = 'phone' 
-    REQUIRED_FIELDS = ['usertype']
+    otp= models.CharField(max_length=6, null=True, blank=True)
+
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = ['usertype', 'username']
 
     db_table = "User"
 

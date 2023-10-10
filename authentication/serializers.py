@@ -3,7 +3,7 @@ from .models import User
 
 
 class NewUserSerializer(serializers.ModelSerializer):
-    phone= serializers.IntegerField(max_value=12, min_value=10)
+    # phone= serializers.IntegerField(max_value=100000000000, min_value=10)
     class Meta:
         model = User
         fields= ['phone', 'usertype', 'password']
@@ -18,4 +18,4 @@ class NewUserSerializer(serializers.ModelSerializer):
 class UserLoginserializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['phone', 'password']
+        fields = ['phone', 'otp']
