@@ -205,7 +205,7 @@ class AddDriver(models.Model):
     t_address = models.CharField(max_length=200, blank=True, null=True)
     p_address = models.CharField(max_length=200, blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
-    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
     pincode = models.CharField(max_length=10, null=True,blank=True)
     aggrement_expiry_date = models.DateField(blank=True, null=True)
