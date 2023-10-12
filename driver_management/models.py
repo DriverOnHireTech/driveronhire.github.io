@@ -202,7 +202,7 @@ class AddDriver(models.Model):
     language = models.CharField(choices=(('Hindi', 'Hindi'), ('English', 'English'), ('Bhojpuri', 'Bhojpuri')), default="Hindi", max_length=100, blank=True, null=True)
 
     # Address
-    t_address = models.CharField(max_length=200, blank=True, null=True)
+    t_address = models.CharField(max_length=200, null=True, blank=True)
     p_address = models.CharField(max_length=200, blank=True, null=True)
     state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
@@ -212,7 +212,7 @@ class AddDriver(models.Model):
 
     # Licence Information
     licence_no = models.CharField(max_length=20, blank=True, null=True)
-    licence_issued_from = models.CharField(max_length=20)
+    licence_issued_from = models.CharField(max_length=20, null=True, blank=True)
     licence_type = models.CharField(choices=(('LMV-TR', 'LMV-TR'), ('LMV-NT', 'LMV-NT')), default="TR", max_length=10, blank=True, null=True)
     date_of_issue = models.DateField(blank=True, null=True)
     date_of_expiry = models.DateField(blank=True, null=True)
