@@ -219,7 +219,7 @@ class AddDriver(models.Model):
 
     # Driver Screening
     present_salary = models.FloatField(null=True, blank=True)
-    expected_salary = models.FloatField()
+    expected_salary = models.FloatField(blank=True, null=True)
     pan_card_no = models.CharField(max_length=15, blank=True, null=True)
     aadhar_card_no = models.CharField(max_length=20)
     blood_group = models.CharField(choices=(("O+", "O+"), ("O-", "O-"), ("A+", "A+"), ("A-", "A-"), ("B+", "B+"),("B-", "B-"), ("AB+", "AB+"), ("AB-", "AB-")), max_length=10, blank=True, null=True)
