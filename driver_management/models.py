@@ -17,12 +17,12 @@ from user_master.models import State, City, Branch, Zone, Location
 class BasicDetail(models.Model):
     """ Basic details model """
     image_upload = models.ImageField(upload_to='media', default=None)
-    first_name = models.CharField(max_length=20, default=None)
+    first_name = models.CharField(max_length=20, default=None, null=True, blank=True)
     middle_name = models.CharField(max_length=20, blank=True, null=True)
     last_name = models.CharField(max_length=20, blank=True, null=True)
     gender = models.CharField(max_length=20, null=True, blank=True, default="Male")
-    date_of_birth = models.DateField()
-    mobile = models.CharField(max_length=15, unique=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    mobile = models.CharField(max_length=15, unique=True, null=True, blank=True)
     alt_mobile = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(null=True, blank=True)
     marital_status = models.CharField(max_length=20, null=True, blank=True)
@@ -30,20 +30,20 @@ class BasicDetail(models.Model):
     qualification = models.CharField(default="SS", max_length=20, null=True, blank=True)
     language = models.CharField(default="Hindi", max_length=100, null=True, blank=True)
       # Address
-    temp_address = models.CharField(max_length=200)
-    permanent_address = models.CharField(max_length=200)
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-    location = models.CharField(max_length=100)
+    temp_address = models.CharField(max_length=200, null=True, blank=True)
+    permanent_address = models.CharField(max_length=200, null=True, blank=True)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
     pincode = models.CharField(max_length=10, null=True,blank=True)
     aggrement_expiry_date = models.DateField(null=True, blank=True)
 
     # Licence Information
-    licence_no = models.CharField(max_length=20)
-    licence_issued_from = models.CharField(max_length=20)
+    licence_no = models.CharField(max_length=20, null=True, blank=True)
+    licence_issued_from = models.CharField(max_length=20, null=True, blank=True)
     licence_type = models.CharField(max_length=20, null=True, blank=True)
-    date_of_issue = models.DateField()
-    date_of_expiry = models.DateField()
+    date_of_issue = models.DateField(null=True, blank=True)
+    date_of_expiry = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return str(self.mobile)
@@ -204,9 +204,9 @@ class AddDriver(models.Model):
     # Address
     t_address = models.CharField(max_length=200, blank=True, null=True)
     p_address = models.CharField(max_length=200, blank=True, null=True)
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
     pincode = models.CharField(max_length=10, null=True,blank=True)
     aggrement_expiry_date = models.DateField(blank=True, null=True)
 
