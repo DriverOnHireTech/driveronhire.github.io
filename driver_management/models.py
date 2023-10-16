@@ -204,7 +204,7 @@ class AddDriver(models.Model):
     # Address
     t_address = models.CharField(max_length=200, null=True, blank=True)
     p_address = models.CharField(max_length=200, blank=True, null=True)
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, null=True, blank=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, null=True, blank=True)
     pincode = models.CharField(max_length=10, null=True,blank=True)
