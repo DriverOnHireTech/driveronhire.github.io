@@ -1,6 +1,7 @@
 base_site/__pycache__/
 booking/__pycache__/
 authentication/__pycache__/
+authentication/migrations/__pycache__
 driver_management/__pycache__/
 client_management/__pycache__/
 enquiry/__pycache__/
