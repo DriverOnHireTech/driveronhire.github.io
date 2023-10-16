@@ -121,6 +121,9 @@ class GenerateOTP(APIView):
 class ValidateOTP(APIView):
     def post(self, request):
         entered_otp = request.data.get('otp')
+        print(entered_otp)
+
+        
 
         # Retrieve the generated OTP and mobile number from the session
         generated_otp = request.session.get('generated_otp')
@@ -131,8 +134,6 @@ class ValidateOTP(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         if entered_otp == generated_otp:
-            # Clear the session data after successful OTP validation
-            request.session.flush()
            
             try:
                 user = User.objects.get(phone=mobile_number)
