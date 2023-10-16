@@ -88,45 +88,45 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=3))
+                            ).filter(distance__lte=D(km=300000))
                     
-                driver_data = []
-                for driver_obj in driver:
-                    driver_location = driver_obj.driverlocation
-                    if driver_location:
-                        location_dict = {
-                            "id": driver_obj.id, 
-                            "longitude": driver_location.x,
-                            "latitude": driver_location.y,
-                        }
-                        driver_data.append(location_dict)                
+                    driver_data = []
+                    for driver_obj in driver:
+                        driver_location = driver_obj.driverlocation
+                        if driver_location:
+                            location_dict = {
+                                "id": driver_obj.id, 
+                                "longitude": driver_location.x,
+                                "latitude": driver_location.y,
+                            }
+                            driver_data.append(location_dict)                
 
-                if driver.exists():
-                     # Send notification using FCM
-                    message = messaging.Message(
-                        notification=messaging.Notification(
-                            title="New Booking",
-                            body="A new booking is available!"
-                        ),
-                        topic="Driver_Booking"  # Replace with the appropriate FCM topic
-                    )
+                    if driver.exists():
+                        # Send notification using FCM
+                        message = messaging.Message(
+                            notification=messaging.Notification(
+                                title="New Booking",
+                                body="A new booking is available!"
+                            ),
+                            topic="Driver_Booking"  # Replace with the appropriate FCM topic
+                        )
 
-                    # Send the message
-                    response = messaging.send(message)
-                    print("Notification sent:", response) 
+                        # Send the message
+                        response = messaging.send(message)
+                        print("Notification sent:", response) 
 
-                #for booking accept 
-                if PlaceBooking.status == "accept":
-                    return Response({'msg':'booking is accepted'})
-                
-                #for booking decline 
-                elif PlaceBooking.status == "decline":
-                    return Response({'msg':'booking is decline'})
-                
-                serializer.validated_data['user_id'] = user.id
-                serializer.save(status="accept")
+                    #for booking accept 
+                    if PlaceBooking.status == "accept":
+                        return Response({'msg':'booking is accepted'})
+                    
+                    #for booking decline 
+                    elif PlaceBooking.status == "decline":
+                        return Response({'msg':'booking is decline'})
+                    
+                    serializer.validated_data['user_id'] = user.id
+                    serializer.save(status="accept")
 
-                return Response({'data':serializer.data,"drivers":driver_data}, status=status.HTTP_201_CREATED)
+                return Response({'data':serializer.data}, status=status.HTTP_201_CREATED)
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

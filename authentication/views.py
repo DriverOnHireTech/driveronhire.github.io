@@ -71,12 +71,10 @@ class Adduser(APIView):
 class LoginView(APIView):
     def post(self, request):
         data =  request.data
-
         phone = data.get('phone')
         password = data.get('password')
-        otp = data.get('otp')
-        user = User.objects.filter(phone=phone).first()
-        if (str(otp) == user.otp):
+        user = authenticate(phone=phone, password=password)
+        if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
             return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK)
@@ -121,6 +119,9 @@ class GenerateOTP(APIView):
 class ValidateOTP(APIView):
     def post(self, request):
         entered_otp = request.data.get('otp')
+        print(entered_otp)
+
+        
 
         # Retrieve the generated OTP and mobile number from the session
         generated_otp = request.session.get('generated_otp')
@@ -131,8 +132,6 @@ class ValidateOTP(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         if entered_otp == generated_otp:
-            # Clear the session data after successful OTP validation
-            request.session.flush()
            
             try:
                 user = User.objects.get(phone=mobile_number)
