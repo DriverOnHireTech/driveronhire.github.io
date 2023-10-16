@@ -20,22 +20,22 @@ from .utils import username_gene
 class Adduser(APIView):
     def post(self, request):
         data= request.data
-        phone = request.data.get('phone')
+        # phone = request.data.get('phone')
         serailizer=NewUserSerializer(data=data)
         if serailizer.is_valid():
-            otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
-            serailizer.validated_data['otp'] = otp
+            # otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+            # serailizer.validated_data['otp'] = otp
             serailizer.validated_data['username'] = username_gene()
-            client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-            message = client.messages.create(
-                body=f"Your OTP is: {otp}",
-                from_=settings.TWILIO_PHONE_NUMBER,
-                to=phone
-            )
             serailizer.save()
     
-            return Response({'msg':'Data is saved', 'data': serailizer.data, 'message':"Otp has been sent."}, status=status.HTTP_201_CREATED)
-        
+            return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
+            # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+            # message = client.messages.create(
+            #     body=f"Your OTP is: {otp}",
+            #     from_=settings.TWILIO_PHONE_NUMBER,
+            #     to=phone
+            # )
+            
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
        
     def get(self, request):
