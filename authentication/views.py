@@ -71,12 +71,10 @@ class Adduser(APIView):
 class LoginView(APIView):
     def post(self, request):
         data =  request.data
-
         phone = data.get('phone')
         password = data.get('password')
-        otp = data.get('otp')
-        user = User.objects.filter(phone=phone).first()
-        if (str(otp) == user.otp):
+        user = authenticate(phone=phone, password=password)
+        if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
             return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK)
