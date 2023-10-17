@@ -1,5 +1,8 @@
+__pycache__/
+*.pyc
 base_site/__pycache__/
-booking/__pycache__/
+booking/__pycache__
+booking/__pycache__
 authentication/__pycache__/
 authentication/migrations/__pycache__
 driver_management/__pycache__/
@@ -10,7 +13,6 @@ user_master/__pycache__/
 # Django #
 *.log
 *.pot
-*.pyc
 migrations/
 __pycache__/
 
