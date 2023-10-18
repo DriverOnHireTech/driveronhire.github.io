@@ -162,7 +162,7 @@ class RmVerification(models.Model):
 
 class AddDriver(models.Model):
     """Add driver model"""
-    image_upload = models.ImageField(upload_to='media', default=None)
+    image_upload = models.ImageField(upload_to='media', default=None, blank=True, null=True)
     # General Details
     #driver_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=20, default=None)
@@ -239,7 +239,7 @@ class AddDriver(models.Model):
     driven_km = models.FloatField(blank=True, null=True)
 
     # Attach Document
-    driving_licence = models.FileField(upload_to='documents/%Y/%m/', default=None)
+    driving_licence = models.FileField(upload_to='documents/%Y/%m/', default=None, null=True, blank=True)
     ration_card = models.FileField(upload_to='documents/%Y/%m/', default=None, null=True, blank=True)
     pan_card = models.FileField(upload_to='documents/%Y/%m/', default=None, null=True, blank=True)
     light_bill = models.FileField(upload_to='documents/%Y/%m/', default=None, null=True, blank=True)

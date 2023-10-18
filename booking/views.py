@@ -14,7 +14,7 @@ from firebase_admin import messaging
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from django.http import JsonResponse
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework.pagination import PageNumberPagination
  
 # from geopy.geocoders import Nominatim
@@ -88,7 +88,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=300000))
+                            ).filter(distance__lte=D(km=3))
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -126,7 +126,7 @@ class MyBookingList(APIView):
                     serializer.validated_data['user_id'] = user.id
                     serializer.save(status="accept")
 
-                return Response({'data':serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -142,6 +142,19 @@ class MyBookingList(APIView):
         serializer = PlacebookingSerializer(page, many=True)
         
         return paginator.get_paginated_response(serializer.data)
+    
+"""for book leter"""
+# class ScheduleBookingView(APIView):
+#     def post(self, request, format=None)
+#         current_time = datetime.now()
+#         booking_time = current_time + timedelta(minutes=10)
+#         serializer = BookingLeterSerializer(data={'user': request.user.id, 'booking_time': booking_time})
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+"""end book leter"""
 
 
 class BookingListWithId(APIView):
