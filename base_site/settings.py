@@ -3,7 +3,7 @@ from pathlib import Path
 import environ
 from firebase_admin import initialize_app
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, initialize_app
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -169,8 +169,14 @@ REST_FRAMEWORK = {
 }
 
 #Setup for push notification with firebase
-FIREBASE_APP = initialize_app()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
+
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
+# cred = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+cred = credentials.Certificate("D:/driveronhire.github.io/notification.json")
+initialize_app(cred, options={
+    "projectId": "notification-1c61d",
+    "messagingSenderId": "601537089473",
+})
 
 FCM_DJANGO_SETTINGS = {
 

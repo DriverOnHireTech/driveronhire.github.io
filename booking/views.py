@@ -16,6 +16,7 @@ from django.contrib.gis.measure import D
 from django.http import JsonResponse
 from datetime import datetime, timedelta
 from rest_framework.pagination import PageNumberPagination
+from fcm_django.models import FCMDevice
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -34,26 +35,26 @@ class MyBookingList(APIView):
                 currant_location = serializer.validated_data.get('currant_location')
                 # driver_type=serializer.validated_data.get('driver_type')
                 car_type= serializer.validated_data.get('car_type')
-                gear_type=serializer.validated_data.get('gear_type')
+                transmission_type=serializer.validated_data.get('gear_type')
 
                  
                 if car_type is None :    
-                    driver=AddDriver.objects.filter( car_type=car_type, transmission_type=gear_type)
+                    driver=AddDriver.objects.filter( car_type=car_type, transmission_type=transmission_type)
 
                 elif currant_location:
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
                     if driver:
-                        driver = driver.filter(car_type=car_type, transmission_type=gear_type)
+                        driver = driver.filter(car_type=car_type, transmission_type=transmission_type)
                         print(car_type)
-
+                        print(transmission_type)
                         print("Driver Details",driver)
                     
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=3))
+                            ).filter(distance__lte=D(km=300))
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -67,13 +68,23 @@ class MyBookingList(APIView):
                             driver_data.append(location_dict)                
 
                     if driver.exists():
+                        devices = FCMDevice.objects.all()
+                        print("Device data: ", devices)
+                        registration_ids = []
+
+                        for device in devices:
+                            registration_id = device.registration_id
+                            registration_ids.append(registration_id)
+                        
+                        print("registration id:", registration_ids)
+
                         # Send notification using FCM
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
                                 body="A new booking is available!"
                             ),
-                            topic="Driver_Booking"  # Replace with the appropriate FCM topic
+                            token= registration_ids[0]  # Replace with the appropriate FCM topic
                         )
 
                         # Send the message
@@ -102,11 +113,11 @@ class MyBookingList(APIView):
     def get(self, request):
         user = request.user.id
         booking=PlaceBooking.objects.all().order_by('id')
-        paginator = PageNumberPagination()
-        page = paginator.paginate_queryset(booking, request)
-        serializer = PlacebookingSerializer(page, many=True)
+        # paginator = PageNumberPagination()
+        # page = paginator.paginate_queryset(booking, request)
+        serializer = PlacebookingSerializer(booking, many=True)
         
-        return paginator.get_paginated_response(serializer.data)
+        return Response(serializer.data)
     
 """for book leter"""
 # class ScheduleBookingView(APIView):
