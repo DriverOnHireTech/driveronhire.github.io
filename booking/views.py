@@ -284,7 +284,7 @@ class Agentbookingview(APIView):
         try:
             data=request.data
             serializer= Agentbookingserailizer(data=data)
-            if serializer.is_valid(Exception=True):
+            if serializer.is_valid():
                 serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         except:
