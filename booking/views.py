@@ -274,3 +274,21 @@ class UpcomingBooking(APIView):
     
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data})
+
+
+
+# Agent can book from here
+
+class Agentbookingview(APIView):
+    def post(self, request):
+        try:
+            data=request.data
+            serializer= Agentbookingserailizer(data=data)
+            if serializer.is_valid(Exception=True):
+                serializer.save()
+                return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+            
+        

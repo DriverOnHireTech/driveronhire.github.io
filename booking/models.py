@@ -100,28 +100,22 @@ class AddfavoriteDriver(models.Model):
         return str(self.user.phone)
 
 
-# class PlaceBookingLeter(models.Model):
-#     STATUS=(
-#         ('accept','accept'),
-#         ('decline', 'decline'),
-#         ('pending', 'pending'),
-#         ('completed', 'completed')
-#     )
-#     user = models.ForeignKey(User,on_delete=models.CASCADE)
-#     mobile= models.PositiveBigIntegerField()
-#     trip_type=models.CharField(max_length=50, null=True ,blank=True)
-#     packege= models.CharField(max_length=100, null=True, blank=True)
-#     from_date = models.DateField()
-#     to_date = models.DateField()
-#     currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
-#     car_type=models.CharField(max_length=100, null=True)
-#     gear_type= models.CharField(max_length=100, null=True)
-#     pickup_location=models.CharField(max_length=100, null=True)
-#     drop_location=models.CharField(max_length=100, null=True)
-#     schedual_booking_time= models.DateTimeField(auto_now_add=False, null=True,blank=True)
-#     status =  models.CharField(max_length=20, choices=STATUS, default='pending')
-#     driver_name =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='driver_name', null=True, blank=True)
-#     booked_time=models.DateTimeField(auto_now_add=True)
-   
-#     def __str__(self):
-#         return self.trip_type
+class AgentBooking(models.Model):
+    booking_type= (
+        ('local', 'local'),
+        ('drop', 'drop'),
+        ('outstation', 'outstation')
+    )
+    client_name= models.CharField(max_length=200, null=True, blank=True)
+    mobile_number= models.BigIntegerField(null=True, blank=True)
+    Alternet_number= models.BigIntegerField(null=True, blank=True)
+    email=models.EmailField(null=True, blank=True)
+    Address=models.CharField(max_length=500, null=True, blank=True)
+    car= models.CharField(max_length=100, null=True, blank=True)
+    bookingfor= models.CharField(choices=booking_type, null=True, blank=True)
+    source= models.CharField(max_length=100, null=True,blank=True)
+    bookingdt= models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.client_name
+
