@@ -8,7 +8,7 @@ from .paginations import cutomepegination
 from rest_framework import status
 from rest_framework import filters
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
@@ -156,9 +156,11 @@ class Bookingreports(APIView):
         try:
             user=self.request.user
             booking_time= request.GET.get('booking_time')
-            end_date_time = request.GET.get('end_date_time')
 
-
+            booking_time = datetime.strptime(booking_time, '%Y-%m-%d%H:%M:%S')  # Assuming date format 'YYYY-MM-DD'
+            print(booking_time)
+            end_date_time = booking_time + timedelta(days=30)
+            print(end_date_time)
 
             #filter record between the dates
             if booking_time:

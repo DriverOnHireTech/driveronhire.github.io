@@ -21,43 +21,6 @@ from rest_framework.pagination import PageNumberPagination
 # import geocoder
 
 
-class userregistration(APIView):
-    def post(self, request):
-        data=request.data
-
-        serializer=ClientregistrationSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-
-            return Response({'msg': 'user is created'}, status=status.HTTP_201_CREATED)
-        
-        else:
-            return Response({'msg': 'user not created'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
-    def get(self, request):
-        user = bookinguser.objects.all().order_by('full_name').reverse()
-        serializer = ClientregistrationSerializer(user, many=True)
-        return Response(serializer.data)
-
-
-class Userlogin(APIView):
-    def post(self, request):
-        full_name=request.data['full_name']
-        mobile_number=request.data['mobile_number']
-        
-      
-        if bookinguser.objects.filter(full_name=full_name, mobile_number=mobile_number).exists():
-            return Response ({
-                'msg':'user can book driver',
-                'status':status.HTTP_200_OK
-            })
-        else:
-              return Response ({
-                'msg':'user not login for book driver',
-                'status':status.HTTP_400_BAD_REQUEST
-            })
-
-
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -69,20 +32,22 @@ class MyBookingList(APIView):
         
         if serializer.is_valid():
                 currant_location = serializer.validated_data.get('currant_location')
-                driver_type=serializer.validated_data.get('driver_type')
+                # driver_type=serializer.validated_data.get('driver_type')
                 car_type= serializer.validated_data.get('car_type')
-                transmission_type=serializer.validated_data.get('transmission_type')
+                gear_type=serializer.validated_data.get('gear_type')
 
                  
                 if car_type is None :    
-                    driver=AddDriver.objects.filter(driver_type=driver_type, car_type=car_type, transmission_type=transmission_type)
+                    driver=AddDriver.objects.filter( car_type=car_type, transmission_type=gear_type)
 
                 elif currant_location:
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
                     if driver:
-                        driver = driver.filter(car_type=car_type, driver_type="Part Time", transmission_type=transmission_type)
+                        driver = driver.filter(car_type=car_type, transmission_type=gear_type)
+                        print(car_type)
+
                         print("Driver Details",driver)
                     
                     

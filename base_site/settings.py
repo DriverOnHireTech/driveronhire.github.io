@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "client_management",
     "enquiry",
     "django_filters",
+    'multiselectfield',
     
     "fcm_django",
     "rest_framework.authtoken",
