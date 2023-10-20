@@ -21,4 +21,6 @@ urlpatterns=[
     path('userprofile/<int:id>/', views.UserProfileWithId.as_view(), name='user-id'),
 
     path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
+
+    path('agentbooking/', views.Agentbookingview.as_view(), name='agent-booking'),
 ]
