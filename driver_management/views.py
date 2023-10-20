@@ -21,6 +21,7 @@ from booking.serializers import PlacebookingSerializer
 
 
 
+
  # for Driver location update   
 
 
@@ -59,7 +60,7 @@ class BasicDetailView(generics.ListCreateAPIView):
 
 
 class MyDriverList(generics.ListCreateAPIView):
-     
+    pagination_class=cutomepegination()
     queryset = AddDriver.objects.all().order_by('id').reverse()
     serializer_class = MyDriverSerializer
     parser_classes = [MultiPartParser, FormParser]
@@ -85,7 +86,7 @@ class updatedriver(APIView):
 class Driversearch(ListAPIView):
         try:
 
-            # pagination_class=cutomepegination
+            pagination_class=cutomepegination()
             model_data= AddDriver.objects.all()
             serializer_class = MyDriverSerializer 
             filter_backends = [DjangoFilterBackend]
