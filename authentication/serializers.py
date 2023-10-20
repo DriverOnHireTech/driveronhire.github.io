@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User
+from fcm_django.models import FCMDevice
 
 
 class NewUserSerializer(serializers.ModelSerializer):
@@ -19,3 +20,9 @@ class UserLoginserializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['phone', 'otp']
+
+
+class Fcmserializer(serializers.ModelSerializer):
+    class Meta:
+        model = FCMDevice
+        fields = "__all__"

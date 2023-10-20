@@ -3,7 +3,7 @@ from pathlib import Path
 import environ
 from firebase_admin import initialize_app
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, initialize_app
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "client_management",
     "enquiry",
     "django_filters",
+    'multiselectfield',
     
     "fcm_django",
     "rest_framework.authtoken",
@@ -161,23 +162,27 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.TokenAuthentication' ],
     
-    #'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    #'PAGE_SIZE': 5,
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 5,
      
    
 }
 
 #Setup for push notification with firebase
-FIREBASE_APP = initialize_app()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
-# cred_path = os.path.join(BASE_DIR, "notification.json")
-# cred = credentials.Certificate(cred_path)
-# firebase_admin.initialize_app(cred)
+
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
+# cred = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+cred = credentials.Certificate("C:/driveronhire.github.io/notification.json")
+initialize_app(cred, options={
+    "projectId": "notification-1c61d",
+    "messagingSenderId": "601537089473",
+})
+
 FCM_DJANGO_SETTINGS = {
 
     "DEFAULT_FIREBASE_APP": None,
     "APP_VERBOSE_NAME": "django_fcm",
-    "FCM_SERVER_KEY": "AAAAsM1f8bU:APA91bELsdJ8WaSy...",
+    "FCM_SERVER_KEY": "AAAAjA5nj8E:APA91bGPmqvxPcz6S148QFNeiq04m6GrNsO1jb72d-HLD0NDD9hB3kJ4ytIuRDwIZEWIYKKKwnEUb3TTOgC-ocMY92XLEgKhnt4qLQJCt2LW3lv9Vb5TUlilzU1EZfF0mizEHOwN-tfv",
     "ONE_DEVICE_PER_USER": False,
     "DELETE_INACTIVE_DEVICES": True,
 }

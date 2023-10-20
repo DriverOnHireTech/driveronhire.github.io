@@ -4,11 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-from .paginations import cutomepegination
+# from .paginations import cutomepegination
 from rest_framework import status
 from rest_framework import filters
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
@@ -20,32 +20,7 @@ from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
 
 
-class Driversignup(APIView):   # For Driver signup
-    def post(self, request):
-        data=request.data
-        Dri_serializer= DriversignupSerializer(data=data)
-        
-        if Dri_serializer.is_valid():
-            user=User(username=Dri_serializer.validated_data['username'],
-                      email=Dri_serializer.validated_data['email'])
-            password=Dri_serializer.validated_data['password']
-            user.set_password(password)
-            user.save()
-            return Response({'msg':'Driver signup is done', 'data':Dri_serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response ({'msg':'Some thing wrong', 'data':Dri_serializer.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-# Driver Login
-class Driverlogin(APIView): 
-    def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return Response({'msg': 'Login Success'}, status=status.HTTP_200_OK)
-        return Response({'msg': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
  # for Driver location update   
 
@@ -85,16 +60,33 @@ class BasicDetailView(generics.ListCreateAPIView):
 
 
 class MyDriverList(generics.ListCreateAPIView):
-     
+    # pagination_class=cutomepegination()
     queryset = AddDriver.objects.all().order_by('id').reverse()
     serializer_class = MyDriverSerializer
     parser_classes = [MultiPartParser, FormParser]
 
 
+"""Update Driver"""
+class updatedriver(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request, id):
+        data= request.data
+        user= request.user
+        driver= request.data.get('driverlocation')
+        driver = AddDriver.objects.get(id=id)
+        serializer =MyDriverSerializer(driver, data=request.data, partial=True)
+        if serializer.is_valid():
+            
+            serializer.save()
+            return Response({"msg":"location updated", "data":serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+"""End update driver"""
 class Driversearch(ListAPIView):
         try:
 
-            # pagination_class=cutomepegination
+            # pagination_class=cutomepegination()
             model_data= AddDriver.objects.all()
             serializer_class = MyDriverSerializer 
             filter_backends = [DjangoFilterBackend]
@@ -165,14 +157,15 @@ class Bookingreports(APIView):
         try:
             user=self.request.user
             booking_time= request.GET.get('booking_time')
-            end_date_time = request.GET.get('end_date_time')
 
-
+            booking_time = datetime.strptime(booking_time, '%Y-%m-%d%H:%M:%S')  # Assuming date format 'YYYY-MM-DD'
+            print(booking_time)
+            end_date_time = booking_time + timedelta(days=30)
+            print(end_date_time)
 
             #filter record between the dates
             if booking_time:
                 booking_filter= PlaceBooking.objects.filter(booking_time__range=[booking_time, end_date_time])
-                print("Number of booking",booking_filter.count())
                 result_serializer=PlacebookingSerializer(booking_filter, many=True)
                 return Response({'msg':'Your Booking Records', 'data':result_serializer.data}, status=status.HTTP_202_ACCEPTED)
             

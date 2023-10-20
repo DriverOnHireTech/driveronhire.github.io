@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from .models import User
-from .serializers import NewUserSerializer, UserLoginserializer
+from .serializers import NewUserSerializer, UserLoginserializer, Fcmserializer
 import random
 from twilio.rest import Client
 from base_site import settings
@@ -12,6 +12,8 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from .utils import username_gene
+from fcm_django.models import FCMDevice
+
 
 
 # Create your views here.
@@ -187,3 +189,11 @@ class ValidateOTP(APIView):
 #             return Response({'token': token.key}, status=status.HTTP_200_OK)
 #         else:
 #             return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetFCM(APIView):
+    def get(self, request):
+        obj = FCMDevice.objects.all()
+        serializer = Fcmserializer(obj, many=True)
+
+        return Response(serializer.data)
