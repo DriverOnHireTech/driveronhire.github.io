@@ -35,9 +35,12 @@ class MyEnquiryDelete(generics.DestroyAPIView):
 class senddriverenquiry(APIView):
     def post(self, request):
         data= request.data
-        message= request.data['message']
+        name = request.data['name']
+        message_old= request.data['message']
         phone_number= request.data['phone_number']
+        service = request.data['service']
         email=request.data['email']
+        message = f"Received new mail from: {name}\n phone number is {phone_number}\n enquired for service: {service}\n message:{message_old} "
 
         serializer = DriverEnquiryserializer(data=data)
         if serializer.is_valid():
