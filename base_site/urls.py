@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/enquiry/<int:id>/update', MyEnquiryUpdate.as_view(), name='enquiry-update-list'),
     path('api/enquiry/<int:id>/delete', MyEnquiryDelete.as_view(), name='enquiry-delete-list'),
     path('auth/', include('authentication.urls')),
+     path('api/enquiry/', include('enquiry.urls')), 
     
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
