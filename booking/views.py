@@ -93,6 +93,8 @@ class MyBookingList(APIView):
 
                     #for booking accept 
                     if PlaceBooking.status == "accept":
+                        PlaceBooking.accepted_driver = user
+                        PlaceBooking.save()
                         return Response({'msg':'booking is accepted'})
                     
                     #for booking decline 
@@ -100,7 +102,7 @@ class MyBookingList(APIView):
                         return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
-                    serializer.save(status="accept")
+                    serializer.save()
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
@@ -118,6 +120,18 @@ class MyBookingList(APIView):
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data)
+    
+class Acceptedride(APIView):
+    def patch(self, request, id):
+        booking= PlaceBooking.objects.get(id=id)
+        serializer= PlacebookingSerializer(booking, data=request.data)
+        booking.accepted_driver= self.request.user
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+
     
 """for book leter"""
 # class ScheduleBookingView(APIView):
@@ -284,7 +298,7 @@ class Agentbookingview(APIView):
         try:
             data=request.data
             serializer= Agentbookingserailizer(data=data)
-            if serializer.is_valid(Exception=True):
+            if serializer.is_valid():
                 serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         except:
