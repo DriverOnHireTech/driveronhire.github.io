@@ -314,12 +314,12 @@ class Agentbookingview(APIView):
 
             mobile_number= request.GET.get('mobile_number')
             client_name= request.GET.get('client_name')
-
+            print(f"client_name:{client_name}\n mobile_number:{mobile_number}")
             clinet_data=AgentBooking.objects.filter(mobile_number=mobile_number, client_name=client_name)
-            print("client data", clinet_data)
-            if clinet_data.exists():
-                serializer=AgentBooking(clinet_data, many=True)
-                print("Filter Data", serializer)
+            
+            if AgentBooking.mobile_number or AgentBooking.client_name:
+                #if clinet_data.exists():
+                serializer=Agentbookingserailizer(clinet_data, many=True)
                 return Response({'msg':'Customer Data','data':serializer.data}, status=status.HTTP_200_OK)
             
             else:
