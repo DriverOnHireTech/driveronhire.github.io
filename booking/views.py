@@ -121,9 +121,14 @@ class MyBookingList(APIView):
     
 class Acceptedride(APIView):
     def patch(self, request, id):
+        data = request.data
+        print("output data:",data)
+        user = User.objects.get(id=data['accepted_driver'])
+        print("User: ",user)
+        print("accepted driver", data['accepted_driver'])
         booking= PlaceBooking.objects.get(id=id)
-        serializer= PlacebookingSerializer(booking, data=request.data)
-        booking.accepted_driver= self.request.user
+        serializer= PlacebookingSerializer(booking, data=data, partial=True)
+        booking.accepted_driver= user
         if serializer.is_valid():
             serializer.save()
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
