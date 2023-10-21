@@ -93,8 +93,6 @@ class MyBookingList(APIView):
 
                     #for booking accept 
                     if PlaceBooking.status == "accept":
-                        PlaceBooking.accepted_driver = user
-                        PlaceBooking.save()
                         return Response({'msg':'booking is accepted'})
                     
                     #for booking decline 
