@@ -100,7 +100,7 @@ class MyBookingList(APIView):
                         return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
-                    serializer.save(status="accept")
+                    serializer.save()
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
@@ -118,6 +118,23 @@ class MyBookingList(APIView):
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data)
+    
+class Acceptedride(APIView):
+    def patch(self, request, id):
+        data = request.data
+        print("output data:",data)
+        user = User.objects.get(id=data['accepted_driver'])
+        print("User: ",user)
+        print("accepted driver", data['accepted_driver'])
+        booking= PlaceBooking.objects.get(id=id)
+        serializer= PlacebookingSerializer(booking, data=data, partial=True)
+        booking.accepted_driver= user
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+
     
 """for book leter"""
 # class ScheduleBookingView(APIView):
@@ -274,3 +291,21 @@ class UpcomingBooking(APIView):
     
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data})
+
+
+
+# Agent can book from here
+
+class Agentbookingview(APIView):
+    def post(self, request):
+        try:
+            data=request.data
+            serializer= Agentbookingserailizer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        except:
+            return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+            
+        

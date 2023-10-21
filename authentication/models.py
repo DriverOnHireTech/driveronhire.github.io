@@ -39,6 +39,10 @@ class User(AbstractUser):
     phone = models.BigIntegerField(unique=True)
     usertype = models.CharField(choices=user_type, max_length=100, null=True, blank=True)
     otp= models.CharField(max_length=6, null=True, blank=True)
+    fcm_token = models.CharField(max_length=200, null=True, blank=True)
+    # _id = models.IntegerField(null=True, blank=True)
+    type = models.CharField(max_length=30, blank=True, null=True)
+    name = models.CharField(max_length=30, blank=True, null=True)
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['usertype']

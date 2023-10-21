@@ -28,7 +28,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         model = PlaceBooking
         
         fields= ['id','trip_type', 'from_date',
-                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile']
+                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile', 'accepted_driver']
 
     # def get_drivers(self, obj):
     #     return {'driver':obj.drivers.car_type}
@@ -80,11 +80,10 @@ class Profileserializer(serializers.ModelSerializer):
 
 
 
-# class BookingLeterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model= PlaceBookingLeter
-#         fields= ['id','trip_type', 'from_date',
-#                   'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 
-#                   'booking_time', 'currant_location', 'status','packege', 'mobile', 'schedual_booking_time']
+class Agentbookingserailizer(serializers.ModelSerializer):
+    class Meta:
+        model= AgentBooking
+        fields= ('client_name', 'mobile_number', 'email', 'Address', 'car', 'bookingfor',
+                 'source')
    
 
