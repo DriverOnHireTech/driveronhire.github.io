@@ -17,6 +17,7 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
+from django.db.models import Q
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -314,12 +315,12 @@ class Agentbookingview(APIView):
 
             mobile_number= request.GET.get('mobile_number')
             client_name= request.GET.get('client_name')
-            print(f"client_name:{client_name}\n mobile_number:{mobile_number}")
-            clinet_data=AgentBooking.objects.filter(mobile_number=mobile_number, client_name=client_name)
-            
-            if AgentBooking.mobile_number or AgentBooking.client_name:
-                #if clinet_data.exists():
+
+            clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name))
+
+            if clinet_data.exists():
                 serializer=Agentbookingserailizer(clinet_data, many=True)
+                
                 return Response({'msg':'Customer Data','data':serializer.data}, status=status.HTTP_200_OK)
             
             else:
