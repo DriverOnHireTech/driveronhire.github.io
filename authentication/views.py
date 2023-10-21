@@ -22,13 +22,29 @@ from fcm_django.models import FCMDevice
 class Adduser(APIView):
     def post(self, request):
         data= request.data
+        print(data)
+        # registration_id = request.data['registration_id']
+
         # phone = request.data.get('phone')
         serailizer=NewUserSerializer(data=data)
         if serailizer.is_valid():
             # otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
             # serailizer.validated_data['otp'] = otp
             serailizer.validated_data['username'] = username_gene()
-            serailizer.save()
+            user = serailizer.save()
+            print("user Data:", user)
+            if user:
+                # token = FCMDevice.objects.create(user=user)
+                json = serailizer.data
+                print("jeson data", json)
+                fcm_token = json['fcm_token']
+                user = json['id'] 
+                device = FCMDevice()
+                device.registration_id = fcm_token
+                device.type = "android"
+                device.name = "Can be anything"
+                device.user = User.objects.get(phone=json['phone'])
+                device.save()
     
             return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
             # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
