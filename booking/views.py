@@ -30,6 +30,12 @@ class MyBookingList(APIView):
     def post(self, request, format=None): 
         user=request.user
         data=request.data
+        trip_type=request.data['trip_type']
+        car_type= request.data['car_type']
+        gear_type=request.data['gear_type']
+        pickup_location=request.data['pickup_location']
+        drop_location=request.data['drop_location']
+
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -83,7 +89,7 @@ class MyBookingList(APIView):
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
-                                body="A new booking is available!"
+                                body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
                             ),
                             token= registration_ids[0]  # Replace with the appropriate FCM topic
                         )
