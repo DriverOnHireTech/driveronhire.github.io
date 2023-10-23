@@ -6,7 +6,7 @@ urlpatterns=[
 
     path('booking/', views.MyBookingList.as_view(), name='booking'),
 
-    #path('book_leter/', views.ScheduleBookingView.as_view(), name='book_leter'),
+    path('book_leter/', views.ScheduleBookingView.as_view(), name='book_leter'),
 
     path('userbooking/<int:id>/', views.BookingListWithId.as_view(), name='booking-id'),
 

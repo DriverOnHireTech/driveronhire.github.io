@@ -119,3 +119,30 @@ class AgentBooking(models.Model):
     def __str__(self):
         return self.client_name
 
+
+class BookLater(models.Model):
+    STATUS=(
+        ('accept','accept'),
+        ('decline', 'decline'),
+        ('pending', 'pending'),
+        ('completed', 'completed')
+    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    mobile= models.PositiveBigIntegerField(null=True, blank=True)
+    trip_type=models.CharField(max_length=50, null=True ,blank=True)
+    packege= models.CharField(max_length=100, null=True, blank=True)
+    from_date = models.DateField(null=True, blank=True)
+    to_date = models.DateField(null=True, blank=True)
+    currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
+    car_type=models.CharField(max_length=100, null=True)
+    gear_type= models.CharField(max_length=100, null=True)
+    pickup_location=models.CharField(max_length=100, null=True)
+    drop_location=models.CharField(max_length=100, null=True)
+    status =  models.CharField(max_length=20, choices=STATUS, default='pending')
+    accepted_driver =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='driver_name', default=1)
+    schedule_booking = models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    booking_time=models.DateTimeField(auto_now_add=True)
+
+   
+    def __str__(self):
+        return self.trip_type

@@ -138,15 +138,64 @@ class Acceptedride(APIView):
 
     
 """for book leter"""
-# class ScheduleBookingView(APIView):
-#     def post(self, request, format=None)
-#         current_time = datetime.now()
-#         booking_time = current_time + timedelta(minutes=10)
-#         serializer = BookingLeterSerializer(data={'user': request.user.id, 'booking_time': booking_time})
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ScheduleBookingView(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        current_time = datetime.now()
+        booking_time = current_time + timedelta(minutes=1)
+        serializer = BookLaterSerializer(data=request.data)
+        if serializer.is_valid():
+            car_type= serializer.validated_data.get('car_type')
+            transmission_type=serializer.validated_data.get('gear_type')   
+            driver=AddDriver.objects.filter( car_type=car_type, transmission_type=transmission_type).values('first_name', 'mobile')
+            print("Driver Details: ", driver)
+
+            if driver.exists():
+                devices = FCMDevice.objects.all()
+                print("Device data: ", devices)
+
+                registration_ids = []
+                for device in devices:
+                    registration_id = device.registration_id
+                    registration_ids.append(registration_id)
+                print("registration id:", registration_ids)
+
+                # Send notification using FCM
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title="New Booking",
+                        body="A new booking is available!"
+                    ),
+                    token= registration_ids[0] 
+                )
+
+                # Send the message
+                response = messaging.send(message)
+                print("Notification sent:", response) 
+
+                status = serializer.validated_data.get('status')
+
+                #for booking accept 
+                if status == "accept":
+                    return Response({'msg':'booking is accepted'})
+                #for pending booking
+                if status == "pending":
+                    return Response({'msg':'booking is sent'})
+                
+                #for booking decline 
+                elif status == "decline":
+                    return Response({'msg':'booking is decline'})
+                
+                serializer.validated_data['user_id'] = user.id
+                serializer.save()
+
+                return Response({'data':serializer.data, 'drivers':list(driver)})
+                        
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """end book leter"""
 

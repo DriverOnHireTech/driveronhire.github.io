@@ -4,7 +4,7 @@ from driver_management.models import AddDriver
 from driver_management.models import Driverlocation
 from driver_management.serializers import MyDriverSerializer
 from user_master.models import Zone
-from .models import bookinguser, Invoice
+from .models import bookinguser, Invoice, BookLater
 from authentication.serializers import NewUserSerializer
 
 from authentication.models import  User
@@ -86,4 +86,8 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         fields= ('client_name', 'mobile_number', 'email', 'Address', 'car', 'bookingfor',
                  'source')
    
-
+class BookLaterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookLater
+        fields = ['id','trip_type', 'from_date',
+                  'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile', 'accepted_driver', "schedule_booking"]
