@@ -41,3 +41,8 @@ class DriverReferserializer(serializers.ModelSerializer):
     class Meta:
         model = ReferDriver
         fields= ('name', 'mobile', 'location', 'branch')
+
+class Driverappstatusserializer(serializers.ModelSerializer):
+    class Meta:
+        model= Driverappstatus
+        fields="__all__"

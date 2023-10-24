@@ -350,3 +350,17 @@ class Driverlocation(models.Model):
     
     def __str__(self):
         return str(self.driver.phone)
+
+
+"""Driver App Status"""
+class Driverappstatus(models.Model):
+    Status=(('active','active'), ('inactive', 'inactive'))
+    drivername=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True, blank=True)
+    package=models.CharField(max_length=100, null=True, blank=True)
+    paymentamount=models.BigIntegerField(null=True, blank=True)
+    is_paid=models.BooleanField(null=True, blank=True, default=False)
+    status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.drivername)
+"""End App Status"""

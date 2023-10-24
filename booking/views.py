@@ -97,6 +97,14 @@ class MyBookingList(APIView):
                         # Send the message
                         response = messaging.send(message)
                         print("Notification sent:", response) 
+
+                    #for booking accept 
+                    if PlaceBooking.status == "accept":
+                        return Response({'msg':'booking is accepted'})
+                    
+                    #for booking decline 
+                    elif PlaceBooking.status == "decline":
+                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
@@ -119,6 +127,8 @@ class MyBookingList(APIView):
         return Response(serializer.data)
     
 class Acceptedride(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
         print("output data:",data)
@@ -351,14 +361,13 @@ class UpcomingBooking(APIView):
 
 class Agentbookingview(APIView):
     def post(self, request):
-        try:
-            data=request.data
-            serializer= Agentbookingserailizer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-        except:
-            return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        data=request.data
+        serializer= Agentbookingserailizer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+                return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
 
