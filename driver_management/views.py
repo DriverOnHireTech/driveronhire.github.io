@@ -195,3 +195,25 @@ class DriverreferView(APIView):
             return Response({'msg':'All Driver Refrence list', 'data':Driver_ref_serialzer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'msg':'No Data Found'}, status=status.HTTP_424_FAILED_DEPENDENCY)
+
+
+class DriverappstatusView(APIView):
+    def post(self, request):
+        data=request.data
+        serializer=Driverappstatusserializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'Driver App status is created', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'msg':'Record Not created', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+    
+
+    def get(self, request):
+        try:
+
+            all_appstatus= Driverappstatus.objects.all()
+            serializer= Driverappstatusserializer(all_appstatus, many=True)
+            return Response({'msg':'All Data', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        
+        except Driverappstatus.DoesNotExist:
+            return Response({'msg':'No Record found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
