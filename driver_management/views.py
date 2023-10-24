@@ -206,3 +206,14 @@ class DriverappstatusView(APIView):
             return Response({'msg':'Driver App status is created', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Record Not created', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+    
+
+    def get(self, request):
+        try:
+
+            all_appstatus= Driverappstatus.objects.all()
+            serializer= Driverappstatusserializer(all_appstatus, many=True)
+            return Response({'msg':'All Data', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        
+        except Driverappstatus.DoesNotExist:
+            return Response({'msg':'No Record found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
