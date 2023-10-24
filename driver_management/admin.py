@@ -10,4 +10,8 @@ admin.site.register(Driverleave)
 admin.site.register(DriverBalance)
 admin.site.register(Driverlocation)
 
+class Driverappstatusadmin(admin.ModelAdmin):
+    fields=['drivername', 'package', 'paymentamount', 'is_paid', 'status']
+admin.site.register(Driverappstatus, Driverappstatusadmin)
+
 
