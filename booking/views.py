@@ -17,6 +17,7 @@ from django.http import JsonResponse
 from datetime import datetime, timedelta
 from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
+from django.db.models import Q
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -29,6 +30,12 @@ class MyBookingList(APIView):
     def post(self, request, format=None): 
         user=request.user
         data=request.data
+        trip_type=request.data['trip_type']
+        car_type= request.data['car_type']
+        gear_type=request.data['gear_type']
+        pickup_location=request.data['pickup_location']
+        drop_location=request.data['drop_location']
+
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -82,7 +89,7 @@ class MyBookingList(APIView):
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
-                                body="A new booking is available!"
+                                body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
                             ),
                             token= registration_ids[0]  # Replace with the appropriate FCM topic
                         )
@@ -91,13 +98,6 @@ class MyBookingList(APIView):
                         response = messaging.send(message)
                         print("Notification sent:", response) 
 
-                    #for booking accept 
-                    if PlaceBooking.status == "accept":
-                        return Response({'msg':'booking is accepted'})
-                    
-                    #for booking decline 
-                    elif PlaceBooking.status == "decline":
-                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
@@ -120,6 +120,8 @@ class MyBookingList(APIView):
         return Response(serializer.data)
     
 class Acceptedride(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
         print("output data:",data)
@@ -298,14 +300,35 @@ class UpcomingBooking(APIView):
 
 class Agentbookingview(APIView):
     def post(self, request):
+        data=request.data
+        serializer= Agentbookingserailizer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+                return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+    def get(self, request):
         try:
-            data=request.data
-            serializer= Agentbookingserailizer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-        except:
-            return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+            mobile_number= request.GET.get('mobile_number')
+            client_name= request.GET.get('client_name')
+
+            clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name))
+
+            if clinet_data.exists():
+                serializer=Agentbookingserailizer(clinet_data, many=True)
+                
+                return Response({'msg':'Customer Data','data':serializer.data}, status=status.HTTP_200_OK)
+            
+            else:
+                return Response({'msg':'No Data Found'}, status=status.HTTP_204_NO_CONTENT)
+            
+        except AgentBooking.DoesNotExist:
+            return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+            
         
             
         
