@@ -61,7 +61,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=300))
+                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -93,18 +93,10 @@ class MyBookingList(APIView):
                             ),
                             token= registration_ids[0]  # Replace with the appropriate FCM topic
                         )
-
+                        print("Notification message: ", message.notification.body)
                         # Send the message
                         response = messaging.send(message)
                         print("Notification sent:", response) 
-
-                    #for booking accept 
-                    if PlaceBooking.status == "accept":
-                        return Response({'msg':'booking is accepted'})
-                    
-                    #for booking decline 
-                    elif PlaceBooking.status == "decline":
-                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
@@ -134,11 +126,16 @@ class Acceptedride(APIView):
         print("User: ",user)
         print("accepted driver", data['accepted_driver'])
         booking= PlaceBooking.objects.get(id=id)
+        print("Booking details: ", booking.status)
         serializer= PlacebookingSerializer(booking, data=data, partial=True)
         booking.accepted_driver= user
+
         if serializer.is_valid():
-            serializer.save()
-            return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+            if booking.status == "accept":
+                return Response({'msg': 'booking already accepted'})
+            else:
+                serializer.save()
+                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
 

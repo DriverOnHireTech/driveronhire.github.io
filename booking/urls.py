@@ -2,7 +2,7 @@ from django.urls import path
 
 from . import views
 
-urlpatterns=[
+urlpatterns = [
 
     path('booking/', views.MyBookingList.as_view(), name='booking'),
 
@@ -25,4 +25,5 @@ urlpatterns=[
     path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
 
     path('agentbooking/', views.Agentbookingview.as_view(), name='agent-booking'),
+
 ]
