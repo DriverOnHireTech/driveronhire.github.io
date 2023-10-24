@@ -114,6 +114,11 @@ class AgentBooking(models.Model):
     car= models.CharField(max_length=100, null=True, blank=True)
     bookingfor= models.CharField(choices=booking_type, null=True, blank=True)
     source= models.CharField(max_length=100, null=True,blank=True)
+    from_date= models.DateField(auto_now_add=False)
+    to_date=models.DateField(auto_now_add=False)
+    religion= models.CharField(max_length=100, null=True,blank=True)
+    request_type=models.CharField(max_length=100, null=True, blank=True)
+    trip_type=models.CharField(max_length=100, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True)
 
     def __str__(self):
