@@ -98,13 +98,6 @@ class MyBookingList(APIView):
                         response = messaging.send(message)
                         print("Notification sent:", response) 
 
-                    #for booking accept 
-                    if PlaceBooking.status == "accept":
-                        return Response({'msg':'booking is accepted'})
-                    
-                    #for booking decline 
-                    elif PlaceBooking.status == "decline":
-                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
@@ -127,6 +120,8 @@ class MyBookingList(APIView):
         return Response(serializer.data)
     
 class Acceptedride(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
         print("output data:",data)
