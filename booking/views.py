@@ -300,14 +300,13 @@ class UpcomingBooking(APIView):
 
 class Agentbookingview(APIView):
     def post(self, request):
-        try:
-            data=request.data
-            serializer= Agentbookingserailizer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-        except:
-            return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        data=request.data
+        serializer= Agentbookingserailizer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+                return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
 
