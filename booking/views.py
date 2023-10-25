@@ -18,6 +18,7 @@ from datetime import datetime, timedelta
 from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
 from django.db.models import Q
+from django.core.mail import send_mail
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -362,10 +363,18 @@ class UpcomingBooking(APIView):
 # Agent can book from here
 
 class Agentbookingview(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
         data=request.data
+        user=request.user
+        email=request.data['email']
+        mobile_number=request.data['mobile_number']
+        bookingfor=request.data['bookingfor']
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
+            serializer.validated_data['booking_created_by']=user.id
+            mail_send= send_mail(mobile_number, bookingfor, email, [settings.EMAIL_HOST_USER], fail_silently=False)
             serializer.save()
             return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
@@ -393,7 +402,16 @@ class Agentbookingview(APIView):
             
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
- 
+    
+    def patch(self, request, id):
+        
+            agent_booking= AgentBooking.objects.get(id=id)
+            serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
     
     def delete(self, request, id):
         agentdata=AgentBooking.objects.get(id=id)
