@@ -393,7 +393,16 @@ class Agentbookingview(APIView):
             
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
- 
+    
+    def patch(self, request, id):
+        
+            agent_booking= AgentBooking.objects.get(id=id)
+            serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
     
     def delete(self, request, id):
         agentdata=AgentBooking.objects.get(id=id)

@@ -83,8 +83,7 @@ class Profileserializer(serializers.ModelSerializer):
 class Agentbookingserailizer(serializers.ModelSerializer):
     class Meta:
         model= AgentBooking
-        fields= ('client_name', 'mobile_number', 'email', 'Address', 'car', 'bookingfor',
-                 'source')
+        fields= "__all__"
    
 class BookLaterSerializer(serializers.ModelSerializer):
     class Meta:

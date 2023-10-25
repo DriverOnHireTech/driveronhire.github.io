@@ -172,7 +172,7 @@ REST_FRAMEWORK = {
 
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.path.join(BASE_DIR, "notification.json")
 # cred = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
-cred = credentials.Certificate("C:/driveronhire.github.io/notification.json")
+cred = credentials.Certificate(os.path.join(BASE_DIR, "notification.json"))
 initialize_app(cred, options={
     "projectId": "notification-1c61d",
     "messagingSenderId": "601537089473",

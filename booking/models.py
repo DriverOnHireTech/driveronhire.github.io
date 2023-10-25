@@ -123,6 +123,7 @@ class AgentBooking(models.Model):
     request_type=models.CharField(max_length=100, null=True, blank=True)
     trip_type=models.CharField(max_length=100, null=True, blank=True)
     packege=  models.CharField(max_length=100, null=True, blank=True)
+    visiting_location= models.CharField(max_length=200, null=True, blank=True)
     status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True)
