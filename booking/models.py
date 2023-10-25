@@ -37,7 +37,8 @@ class PlaceBooking(models.Model):
         ('accept','accept'),
         ('decline', 'decline'),
         ('pending', 'pending'),
-        ('completed', 'completed')
+        ('completed', 'completed'),
+        ('cancelled', 'cancelled')
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     mobile= models.PositiveBigIntegerField()
