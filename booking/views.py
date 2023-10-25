@@ -392,6 +392,11 @@ class Agentbookingview(APIView):
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
             
+    
+    def delete(self, request, id):
+        agentdata=AgentBooking.objects.get(id=id)
+        agentdata.delete()
+        return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
         
             
         
