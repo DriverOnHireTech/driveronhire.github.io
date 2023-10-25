@@ -368,13 +368,16 @@ class Agentbookingview(APIView):
     def post(self, request):
         data=request.data
         user=request.user
-        email=request.data['email']
+        client_name = request.data['client_name']
+        email=[request.data['email']]
         mobile_number=request.data['mobile_number']
         bookingfor=request.data['bookingfor']
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
-            serializer.validated_data['booking_created_by']=user.id
-            mail_send= send_mail(mobile_number, bookingfor, email, [settings.EMAIL_HOST_USER], fail_silently=False)
+            serializer.validated_data['booking_created_by']=User.objects.get(id=user.id)
+            title = "Your booking details"
+            message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+            mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
             serializer.save()
             return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
