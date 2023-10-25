@@ -61,7 +61,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                            ).filter(distance__lte=D(km=300))
+                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -93,11 +93,18 @@ class MyBookingList(APIView):
                             ),
                             token= registration_ids[0]  # Replace with the appropriate FCM topic
                         )
-
+                        print("Notification message: ", message.notification.body)
                         # Send the message
                         response = messaging.send(message)
                         print("Notification sent:", response) 
 
+                    #for booking accept 
+                    if PlaceBooking.status == "accept":
+                        return Response({'msg':'booking is accepted'})
+                    
+                    #for booking decline 
+                    elif PlaceBooking.status == "decline":
+                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
@@ -129,25 +136,79 @@ class Acceptedride(APIView):
         print("User: ",user)
         print("accepted driver", data['accepted_driver'])
         booking= PlaceBooking.objects.get(id=id)
+        print("Booking details: ", booking.status)
         serializer= PlacebookingSerializer(booking, data=data, partial=True)
         booking.accepted_driver= user
+
         if serializer.is_valid():
-            serializer.save()
-            return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+            if booking.status == "accept":
+                return Response({'msg': 'booking already accepted'})
+            else:
+                serializer.save()
+                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
 
     
 """for book leter"""
-# class ScheduleBookingView(APIView):
-#     def post(self, request, format=None)
-#         current_time = datetime.now()
-#         booking_time = current_time + timedelta(minutes=10)
-#         serializer = BookingLeterSerializer(data={'user': request.user.id, 'booking_time': booking_time})
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ScheduleBookingView(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        current_time = datetime.now()
+        booking_time = current_time + timedelta(minutes=1)
+        serializer = BookLaterSerializer(data=request.data)
+        if serializer.is_valid():
+            car_type= serializer.validated_data.get('car_type')
+            transmission_type=serializer.validated_data.get('gear_type')   
+            driver=AddDriver.objects.filter( car_type=car_type, transmission_type=transmission_type).values('first_name', 'mobile')
+            print("Driver Details: ", driver)
+
+            if driver.exists():
+                devices = FCMDevice.objects.all()
+                print("Device data: ", devices)
+
+                registration_ids = []
+                for device in devices:
+                    registration_id = device.registration_id
+                    registration_ids.append(registration_id)
+                print("registration id:", registration_ids)
+
+                # Send notification using FCM
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title="New Booking",
+                        body="A new booking is available!"
+                    ),
+                    token= registration_ids[0] 
+                )
+
+                # Send the message
+                response = messaging.send(message)
+                print("Notification sent:", response) 
+
+                status = serializer.validated_data.get('status')
+
+                #for booking accept 
+                if status == "accept":
+                    return Response({'msg':'booking is accepted'})
+                #for pending booking
+                if status == "pending":
+                    return Response({'msg':'booking is sent'})
+                
+                #for booking decline 
+                elif status == "decline":
+                    return Response({'msg':'booking is decline'})
+                
+                serializer.validated_data['user_id'] = user.id
+                serializer.save()
+
+                return Response({'data':serializer.data, 'drivers':list(driver)})
+                        
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """end book leter"""
 
@@ -164,9 +225,11 @@ class BookingListWithId(APIView):
     serializer_class = PlacebookingSerializer
 
     def put(self, request, id):
+        user = request.user
         booking = PlaceBooking.objects.get(id=id)
         serializer = PlacebookingSerializer(booking, data=request.data, partial=True)
         if serializer.is_valid():
+            serializer.validated_data['user_id'] = user.id
             serializer.save()
             return Response(request.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
@@ -324,16 +387,18 @@ class Agentbookingview(APIView):
                 return Response({'msg':'Customer Data','data':serializer.data}, status=status.HTTP_200_OK)
             
             else:
-                return Response({'msg':'No Data Found'}, status=status.HTTP_204_NO_CONTENT)
+                alldata=AgentBooking.objects.all().order_by('id')
+                serialzier= Agentbookingserailizer(alldata, many=True)
+                return Response({'msg':'All Data', 'data':serialzier.data}, status=status.HTTP_204_NO_CONTENT)
             
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
-            
+ 
     
     def delete(self, request, id):
         agentdata=AgentBooking.objects.get(id=id)
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
-        
+     
             
         
