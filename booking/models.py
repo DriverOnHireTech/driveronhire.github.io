@@ -106,6 +106,7 @@ class AgentBooking(models.Model):
         ('drop', 'drop'),
         ('outstation', 'outstation')
     )
+    Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
     client_name= models.CharField(max_length=200, null=True, blank=True)
     mobile_number= models.BigIntegerField(null=True, blank=True)
     Alternet_number= models.BigIntegerField(null=True, blank=True)
@@ -121,6 +122,8 @@ class AgentBooking(models.Model):
     request_type=models.CharField(max_length=100, null=True, blank=True)
     trip_type=models.CharField(max_length=100, null=True, blank=True)
     packege=  models.CharField(max_length=100, null=True, blank=True)
+    status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
+    driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True)
 
     def __str__(self):
