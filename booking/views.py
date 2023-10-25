@@ -18,6 +18,7 @@ from datetime import datetime, timedelta
 from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
 from django.db.models import Q
+from django.core.mail import send_mail
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -362,14 +363,18 @@ class UpcomingBooking(APIView):
 # Agent can book from here
 
 class Agentbookingview(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
-        authentication_classes=[TokenAuthentication]
-        permission_classes=[IsAuthenticated]
         data=request.data
         user=request.user
+        email=request.data['email']
+        mobile_number=request.data['mobile_number']
+        bookingfor=request.data['bookingfor']
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
             serializer.validated_data['booking_created_by']=user.id
+            mail_send= send_mail(mobile_number, bookingfor, email, [settings.EMAIL_HOST_USER], fail_silently=False)
             serializer.save()
             return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
