@@ -15,5 +15,5 @@ admin.site.register(AddfavoriteDriver, Addfavoritedriveradmin)
 
 
 class AgentbookingAdmin(admin.ModelAdmin):
-    fields=['client_name', 'Address', 'car', 'bookingfor', 'mobile_number', "bookingdt"]
+    fields=['client_name', 'Address', 'car', 'bookingfor', 'mobile_number']
 admin.site.register(AgentBooking, AgentbookingAdmin)
