@@ -363,9 +363,13 @@ class UpcomingBooking(APIView):
 
 class Agentbookingview(APIView):
     def post(self, request):
+        authentication_classes=[TokenAuthentication]
+        permission_classes=[IsAuthenticated]
         data=request.data
+        user=request.user
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
+            serializer.validated_data['booking_created_by']=user.id
             serializer.save()
             return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:

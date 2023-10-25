@@ -126,6 +126,7 @@ class AgentBooking(models.Model):
     visiting_location= models.CharField(max_length=200, null=True, blank=True)
     status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
+    booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True)
 
     def __str__(self):
