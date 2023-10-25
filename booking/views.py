@@ -331,7 +331,7 @@ class Agentbookingview(APIView):
             
     
     def delete(self, request, id):
-        agentdata=AgentBooking.objects.all()
+        agentdata=AgentBooking.objects.get(id=id)
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
         
