@@ -24,10 +24,7 @@ urlpatterns = [
 
     path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
 
-    path('agentbooking/', views.Agentbookingview.as_view(), name='agent-booking'),
+    path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'),
 
-<<<<<<< HEAD
-=======
     path('deleteclinetbooking/<int:id>/', views.Agentbookingview.as_view(), name='delete'),
->>>>>>> ec1fb3e4f891083de0f9c4025dcc2567b4c01c0c
 ]
