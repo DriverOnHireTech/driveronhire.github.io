@@ -28,7 +28,7 @@ class MyDriverSerializer(serializers.ModelSerializer):
         model = AddDriver
         fields = ('first_name', 'sex', 'date_of_birth', 'driver_type', 'branch', 'zone', 't_address', 'p_address','mobile',
                   'licence_no', 'licence_issued_from', 
-                  'licence_type', 'date_of_issue', 'date_of_expiry', 'present_salary', 'start_doh_date', 'aggrement_expiry_date', 'driverlocation')
+                  'licence_type', 'date_of_issue', 'date_of_expiry', 'present_salary', 'start_doh_date', 'aggrement_expiry_date','scheme_type', 'transmission_type','car_type')
 
 
 class DriverleaveSerializer(serializers.ModelSerializer):
