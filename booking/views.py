@@ -406,13 +406,6 @@ class Agentbookingview(APIView):
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
         
-    def get(self, request, id):
-        try:
-            data = AgentBooking.objects.get(id=id)
-            serializer = Agentbookingserailizer(data)
-            return Response({'msg': 'Data with id', 'data': serializer.data})
-        except:
-            return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
     
     def patch(self, request, id):
         
@@ -430,4 +423,12 @@ class Agentbookingview(APIView):
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
      
             
+class AgentDetailView(APIView):
+    def get(self, request, id):
+        try:
+            data = AgentBooking.objects.get(id=id)
+            serializer = Agentbookingserailizer(data)
+            return Response({'msg': 'Data with id', 'data': serializer.data})
+        except:
+            return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
         
