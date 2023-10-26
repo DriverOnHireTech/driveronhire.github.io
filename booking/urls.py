@@ -26,7 +26,7 @@ urlpatterns = [
 
     path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'),
 
-    path('agent_booking/<int:id>/', views.Agentbookingview.as_view(), name='agent-booking'),
+    path('agent_booking/<int:id>/', views.AgentDetailView.as_view(), name='agent-booking-id'),
 
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
 

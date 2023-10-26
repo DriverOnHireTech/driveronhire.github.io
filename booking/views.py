@@ -444,4 +444,12 @@ class driverlineupplacebooking(APIView):
             return Response({'msg':'all driver list', 'data':serializer.data}, status=status.HTTP_200_OK)
      
             
+class AgentDetailView(APIView):
+    def get(self, request, id):
+        try:
+            data = AgentBooking.objects.get(id=id)
+            serializer = Agentbookingserailizer(data)
+            return Response({'msg': 'Data with id', 'data': serializer.data})
+        except:
+            return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
         
