@@ -421,6 +421,27 @@ class Agentbookingview(APIView):
         agentdata=AgentBooking.objects.get(id=id)
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
+    
+
+
+class onoffduteyview(APIView):
+    def get(self, request):
+        pass
+
+# Filter driver based on package
+class driverlineupplacebooking(APIView):  
+    def get(self, request):
+        scheme_type= request.GET.get("scheme_type")
+        
+        if scheme_type:
+            # Get all driver which is in scheme 
+            driver= AddDriver.objects.filter(scheme_type=scheme_type)
+            serializer=MyDriverSerializer(driver, many=True)
+            
+            return Response({'msg':'this is scheme driver', 'data':serializer.data})
+        else:
+            serializer=AddDriver.objects.all().order_by('id')
+            return Response({'msg':'all driver list', 'data':serializer.data}, status=status.HTTP_200_OK)
      
             
 class AgentDetailView(APIView):

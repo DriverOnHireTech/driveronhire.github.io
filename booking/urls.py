@@ -31,4 +31,6 @@ urlpatterns = [
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
 
     path('deleteclinetbooking/<int:id>/', views.Agentbookingview.as_view(), name='delete'),
+
+    path('driverlineup/', views.driverlineupplacebooking.as_view(), name='driver_lineup'),
 ]
