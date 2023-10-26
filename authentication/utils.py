@@ -5,8 +5,9 @@ from twilio.rest import Client  # Import the Twilio Client if using Twilio
 
 
 def username_gene():
-    phone=123456789
+    phone=1234567
     generate=random.randint(0,phone)
     return generate
 
 result= username_gene()
+print(result)
