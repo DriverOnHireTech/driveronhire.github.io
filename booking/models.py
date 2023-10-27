@@ -60,14 +60,14 @@ class PlaceBooking(models.Model):
     
 
 class Invoice(models.Model):
-    user =  models.ForeignKey(bookinguser, on_delete=models.CASCADE)
-    driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE)
-    placebooking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE)
-    add_favourite = models.BooleanField(default=False)
-    invoice_generate =  models.DateTimeField(auto_now_add=True)
+    # user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
+    placebooking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE,null=True, blank=True)
+    add_favourite = models.BooleanField(default=False, null=True, blank=True)
+    invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
 
     def __str__(self):
-        return self.user.full_name
+        return self.driver.first_name
   
 
 class Feedback(models.Model):

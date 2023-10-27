@@ -453,7 +453,7 @@ class driverlineupplacebooking(APIView):
         
         if scheme_type:
             # Get all driver which is in scheme 
-            driver= AddDriver.objects.filter(scheme_type=scheme_type)
+            driver= AddDriver.objects.filter(scheme_type=scheme_type).order_by('id')
             serializer=MyDriverSerializer(driver, many=True)
             
             return Response({'msg':'this is scheme driver', 'data':serializer.data})

@@ -10,4 +10,4 @@ def username_gene():
     return generate
 
 result= username_gene()
-print(result)
+
