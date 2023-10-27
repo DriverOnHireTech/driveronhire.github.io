@@ -178,9 +178,9 @@ class AddDriver(models.Model):
     image_upload = models.ImageField(upload_to='media', default=None, blank=True, null=True)
     # General Details
     #driver_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=20, default=None)
-    middle_name = models.CharField(max_length=20, blank=True, null=True)
-    last_name = models.CharField(max_length=20, blank=True, null=True)
+    first_name = models.CharField(max_length=100, default=None)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
     sex = models.CharField(
         choices=(('Male', "Male"), ('Female', "Female")),
         max_length=10,
@@ -190,7 +190,7 @@ class AddDriver(models.Model):
     date_of_birth = models.DateField()
     mobile = models.CharField(max_length=15, blank=True, null=True)
     alt_mobile = models.CharField(max_length=15, blank=True, null=True)
-    email = models.EmailField(default="info@driveronhire.com")
+    email = models.EmailField(default="info@driveronhire.com", blank=True, null=True)
     
     marital_status = models.CharField(choices=(('Married', 'Married'), ('Single', 'Single')),
                                       max_length=10, blank=True, null=True)
@@ -224,8 +224,8 @@ class AddDriver(models.Model):
     aggrement_expiry_date = models.DateField(blank=True, null=True)
 
     # Licence Information
-    licence_no = models.CharField(max_length=20, blank=True, null=True)
-    licence_issued_from = models.CharField(max_length=20, null=True, blank=True)
+    licence_no = models.CharField(max_length=100, blank=True, null=True)
+    licence_issued_from = models.CharField(max_length=100, null=True, blank=True)
     licence_type = models.CharField(choices=(('LMV-TR', 'LMV-TR'), ('LMV-NT', 'LMV-NT')), default="TR", max_length=10, blank=True, null=True)
     date_of_issue = models.DateField(blank=True, null=True)
     date_of_expiry = models.DateField(blank=True, null=True)
@@ -233,18 +233,18 @@ class AddDriver(models.Model):
     # Driver Screening
     present_salary = models.FloatField(null=True, blank=True)
     expected_salary = models.FloatField(blank=True, null=True)
-    pan_card_no = models.CharField(max_length=15, blank=True, null=True)
-    aadhar_card_no = models.CharField(max_length=20)
+    pan_card_no = models.CharField(max_length=100, blank=True, null=True)
+    aadhar_card_no = models.CharField(max_length=100)
     blood_group = models.CharField(choices=(("O+", "O+"), ("O-", "O-"), ("A+", "A+"), ("A-", "A-"), ("B+", "B+"),("B-", "B-"), ("AB+", "AB+"), ("AB-", "AB-")), max_length=10, blank=True, null=True)
     passport = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10,null=True,blank=True)
-    passport_no = models.CharField(max_length=20, null=True, blank=True)
+    passport_no = models.CharField(max_length=100, null=True, blank=True)
     heavy_vehicle = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, null=True,blank=True)
     car_transmission = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury")), max_length=10, blank=True, null=True)
     start_doh_date = models.DateField(blank=True, null=True)
     
 
     # Car Details
-    car_company_name = models.CharField(max_length=15, null=True,blank=True)
+    car_company_name = models.CharField(max_length=100, null=True,blank=True)
     transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All')), max_length=10, blank=True, null=True)
     car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),
                                          ("MPV", "MPV"), ("MUV", "MUV")),

@@ -120,7 +120,7 @@ class MyBookingList(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request):
         user = request.user.id
-        booking=PlaceBooking.objects.all().order_by('id')
+        booking=PlaceBooking.objects.filter(user_id=user).order_by('id')
         # paginator = PageNumberPagination()
         # page = paginator.paginate_queryset(booking, request)
         serializer = PlacebookingSerializer(booking, many=True)
@@ -440,8 +440,9 @@ class driverlineupplacebooking(APIView):
             
             return Response({'msg':'this is scheme driver', 'data':serializer.data})
         else:
-            serializer=AddDriver.objects.all().order_by('id')
-            return Response({'msg':'all driver list', 'data':serializer.data}, status=status.HTTP_200_OK)
+            adddriverdata=AddDriver.objects.all()
+            serializer1 = MyDriverSerializer(adddriverdata, many=True)
+            return Response({'msg':'all driver list', "data":serializer1.data}, status=status.HTTP_200_OK)
      
             
 class AgentDetailView(APIView):
@@ -452,4 +453,3 @@ class AgentDetailView(APIView):
             return Response({'msg': 'Data with id', 'data': serializer.data})
         except:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
-        

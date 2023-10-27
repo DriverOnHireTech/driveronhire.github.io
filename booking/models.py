@@ -112,8 +112,10 @@ class AgentBooking(models.Model):
     mobile_number= models.BigIntegerField(null=True, blank=True)
     Alternet_number= models.BigIntegerField(null=True, blank=True)
     email=models.EmailField(null=True, blank=True)
-    Address=models.CharField(max_length=500, null=True, blank=True)
-    car= models.CharField(max_length=100, null=True, blank=True)
+    address=models.CharField(max_length=500, null=True, blank=True)
+    car_company= models.CharField(max_length=100, null=True, blank=True)
+    car_type = models.CharField(max_length=100, blank=True, null=True)
+    car_transmission = models.CharField(max_length=100, blank=True, null=True)
     bookingfor= models.CharField(choices=booking_type, null=True, blank=True)
     source= models.CharField(max_length=100, null=True,blank=True)
     from_date= models.DateField(auto_now_add=False, null=True, blank=True)
@@ -127,7 +129,7 @@ class AgentBooking(models.Model):
     status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    bookingdt= models.DateField(auto_now_add=True)
+    bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return self.client_name
