@@ -4,7 +4,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-# from .paginations import cutomepegination
 from rest_framework import status
 from rest_framework import filters
 from django.utils import timezone
@@ -18,6 +17,7 @@ from rest_framework.authentication import BasicAuthentication, TokenAuthenticati
 from .utils import leavecalcu
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
+from rest_framework.pagination import PageNumberPagination
 
 
 
@@ -60,7 +60,7 @@ class BasicDetailView(generics.ListCreateAPIView):
 
 
 class MyDriverList(generics.ListCreateAPIView):
-    # pagination_class=cutomepegination()
+    pagination_class=PageNumberPagination
     queryset = AddDriver.objects.all().order_by('id').reverse()
     serializer_class = MyDriverSerializer
     parser_classes = [MultiPartParser, FormParser]

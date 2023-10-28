@@ -19,6 +19,8 @@ from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
 from django.db.models import Q
 from django.core.mail import send_mail
+from rest_framework.pagination import PageNumberPagination
+from driver_management.paginations import cutomepegination
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -27,7 +29,6 @@ from django.core.mail import send_mail
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
-
     def post(self, request, format=None): 
         user=request.user
         data=request.data
@@ -365,6 +366,7 @@ class UpcomingBooking(APIView):
 class Agentbookingview(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
+
     def post(self, request):
         data=request.data
         user=request.user
@@ -384,24 +386,40 @@ class Agentbookingview(APIView):
                 return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         
 
+    pagination_class = PageNumberPagination
 
     def get(self, request):
+        page = request.query_params.get('page', 1)
+
         try:
 
             mobile_number= request.GET.get('mobile_number')
             client_name= request.GET.get('client_name')
+            if(mobile_number or client_name):
+                clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name))
+                serializer = Agentbookingserailizer(clinet_data, many=True)
+                pagination = cutomepegination()
+                paginated_queryset = pagination.paginate_queryset(clinet_data, request)
+                serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
 
-            clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name))
-
-            if clinet_data.exists():
-                serializer=Agentbookingserailizer(clinet_data, many=True)
-                
-                return Response({'msg':'Customer Data','data':serializer.data}, status=status.HTTP_200_OK)
-            
+                # Return the paginated response
+                return pagination.get_paginated_response(serialized_data.data)
             else:
-                alldata=AgentBooking.objects.all().order_by('id')
-                serialzier= Agentbookingserailizer(alldata, many=True)
-                return Response({'msg':'All Data', 'data':serialzier.data}, status=status.HTTP_200_OK)
+                alldata=AgentBooking.objects.all().order_by('-id')
+                serializer = Agentbookingserailizer(alldata, many=True)
+                pagination = cutomepegination()
+                paginated_queryset = pagination.paginate_queryset(alldata, request)
+                serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
+
+                # Return the paginated response
+                return pagination.get_paginated_response(serialized_data.data)
+
+
+            serializer = Agentbookingserailizer(page, many=True)
+            return self.get_paginated_response({'msg': 'Customer Data', 'data': serializer.data})
+
+
+            return Response({'msg': 'No Data Found'}, status=status.HTTP_204_NO_CONTENT)
             
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
