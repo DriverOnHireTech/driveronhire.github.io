@@ -13,7 +13,6 @@ admin.site.register(Driverlocation)
 
 
 class Adddriveradmin(admin.ModelAdmin):
-    fields=['first_name','driver_type', 'mobile']
     list_filter=['mobile']
 
 admin.site.register(AddDriver, Adddriveradmin)
