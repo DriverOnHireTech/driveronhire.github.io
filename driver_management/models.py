@@ -9,6 +9,7 @@ from user_master.models import region
 
 from django.conf import settings
 from user_master.models import State, City, Branch, Zone, Location
+from multiselectfield import MultiSelectField
 
 # from user_master.models import region
 # from booking.models import PlaceBooking
@@ -173,6 +174,10 @@ class Driverappstatus(models.Model):
         return str(self.is_paid)
 """End App Status"""
 
+transmission_option=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All'))
+car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"))
+
+
 class AddDriver(models.Model):
     """Add driver model"""
     image_upload = models.ImageField(upload_to='media', default=None, blank=True, null=True)
@@ -245,10 +250,10 @@ class AddDriver(models.Model):
 
     # Car Details
     car_company_name = models.CharField(max_length=100, null=True,blank=True)
-    transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All')), max_length=10, blank=True, null=True)
-    car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),
-                                         ("MPV", "MPV"), ("MUV", "MUV")),
-                                max_length=10, blank=True, null=True)
+    # transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All')), max_length=10, blank=True, null=True)
+    # car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV")),max_length=10, blank=True, null=True)
+    transmission_type = MultiSelectField(choices=transmission_option, max_length=500, null=True, blank=True)
+    car_type = MultiSelectField(choices=car_option, max_length=500, null=True, blank=True)
     driven_km = models.FloatField(blank=True, null=True)
 
     # Attach Document

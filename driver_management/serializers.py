@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import serializers
+from rest_framework import serializers, fields
 from .models import *
 from user_master.serializers import *
 from authentication.serializers import NewUserSerializer
@@ -24,6 +24,8 @@ class Driverlocationserializer(serializers.ModelSerializer):
 
 
 class MyDriverSerializer(serializers.ModelSerializer):
+    transmission_type = fields.MultipleChoiceField(choices=transmission_option)
+    car_type = fields.MultipleChoiceField(choices=car_option)
     class Meta:
         model = AddDriver
         fields = ('id','first_name', 'sex', 'date_of_birth', 'driver_type', 'branch', 'zone', 't_address', 'p_address','mobile',
