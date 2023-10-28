@@ -100,6 +100,8 @@ class Driversearch(ListAPIView):
                 mobile = self.request.query_params.get('mobile')
                 if mobile:
                     queryset =queryset.filter (mobile=mobile)
+                    count=queryset.count()
+    
 
                 return queryset
         except AddDriver.DoesNotExist:
