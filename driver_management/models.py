@@ -298,7 +298,7 @@ class AddDriver(models.Model):
     week_off = models.CharField(choices=(("Monday", "Monday"), ("Tuesday", "Tuesday"), ("Wednesday", "Wednesday"),
                                          ("Thursday", "Thursday"), ("Friday", "Friday"), ("Saturday", "Saturday"), ("Sunday", "Sunday")),
                                 max_length=10, blank=True, null=True)
-    scheme_type = models.CharField(choices=(("Platinum", "Platinum"), ("Gold", "Gold"), ("Silver", "Silver")), max_length=10, blank=True, null=True)
+    scheme_type = models.CharField(choices=(("Platinum", "Platinum"), ("Gold", "Gold"), ("Silver", "Silver"), ("Diwali", "Diwali"), ("Gold2", "Gold2"), ("Platinum2", "Platinum2")), max_length=10, blank=True, null=True)
     driver_status = models.CharField(choices=(("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected"), ("Suspended", "Suspended")),max_length=10, blank=True, null=True)
     driver_rating= models.PositiveBigIntegerField(blank=True, null=True)
 

@@ -31,6 +31,7 @@ class Adduser(APIView):
             # otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
             # serailizer.validated_data['otp'] = otp
             serailizer.validated_data['username'] = username_gene()
+            fcm_token= request.data.get('registration_id')
             user = serailizer.save()
             print("user Data:", user)
             if user:
