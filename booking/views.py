@@ -405,7 +405,7 @@ class Agentbookingview(APIView):
                 # Return the paginated response
                 return pagination.get_paginated_response(serialized_data.data)
             else:
-                alldata=AgentBooking.objects.all().order_by('id')
+                alldata=AgentBooking.objects.all().order_by('-id')
                 serializer = Agentbookingserailizer(alldata, many=True)
                 pagination = cutomepegination()
                 paginated_queryset = pagination.paginate_queryset(alldata, request)
