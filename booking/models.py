@@ -40,7 +40,19 @@ class PlaceBooking(models.Model):
         ('completed', 'completed'),
         ('cancelled', 'cancelled')
     )
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    reason=(
+        ("Not in Uniform", "Not in Uniform"),
+        ("Plan got cancel", "Plan got cancel"),
+        ("Driver was not looking good","Driver was not looking good"),
+        ("Asking advance money", "Asking advance money"),
+        ("Driver was smelling", "Driver was smelling"),
+        ("Isolation cover not there", "Isolation cover not there"),
+        ("Not reach on time", "Not reach on time"),
+        ("Driver not received my call", "Driver not received my call"),
+        ("Booked by mistake", "Booked by mistake"),
+        ("Charges issue", "Charges issue")
+    )
+    user = models.ForeignKey(User,on_delete=models.CASCADE) 
     mobile= models.PositiveBigIntegerField()
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     packege= models.CharField(max_length=100, null=True, blank=True)
@@ -52,8 +64,9 @@ class PlaceBooking(models.Model):
     pickup_location=models.CharField(max_length=100, null=True)
     drop_location=models.CharField(max_length=100, null=True)
     status =  models.CharField(max_length=20, choices=STATUS, default='pending')
-    accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, 
-                                         related_name='accepted_driver', null=False, blank=True)
+    cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
+
+    accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
     booking_time=models.DateTimeField(auto_now_add=True)
    
     def __str__(self):
@@ -108,6 +121,18 @@ class AgentBooking(models.Model):
         ('drop', 'drop'),
         ('outstation', 'outstation')
     )
+    reason=(
+        ("Not in Uniform", "Not in Uniform"),
+        ("Plan got cancel", "Plan got cancel"),
+        ("Driver was not looking good","Driver was not looking good"),
+        ("Asking advance money", "Asking advance money"),
+        ("Driver was smelling", "Driver was smelling"),
+        ("Isolation cover not there", "Isolation cover not there"),
+        ("Not reach on time", "Not reach on time"),
+        ("Driver not received my call", "Driver not received my call"),
+        ("Booked by mistake", "Booked by mistake"),
+        ("Charges issue", "Charges issue")
+    )
     Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
     client_name= models.CharField(max_length=200, null=True, blank=True)
     mobile_number= models.BigIntegerField(null=True, blank=True)
@@ -128,6 +153,7 @@ class AgentBooking(models.Model):
     packege=  models.CharField(max_length=100, null=True, blank=True)
     visiting_location= models.CharField(max_length=200, null=True, blank=True)
     status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
+    cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
