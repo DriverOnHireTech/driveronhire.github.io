@@ -46,20 +46,12 @@ class MyBookingList(APIView):
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
 
-                 
-                if car_type is None :    
-                    driver=AddDriver.objects.filter( car_type=car_type, transmission_type=transmission_type)
-
-                elif currant_location:
+                if currant_location:
                     if currant_location is None:
                         return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
                     driver =AddDriver.objects.all()
                     if driver:
                         driver = driver.filter(Q(car_type__contains=car_type) & Q(transmission_type__contains=transmission_type))
-                        print(car_type)
-                        print(transmission_type)
-                        print("Driver Details",driver)
-                    
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
@@ -76,11 +68,17 @@ class MyBookingList(APIView):
                             }
                             driver_data.append(location_dict)                
 
+                    driver_id = []
                     if driver.exists():
-                        devices = FCMDevice.objects.all()
-                        print("Device data: ", devices)
-                        registration_ids = []
+                        for drive in driver_data:
+                            add_driver = AddDriver.objects.filter(id=drive['id'])
+                            for new_driver in add_driver:
+                                print("Add driver id: ", new_driver.driver_user)
+                                driver_id.append(new_driver.driver_user)
+                        
+                        devices = FCMDevice.objects.filter(user__in=driver_id)
 
+                        registration_ids = []
                         for device in devices:
                             registration_id = device.registration_id
                             registration_ids.append(registration_id)
@@ -96,7 +94,6 @@ class MyBookingList(APIView):
                                 ),
                                 token= token  # Replace with the appropriate FCM topic
                             )
-                        print("Notification message: ", message.notification.body)
                         # Send the message
                         response = messaging.send(message)
                         print("Notification sent:", response) 
