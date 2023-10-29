@@ -34,7 +34,8 @@ class CustomAccountManager(BaseUserManager):
 class User(AbstractUser):
     user_type= (
         ('Customer', 'Customer'),
-        ('Driver', 'Driver')
+        ('Driver', 'Driver'), 
+        ('Staff', 'Staff')
     )
     phone = models.BigIntegerField(unique=True)
     usertype = models.CharField(choices=user_type, max_length=100, null=True, blank=True)
