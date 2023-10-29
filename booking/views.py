@@ -88,13 +88,14 @@ class MyBookingList(APIView):
                         print("registration id:", registration_ids)
 
                         # Send notification using FCM
-                        message = messaging.Message(
-                            notification=messaging.Notification(
-                                title="New Booking",
-                                body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
-                            ),
-                            token= registration_ids[0]  # Replace with the appropriate FCM topic
-                        )
+                        for token in registration_ids:
+                            message = messaging.Message(
+                                notification=messaging.Notification(
+                                    title="New Booking",
+                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
+                                ),
+                                token= token  # Replace with the appropriate FCM topic
+                            )
                         print("Notification message: ", message.notification.body)
                         # Send the message
                         response = messaging.send(message)
