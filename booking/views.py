@@ -87,16 +87,17 @@ class MyBookingList(APIView):
 
                         # Send notification using FCM
                         for token in registration_ids:
+                            print("Token value", token)
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
                                     body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
                                 ),
-                                token= token  # Replace with the appropriate FCM topic
+                                token= token 
                             )
-                        # Send the message
-                        response = messaging.send(message)
-                        print("Notification sent:", response) 
+                            # Send the message
+                            response = messaging.send(message)
+                            print("Notification sent:", response) 
 
                     #for booking accept 
                     if PlaceBooking.status == "accept":
@@ -115,16 +116,12 @@ class MyBookingList(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
         
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
+
     def get(self, request):
-        user = request.user.id
-        booking=PlaceBooking.objects.filter(user_id=user).order_by('id')
-        # paginator = PageNumberPagination()
-        # page = paginator.paginate_queryset(booking, request)
+        booking=PlaceBooking.objects.all().order_by('id')
         serializer = PlacebookingSerializer(booking, many=True)
         
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
