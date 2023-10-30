@@ -118,7 +118,7 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        booking=PlaceBooking.objects.all().order_by('id')
+        booking=PlaceBooking.objects.all().order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -142,6 +142,7 @@ class Acceptedride(APIView):
 
         if serializer.is_valid():
             if booking.status == "accept":
+                
                 return Response({'msg': 'booking already accepted'})
             else:
                 serializer.save()
