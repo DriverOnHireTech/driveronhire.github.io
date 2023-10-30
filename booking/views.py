@@ -128,9 +128,12 @@ class Acceptedride(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
+        user = request.user
         print("output data:",data)
-        user = User.objects.get(id=data['accepted_driver'])
-        print("User: ",user)
+        print("User id: ", user.id)
+        data.setdefault("accepted_driver",user.id)
+        # user = User.objects.get(id=data['accepted_driver'])
+        # print("User: ",user)
         print("accepted driver", data['accepted_driver'])
         booking= PlaceBooking.objects.get(id=id)
         print("Booking details: ", booking.status)
