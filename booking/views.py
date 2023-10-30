@@ -201,15 +201,19 @@ class ScheduleBookingView(APIView):
 
 
 class BookingListWithId(APIView):
+    """Get Logged user Booking"""
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
-    def get(self, request, id):
-        user= request.user
-        booking = PlaceBooking.objects.get(id=id)
-        serializer = PlacebookingSerializer(booking)
-        return Response(serializer.data)
-    
-    serializer_class = PlacebookingSerializer
+    def get(self, request):
+        try:
+            user= request.user
+            booking = PlaceBooking.objects.filter(user=user)
+            serializer = PlacebookingSerializer(booking, many=True)
+            return Response({"msg":"All Booking", 'data':serializer.data},status=status.HTTP_200_OK)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No Data Fount'}, status=status.HTTP_204_NO_CONTENT)
+        
+    """End Get user booking"""
 
     def put(self, request, id):
         user = request.user
