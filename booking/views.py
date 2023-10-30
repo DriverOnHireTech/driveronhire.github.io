@@ -95,8 +95,8 @@ class MyBookingList(APIView):
                                 token= token  # Replace with the appropriate FCM topic
                             )
                         # Send the message
-                        response = messaging.send(message)
-                        print("Notification sent:", response) 
+                            response = messaging.send(message)
+                            print("Notification sent:", response) 
 
                     #for booking accept 
                     if PlaceBooking.status == "accept":
