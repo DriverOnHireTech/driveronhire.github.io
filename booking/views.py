@@ -335,7 +335,7 @@ class PendingBooking(APIView):
                 return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
         
         except PlaceBooking.DoesNotExist:
-            return Response({'msg':'No Data found', 'data':serializer.data})
+            return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)
 
 
 class UpcomingBooking(APIView):
