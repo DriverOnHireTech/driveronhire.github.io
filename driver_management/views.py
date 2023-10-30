@@ -86,7 +86,7 @@ class updatedriver(APIView):
         if serializer.is_valid(): 
             serializer.save()
             print("Serializer Data: ", serializer.data)
-            return Response({"msg":"location updated", "data":serializer.data})
+            return Response({"msg":"location updated", "data":serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """End update driver"""
