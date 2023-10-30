@@ -98,14 +98,6 @@ class MyBookingList(APIView):
                             # Send the message
                             response = messaging.send(message)
                             print("Notification sent:", response) 
-
-                    #for booking accept 
-                    if PlaceBooking.status == "accept":
-                        return Response({'msg':'booking is accepted'})
-                    
-                    #for booking decline 
-                    elif PlaceBooking.status == "decline":
-                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
@@ -132,8 +124,6 @@ class Acceptedride(APIView):
         print("output data:",data)
         print("User id: ", user.id)
         data.setdefault("accepted_driver",user.id)
-        # user = User.objects.get(id=data['accepted_driver'])
-        # print("User: ",user)
         print("accepted driver", data['accepted_driver'])
         booking= PlaceBooking.objects.get(id=id)
         print("Booking details: ", booking.status)
@@ -141,12 +131,8 @@ class Acceptedride(APIView):
         booking.accepted_driver= user
 
         if serializer.is_valid():
-            if booking.status == "accept":
-                
-                return Response({'msg': 'booking already accepted'})
-            else:
-                serializer.save()
-                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+            serializer.save()
+            return Response({'msg':'booking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
 
