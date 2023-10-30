@@ -118,7 +118,7 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        booking=PlaceBooking.objects.all().order_by('id')
+        booking=PlaceBooking.objects.all().order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -129,6 +129,8 @@ class Acceptedride(APIView):
     def patch(self, request, id):
         data = request.data
         print("output data:",data)
+        driverfilter=User.objects.filter(usertype='Driver')
+        print("Drivers", driverfilter)
         user = User.objects.get(id=data['accepted_driver'])
         print("User: ",user)
         print("accepted driver", data['accepted_driver'])
