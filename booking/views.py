@@ -128,31 +128,23 @@ class Acceptedride(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
-        user= request.data
+        user = request.user
         print("output data:",data)
-        if user.id !="Driver":
-            return Response({'msg': 'Unauthorized access'}, status=status.HTTP_401_UNAUTHORIZED)
-        driverfilter=User.objects.filter(usertype='Driver')
-        for driver in driverfilter:
-            print("Driver ID:", driver.id)
-
-        try:
-            booking= PlaceBooking.objects.get(id=id)
-            print("Booking details: ", booking.status)
-        except PlaceBooking.DoesNotExist:
-            return Response({'msg': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
-
+        print("User id: ", user.id)
+        data.setdefault("accepted_driver",user.id)
+        # user = User.objects.get(id=data['accepted_driver'])
+        # print("User: ",user)
+        print("accepted driver", data['accepted_driver'])
+        booking= PlaceBooking.objects.get(id=id)
+        print("Booking details: ", booking.status)
         serializer= PlacebookingSerializer(booking, data=data, partial=True)
-    
-        #booking.accepted_driver= data['accepted_driver']
+        booking.accepted_driver= user
 
         if serializer.is_valid():
             if booking.status == "accept":
                 
                 return Response({'msg': 'booking already accepted'})
             else:
-                booking.status = "accept"
-                booking.accepted_driver = user  
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
