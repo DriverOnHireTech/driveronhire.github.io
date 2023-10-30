@@ -118,7 +118,7 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        booking=PlaceBooking.objects.all().order_by('id')
+        booking=PlaceBooking.objects.all().order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -128,23 +128,31 @@ class Acceptedride(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
+        user= request.data
         print("output data:",data)
-        user = User.objects.get(id=data['accepted_driver'])
-        print("User: ",user)
-        print("accepted driver", data['accepted_driver'])
-        booking= PlaceBooking.objects.get(id=id)
-        print("Booking details: ", booking.status)
-        serializer= PlacebookingSerializer(booking, data=data, partial=True)
-        booking.accepted_driver= user
+        driverfilter=User.objects.filter(usertype='Driver')
+        for i in driverfilter:
+             print("Drivers", i.id)
+        if driverfilter or driverfilter.id:
+        # user = User.objects.get(id=data['accepted_driver'])
+        # print("User: ",user)
+        # print("accepted driver", data['accepted_driver'])
+            booking= PlaceBooking.objects.get(id=id)
+            print("Booking details: ", booking.status)
+    
+            serializer= PlacebookingSerializer(booking, data=data, partial=True)
+    
+        #booking.accepted_driver= data['accepted_driver']
 
-        if serializer.is_valid():
-            if booking.status == "accept":
-                return Response({'msg': 'booking already accepted'})
+            if serializer.is_valid():
+                if booking.status == "accept":
+                    
+                    return Response({'msg': 'booking already accepted'})
+                else:
+                    serializer.save()
+                    return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
             else:
-                serializer.save()
-                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+                return Response({'msg':'Not Accpeted', 'error':serializer.errors})
 
     
 """for book leter"""
