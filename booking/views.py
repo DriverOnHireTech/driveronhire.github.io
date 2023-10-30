@@ -129,26 +129,24 @@ class Acceptedride(APIView):
     def patch(self, request, id):
         data = request.data
         user = request.user
+        booking= PlaceBooking.objects.get(id=id)
         print("output data:",data)
         print("User id: ", user.id)
         data.setdefault("accepted_driver",user.id)
-        # user = User.objects.get(id=data['accepted_driver'])
-        # print("User: ",user)
-        print("accepted driver", data['accepted_driver'])
-        booking= PlaceBooking.objects.get(id=id)
-        print("Booking details: ", booking.status)
-        serializer= PlacebookingSerializer(booking, data=data, partial=True)
-        booking.accepted_driver= user
 
-        if serializer.is_valid():
-            if booking.status == "accept":
-                
-                return Response({'msg': 'booking already accepted'})
-            else:
+        if booking.status == "accept":
+                return Response({'msg': 'booking already accepted by other driver'})
+        
+        elif booking.status == "pending":
+            serializer= PlacebookingSerializer(booking, data=data, partial=True)
+            booking.accepted_driver= user
+            if serializer.is_valid():
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+      
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+        return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     
 """for book leter"""
