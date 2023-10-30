@@ -8,7 +8,7 @@ urlpatterns = [
 
     path('book_leter/', views.ScheduleBookingView.as_view(), name='book_leter'),
 
-    path('userbooking/<int:id>/', views.BookingListWithId.as_view(), name='booking-id'),
+    path('userbooking/', views.BookingListWithId.as_view(), name='booking-id'), # Get logged user booking
 
     path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'),
 

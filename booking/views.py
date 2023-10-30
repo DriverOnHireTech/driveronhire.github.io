@@ -128,21 +128,31 @@ class Acceptedride(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
+        user= request.data
         print("output data:",data)
+        if user.id !="Driver":
+            return Response({'msg': 'Unauthorized access'}, status=status.HTTP_401_UNAUTHORIZED)
         driverfilter=User.objects.filter(usertype='Driver')
-        print("Drivers", driverfilter)
-        user = User.objects.get(id=data['accepted_driver'])
-        print("User: ",user)
-        print("accepted driver", data['accepted_driver'])
-        booking= PlaceBooking.objects.get(id=id)
-        print("Booking details: ", booking.status)
+        for driver in driverfilter:
+            print("Driver ID:", driver.id)
+
+        try:
+            booking= PlaceBooking.objects.get(id=id)
+            print("Booking details: ", booking.status)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+
         serializer= PlacebookingSerializer(booking, data=data, partial=True)
-        booking.accepted_driver= user
+    
+        #booking.accepted_driver= data['accepted_driver']
 
         if serializer.is_valid():
             if booking.status == "accept":
+                
                 return Response({'msg': 'booking already accepted'})
             else:
+                booking.status = "accept"
+                booking.accepted_driver = user  
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
@@ -213,15 +223,19 @@ class ScheduleBookingView(APIView):
 
 
 class BookingListWithId(APIView):
+    """Get Logged user Booking"""
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
-    def get(self, request, id):
-        user= request.user
-        booking = PlaceBooking.objects.get(id=id)
-        serializer = PlacebookingSerializer(booking)
-        return Response(serializer.data)
-    
-    serializer_class = PlacebookingSerializer
+    def get(self, request):
+        try:
+            user= request.user
+            booking = PlaceBooking.objects.filter(user=user)
+            serializer = PlacebookingSerializer(booking, many=True)
+            return Response({"msg":"All Booking", 'data':serializer.data},status=status.HTTP_200_OK)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No Data Fount'}, status=status.HTTP_204_NO_CONTENT)
+        
+    """End Get user booking"""
 
     def put(self, request, id):
         user = request.user
