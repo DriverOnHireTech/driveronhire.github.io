@@ -13,7 +13,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 from .utils import leavecalcu
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
@@ -68,20 +68,21 @@ class MyDriverList(generics.ListCreateAPIView):
 
 """Update Driver"""
 class updatedriver(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def get(self, request, id):
         driver = AddDriver.objects.get(id=id)
         serializer = MyDriverSerializer(driver)
         return Response(serializer.data)
 
-    def patch(self, request, id):
+    
+    def patch(self, request):
         data= request.data
         print("Data: ",data)
         user= request.user
-        print("User: ",user)
-        driver= request.data.get('driverlocation')
-        print("Driver: ", driver)
-        driver = AddDriver.objects.get(id=id)
-        print("Again Driver: ", driver)
+        print("User: ",user.id)
+        driver = AddDriver.objects.get(driver_user=user.id)
+        print("Again Driver: ", driver.id)
         serializer =MyDriverSerializer(driver, data=request.data, partial=True)
         if serializer.is_valid(): 
             serializer.save()
