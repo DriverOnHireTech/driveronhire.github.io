@@ -28,7 +28,7 @@ class MyDriverSerializer(serializers.ModelSerializer):
     car_type = fields.MultipleChoiceField(choices=car_option)
     class Meta:
         model = AddDriver
-        fields = ["id","first_name", "sex", "mobile", "driver_type", "transmission_type", "car_type"]
+        fields = ["id","first_name", "sex", "mobile", "driver_type", "transmission_type", "car_type", "driverlocation"]
 
 
 class DriverleaveSerializer(serializers.ModelSerializer):

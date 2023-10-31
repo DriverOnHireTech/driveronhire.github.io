@@ -10,6 +10,8 @@ urlpatterns = [
 
     path('userbooking/', views.BookingListWithId.as_view(), name='booking-id'), # Get logged user booking
 
+    path('userbooking/<int:id>/', views.BookingListWithId.as_view(), name='booking-id'),
+
     path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'),
 
     path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),

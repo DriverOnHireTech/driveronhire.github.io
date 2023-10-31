@@ -147,6 +147,8 @@ class Acceptedride(APIView):
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
         return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
 
     
 """for book leter"""
