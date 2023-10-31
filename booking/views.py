@@ -310,7 +310,7 @@ class UserProfileWithId(APIView):
         try:
             user = Profile.objects.get(id=id)
             serializer = Profileserializer(user)
-            return Response(serializer.data)
+            return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
 
         except Profile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
