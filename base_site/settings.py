@@ -73,7 +73,7 @@ MIDDLEWARE = [
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com',
-    'http://driversonhire.com/'
+    # 'http://driversonhire.com/'
 )
 
 ROOT_URLCONF = "base_site.urls"

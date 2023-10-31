@@ -307,6 +307,7 @@ class AddDriver(models.Model):
         srid=4326, help_text="Point(longitude latitude)")
     
     driver_app_status=models.ForeignKey(Driverappstatus, on_delete=models.CASCADE, null=True, blank=True)
+    driver_update_date= models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.first_name
