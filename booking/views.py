@@ -98,14 +98,6 @@ class MyBookingList(APIView):
                             # Send the message
                             response = messaging.send(message)
                             print("Notification sent:", response) 
-
-                    #for booking accept 
-                    if PlaceBooking.status == "accept":
-                        return Response({'msg':'booking is accepted'})
-                    
-                    #for booking decline 
-                    elif PlaceBooking.status == "decline":
-                        return Response({'msg':'booking is decline'})
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
