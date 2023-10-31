@@ -121,20 +121,24 @@ class Acceptedride(APIView):
     def patch(self, request, id):
         data = request.data
         user = request.user
+        booking= PlaceBooking.objects.get(id=id)
         print("output data:",data)
         print("User id: ", user.id)
         data.setdefault("accepted_driver",user.id)
-        print("accepted driver", data['accepted_driver'])
-        booking= PlaceBooking.objects.get(id=id)
-        print("Booking details: ", booking.status)
-        serializer= PlacebookingSerializer(booking, data=data, partial=True)
-        booking.accepted_driver= user
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'msg':'booking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        if booking.status == "accept":
+                return Response({'msg': 'booking already accepted by other driver'})
+        
+        elif booking.status == "pending":
+            serializer= PlacebookingSerializer(booking, data=data, partial=True)
+            booking.accepted_driver= user
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+      
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+        return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     
 """for book leter"""
@@ -298,7 +302,7 @@ class UserProfileWithId(APIView):
         try:
             user = Profile.objects.get(id=id)
             serializer = Profileserializer(user)
-            return Response(serializer.data)
+            return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
 
         except Profile.DoesNotExist:
             return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)

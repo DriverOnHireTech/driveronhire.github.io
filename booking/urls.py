@@ -20,7 +20,7 @@ urlpatterns = [
 
     path('pendingbookings/', views.PendingBooking.as_view(), name='pendingbookings'),
 
-    path('userprofile/<int:id>/', views.UserProfileWithId.as_view(), name='user-id'),
+    path('userprofile/<int:id>/', views.UserProfileWithId.as_view(), name='user-id'), # Get User profile 
 
     path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
 
