@@ -234,7 +234,7 @@ class BookingListWithId(APIView):
         if serializer.is_valid():
             serializer.validated_data['user_id'] = user.id
             serializer.save()
-            return Response(request.data)
+            return Response({'msg': "Booking Update", 'data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 
