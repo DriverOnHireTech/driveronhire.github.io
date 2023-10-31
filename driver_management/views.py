@@ -117,16 +117,17 @@ class Driversearch(ListAPIView):
 
 # Driver profile
 class Driverprofile(APIView):
-    authentication_classes = [BasicAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request):
         try:
+            user=request.user
             driver = AddDriver.objects.get(driver_user=request.user)
             serializer = MyDriverSerializer(driver)
-            return Response({'msg': 'Here is your profile', 'data':serializer.data})
+            return Response({'msg': 'Here is your profile', 'data':serializer.data}, status=status.HTTP_200_OK)
         
         except AddDriver.DoesNotExist:
-            return Response({'msg': 'No profile was found'})    
+            return Response({'msg': 'No profile was found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)    
 
 
 # Driver Leave API
