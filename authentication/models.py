@@ -52,7 +52,7 @@ class User(AbstractUser):
 
  
     def __str__(self):
-        return self.user_type
+        return str(self.phone)
     
 
 
