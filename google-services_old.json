@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "601537089473",
+    "project_id": "notification-1c61d",
+    "storage_bucket": "notification-1c61d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601537089473:android:6d6afb274ad42ac0b26940",
+        "android_client_info": {
+          "package_name": "com.example.driverapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "601537089473-fjknrr94823rr2m2jnhtoqrc3o2eha2g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMtzF5miG8juNCijcZZNDqrbbNtU7Kf2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "601537089473-fjknrr94823rr2m2jnhtoqrc3o2eha2g.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "601537089473-k181ai6cqchtte8fdkkrlm4pom66a2b6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dohnotification"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
