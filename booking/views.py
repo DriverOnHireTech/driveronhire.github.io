@@ -24,7 +24,7 @@ from driver_management.paginations import cutomepegination
  
 # from geopy.geocoders import Nominatim
 # import geocoder
-
+from datetime import datetime, date
 
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
@@ -110,9 +110,10 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        
-        booking=PlaceBooking.objects.all().order_by('-id')
-        serializer = PlacebookingSerializer(booking, many=True)
+        current_date = date.today()
+        # booking=PlaceBooking.objects.all().order_by('-id')
+        bookings = PlaceBooking.objects.filter(booking_time__date=current_date).order_by('-id')
+        serializer = PlacebookingSerializer(bookings, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
     
