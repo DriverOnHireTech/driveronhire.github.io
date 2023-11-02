@@ -110,6 +110,7 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
+        
         booking=PlaceBooking.objects.all().order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
         
