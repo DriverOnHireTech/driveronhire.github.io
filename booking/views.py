@@ -112,7 +112,7 @@ class MyBookingList(APIView):
     def get(self, request):
         current_date = date.today()
         # booking=PlaceBooking.objects.all().order_by('-id')
-        bookings = PlaceBooking.objects.filter(booking_time__date=current_date).order_by('-id')
+        bookings = PlaceBooking.objects.filter(booking_time__date=current_date, STATUS__in=['pending', 'accept'], user=request.user).order_by('-id')
         serializer = PlacebookingSerializer(bookings, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
