@@ -110,7 +110,43 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        booking=PlaceBooking.objects.all().order_by('-id')
+        currant_location = serializer.validated_data.get('currant_location')
+                # driver_type=serializer.validated_data.get('driver_type')
+        car_type= serializer.validated_data.get('car_type')
+        transmission_type=serializer.validated_data.get('gear_type')
+
+        if currant_location:
+            if currant_location is None:
+                return JsonResponse({'error': 'Current location is missing.'}, status=status.HTTP_400_BAD_REQUEST)
+            driver =AddDriver.objects.all()
+            if driver:
+                driver = driver.filter(Q(car_type__contains=car_type) & Q(transmission_type__contains=transmission_type))
+            
+            driver=driver.annotate(
+                    distance = Distance('driverlocation', currant_location)
+                        ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
+                    
+            driver_data = []
+            for driver_obj in driver:
+                driver_location = driver_obj.driverlocation
+                if driver_location:
+                    location_dict = {
+                        "id": driver_obj.id, 
+                        "longitude": driver_location.x,
+                        "latitude": driver_location.y,
+                    }
+                    driver_data.append(location_dict)                
+
+            driver_id = []
+            if driver.exists():
+                for drive in driver_data:
+                    add_driver = AddDriver.objects.filter(id=drive['id'])
+                    for new_driver in add_driver:
+                        print("Add driver id: ", new_driver.driver_user)
+                        driver_id.append(new_driver.driver_user)
+
+
+        booking=PlaceBooking.objects.filter(user_id__in=driver_id).order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
