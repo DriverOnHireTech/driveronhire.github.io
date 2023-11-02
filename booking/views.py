@@ -276,39 +276,6 @@ class FeedbackApi(APIView):
         return Response({'msg': 'All feedback list', 'data':serializer.data}, status=status.HTTP_201_CREATED)
 
 
-class userprofile(APIView):  
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
-    def post(self, request):
-        user=request.user
-        serializer= Profileserializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'msg':'Profile is update', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'msg':'unable to update', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
-    def get(self, request):
-        try:
-            user = request.user
-            allprofile = Profile.objects.all()
-            pro_seri =Profileserializer(allprofile, many=True)
-            return Response({'msg': 'All Profile List', 'data':pro_seri.data}, status=status.HTTP_200_OK)
-        
-        except Profile.DoesNotExist:
-            return Response({'msg':'No Profile avalaible', 'data':pro_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-class UserProfileWithId(APIView):
-    def get(self, request, id):
-        try:
-            user = Profile.objects.get(id=id)
-            serializer = Profileserializer(user)
-            return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
-
-        except Profile.DoesNotExist:
-            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
-
 
 class PendingBooking(APIView):
     def get(self, request, *args, **kwargs):

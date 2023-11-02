@@ -71,10 +71,7 @@ class Feedbackserializer(serializers.ModelSerializer):
         fields = "__all__"
     
 
-class Profileserializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = "__all__"
+
 
 
 

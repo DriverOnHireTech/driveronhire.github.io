@@ -53,11 +53,11 @@ class PlaceBooking(models.Model):
         ("Charges issue", "Charges issue")
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
-    mobile= models.PositiveBigIntegerField()
+    mobile= models.PositiveBigIntegerField(null=True, blank=True)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     packege= models.CharField(max_length=100, null=True, blank=True)
-    from_date = models.DateField()
-    to_date = models.DateField()
+    booking_date= models.DateField(auto_now_add=False, null=True, blank=True)
+    no_of_days= models.PositiveIntegerField(null=True, blank=True)
     currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
     car_type=models.CharField(max_length=100, null=True)
     gear_type= models.CharField(max_length=100, null=True)
@@ -65,12 +65,20 @@ class PlaceBooking(models.Model):
     drop_location=models.CharField(max_length=100, null=True)
     status =  models.CharField(max_length=100, choices=STATUS, default='pending')
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
-
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
     booking_time=models.DateTimeField(auto_now_add=True)
    
     def __str__(self):
         return self.trip_type
+
+class userProfile(models.Model):
+    user= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    mobile= models.PositiveBigIntegerField(null=True, blank=True)
+    user_address= models.CharField(max_length=200, null=True, blank=True)
+    user_car= models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user.phone)
     
 
 class Invoice(models.Model):
@@ -95,14 +103,6 @@ class Feedback(models.Model):
     
 
 """This model for user Profile"""
-class Profile(models.Model):
-    user= models.ForeignKey(User, on_delete=models.CASCADE)
-    userlocation= gis_point.PointField(
-        "Location in Map", geography=True, blank=True, null=True,
-        srid=4326, help_text="Point(longitude latitude)")
-    
-    def __str__(self):
-        return str(self.user.phone)
     
 
 
