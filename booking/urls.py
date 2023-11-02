@@ -18,11 +18,9 @@ urlpatterns = [
 
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
-    # path('userprofile/', views.userprofile.as_view(), name='userprofile'),
+    path('userprofile/', views.userprofile.as_view(), name='userprofile'),
 
     path('pendingbookings/', views.PendingBooking.as_view(), name='pendingbookings'),
-
-    # path('userprofile/<int:id>/', views.UserProfileWithId.as_view(), name='user-id'), # Get User profile 
 
     path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
 

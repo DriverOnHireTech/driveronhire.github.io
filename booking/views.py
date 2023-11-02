@@ -434,3 +434,17 @@ class AgentDetailView(APIView):
             return Response({'msg': 'Data with id', 'data': serializer.data})
         except:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+        
+class userprofile(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def post(sefl, request):
+        user=request.user
+        data=request.data
+        serializer=Userprofileserializer(data=data)
+        if serializer.is_valid():
+            serializer.validated_data['user']=user.id
+            serializer.save()
+            return Response({'msg':'Profile is created','data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'msg':'Unable to create profile', 'error':serializer.errors}, status=status.HTTP_401_UNAUTHORIZED)
