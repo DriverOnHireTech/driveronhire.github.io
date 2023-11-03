@@ -235,6 +235,20 @@ class BookingListWithId(APIView):
             return Response({'msg': "Booking Update", 'data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+class get_bookingbyid(APIView):
+    def get(self, request, id):
+        try:
+
+            get_booking= PlaceBooking.objects.get(id=id)
+            serializer=PlacebookingSerializer(get_booking)
+            return Response({'msg':"booking by id", 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+            all_booking= PlaceBooking.objects.all()
+            serializer= PlaceBooking(all_booking, many=True)
+            return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
+        
+
+
 
 class InvoiceGenerate(APIView):
     def post(self, request):
