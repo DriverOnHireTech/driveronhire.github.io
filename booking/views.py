@@ -238,7 +238,6 @@ class BookingListWithId(APIView):
 class get_bookingbyid(APIView):
     def get(self, request, id):
         try:
-
             get_booking= PlaceBooking.objects.get(id=id)
             serializer=PlacebookingSerializer(get_booking)
             return Response({'msg':"booking by id", 'data':serializer.data}, status=status.HTTP_200_OK)
@@ -305,7 +304,7 @@ class PendingBooking(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status)
+                pending_booking=PlaceBooking.objects.filter(status=booking_status, user=user.id)
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
