@@ -12,6 +12,8 @@ urlpatterns = [
 
     path('userbooking/<int:id>/', views.BookingListWithId.as_view(), name='booking-id'),
 
+    path('singlebooking/<int:id>/', views.get_bookingbyid.as_view(), name='single-booking'), # single Booking Get
+
     path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'),
 
     path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),

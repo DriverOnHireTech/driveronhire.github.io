@@ -31,8 +31,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
                    'car_type', 'gear_type', 
                   'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile')
 
-    # def get_drivers(self, obj):
-    #     return {'driver':obj.drivers.car_type}
+    
 
    
     

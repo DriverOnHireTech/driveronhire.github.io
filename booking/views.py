@@ -114,7 +114,7 @@ class MyBookingList(APIView):
         print(current_date)
         print(request.user.id)
         booking=PlaceBooking.objects.all().order_by('-id')
-        #bookings = PlaceBooking.objects.filter(booking_time__date=current_date, status__in=['pending', 'accept'], user_id=request.user.id).order_by('-id')
+       # bookings = PlaceBooking.objects.filter(booking_time__date=current_date, status__in=['pending', 'accept'], user_id=request.user.id).order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
         print(serializer.data, 'datata')
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -217,7 +217,7 @@ class BookingListWithId(APIView):
     def get(self, request):
         try:
             user= request.user
-            booking = PlaceBooking.objects.filter(user=user)
+            booking = PlaceBooking.objects.filter(user=user).order_by('-id')
             serializer = PlacebookingSerializer(booking, many=True)
             return Response({"msg":"All Booking", 'data':serializer.data},status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
@@ -234,6 +234,19 @@ class BookingListWithId(APIView):
             serializer.save()
             return Response({'msg': "Booking Update", 'data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+class get_bookingbyid(APIView):
+    def get(self, request, id):
+        try:
+            get_booking= PlaceBooking.objects.get(id=id)
+            serializer=PlacebookingSerializer(get_booking)
+            return Response({'msg':"booking by id", 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+            all_booking= PlaceBooking.objects.all()
+            serializer= PlaceBooking(all_booking, many=True)
+            return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
+        
+
 
 
 class InvoiceGenerate(APIView):
@@ -291,7 +304,7 @@ class PendingBooking(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status)
+                pending_booking=PlaceBooking.objects.filter(status=booking_status, user=user.id)
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
