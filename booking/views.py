@@ -217,7 +217,7 @@ class BookingListWithId(APIView):
     def get(self, request):
         try:
             user= request.user
-            booking = PlaceBooking.objects.filter(user=user)
+            booking = PlaceBooking.objects.filter(user=user).order_by('-id')
             serializer = PlacebookingSerializer(booking, many=True)
             return Response({"msg":"All Booking", 'data':serializer.data},status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
