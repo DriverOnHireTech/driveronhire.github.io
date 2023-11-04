@@ -243,7 +243,7 @@ class get_bookingbyid(APIView):
             return Response({'msg':"booking by id", 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             all_booking= PlaceBooking.objects.all()
-            serializer= PlaceBooking(all_booking, many=True)
+            serializer= PlacebookingSerializer(all_booking, many=True)
             return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
         
 

@@ -80,6 +80,15 @@ class userProfile(models.Model):
     def __str__(self):
         return str(self.user.phone)
     
+"""Save notifications"""
+class Notifydrivers(models.Model):
+    driver=models.ManyToManyField(AddDriver)
+    received_at=models.DateField(auto_now=True)
+
+    def __str__(self):
+        return str(self.driver)
+
+"""End Notifications"""
 
 class Invoice(models.Model):
     # user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
