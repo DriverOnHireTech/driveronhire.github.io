@@ -7,6 +7,7 @@ admin.site.register(Invoice)
 admin.site.register(Feedback)
 admin.site.register(userProfile)
 admin.site.register(BookLater)
+admin.site.register(Notifydrivers)
 
 class Addfavoritedriveradmin(admin.ModelAdmin):
     fields=['user', 'driver_name', 'add_favorite']
