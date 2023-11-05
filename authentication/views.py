@@ -40,12 +40,12 @@ class Adduser(APIView):
                 print("jeson data", json)
                 fcm_token = json['fcm_token']
                 user = json['id'] 
-                device = FCMDevice()
-                device.registration_id = fcm_token
-                device.type = "android"
-                device.name = "Can be anything"
-                device.user = User.objects.get(phone=json['phone'])
-                device.save()
+                # device = FCMDevice()
+                # device.registration_id = fcm_token
+                # device.type = "android"
+                # device.name = "Can be anything"
+                # device.user = User.objects.get(phone=json['phone'])
+                # device.save()
     
             return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
             # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -93,9 +93,18 @@ class LoginView(APIView):
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(phone=phone, password=password)
+        # login_user=User.objects.filter(user=user)
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
+            fcm_token = data.get('fcm_token')
+            # Create and save the FCM device for the user
+            device, created = FCMDevice.objects.get_or_create(user=user)
+            device.registration_id = fcm_token
+            device.type = "android"
+            device.name = user.get_username()
+            device.save()
+
             return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK)
                 
         else:

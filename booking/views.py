@@ -75,7 +75,10 @@ class MyBookingList(APIView):
                             for new_driver in add_driver:
                                 print("Add driver id: ", new_driver.driver_user)
                                 driver_id.append(new_driver.driver_user)
-                        
+                                #Saving driver name whos received notification
+                                notify=Notifydrivers.objects.create(driver_id=driver)
+                                notify.save()
+
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
                         registration_ids = []
