@@ -116,6 +116,7 @@ class Logoutapi(APIView):
         try:
             user =  request.user.id
             logout(request)
+            request.user.auth_token.delete()
             return Response({'msg':'Logout successfuly'}, status=status.HTTP_200_OK)
         
         except:
