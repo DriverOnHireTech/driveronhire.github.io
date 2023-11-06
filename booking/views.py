@@ -56,7 +56,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=10)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -77,8 +77,8 @@ class MyBookingList(APIView):
                                 print("Add driver id: ", new_driver.driver_user)
                                 driver_id.append(new_driver.driver_user)
                                 #Saving driver name whos received notification
-                                notify=Notifydrivers.objects.create(driver_id=driver)
-                                notify.save()
+                                #notify=Notifydrivers.objects.create(driver_id=driver)
+                                #notify.save()
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
