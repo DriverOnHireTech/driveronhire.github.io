@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -250,3 +251,18 @@ class region(models.Model):
     def __str__(self):
         return self.region_name
     
+# class driverpackege(models.Model):
+#     PACKEGES=(
+#         ('Platinum', 'Platinum'),
+#         ('Gold', 'Gold'),
+#         ('Silver', 'Silver')
+#     )
+#     user=models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+#     packege_name=models.CharField(choices=PACKEGES,max_length=200, null=True, blank=True)
+
+#     amount=models.PositiveBigIntegerField(null=True, blank=True)
+
+#     tax= models.IntegerField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.packege_name

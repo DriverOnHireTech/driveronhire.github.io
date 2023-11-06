@@ -26,6 +26,7 @@ from driver_management.paginations import cutomepegination
 # import geocoder
 from datetime import datetime, date
 
+
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -55,7 +56,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=10)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -75,7 +76,10 @@ class MyBookingList(APIView):
                             for new_driver in add_driver:
                                 print("Add driver id: ", new_driver.driver_user)
                                 driver_id.append(new_driver.driver_user)
-                        
+                                #Saving driver name whos received notification
+                                notify=Notifydrivers.objects.create(driver_id=driver)
+                                notify.save()
+
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
                         registration_ids = []
@@ -118,7 +122,8 @@ class MyBookingList(APIView):
         serializer = PlacebookingSerializer(booking, many=True)
         print(serializer.data, 'datata')
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -144,8 +149,6 @@ class Acceptedride(APIView):
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
         return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
-
     
 """for book leter"""
 class ScheduleBookingView(APIView):
@@ -206,7 +209,6 @@ class ScheduleBookingView(APIView):
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 """end book leter"""
 
 
@@ -235,6 +237,7 @@ class BookingListWithId(APIView):
             return Response({'msg': "Booking Update", 'data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+
 class get_bookingbyid(APIView):
     def get(self, request, id):
         try:
@@ -246,8 +249,6 @@ class get_bookingbyid(APIView):
             serializer= PlacebookingSerializer(all_booking, many=True)
             return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
         
-
-
 
 class InvoiceGenerate(APIView):
     def post(self, request):
@@ -293,8 +294,9 @@ class FeedbackApi(APIView):
         return Response({'msg': 'All feedback list', 'data':serializer.data}, status=status.HTTP_201_CREATED)
 
 
-
 class PendingBooking(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def get(self, request, *args, **kwargs):
         try:
             data=request.data
@@ -304,7 +306,7 @@ class PendingBooking(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status)
+                pending_booking=PlaceBooking.objects.filter(status=booking_status, user=user)
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
@@ -339,9 +341,7 @@ class UpcomingBooking(APIView):
             return Response({'msg':'No Data found', 'data':serializer.data})
 
 
-
 # Agent can book from here
-
 class Agentbookingview(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -421,10 +421,10 @@ class Agentbookingview(APIView):
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
     
 
-
 class onoffduteyview(APIView):
     def get(self, request):
         pass
+
 
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  
@@ -451,7 +451,8 @@ class AgentDetailView(APIView):
             return Response({'msg': 'Data with id', 'data': serializer.data})
         except:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
-        
+
+
 class userprofile(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
