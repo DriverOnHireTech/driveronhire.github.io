@@ -19,37 +19,14 @@ class Adduser(APIView):
     def post(self, request):
         data= request.data
         print(data)
-        # registration_id = request.data['registration_id']
 
-        # phone = request.data.get('phone')
         serailizer=NewUserSerializer(data=data)
         if serailizer.is_valid():
-            # otp = ''.join([str(random.randint(0, 9)) for _ in range(4)])
-            # serailizer.validated_data['otp'] = otp
             serailizer.validated_data['username'] = username_gene()
-            fcm_token= request.data.get('registration_id')
             user = serailizer.save()
-            print("user Data:", user)
-            if user:
-                # token = FCMDevice.objects.create(user=user)
-                json = serailizer.data
-                print("jeson data", json)
-                fcm_token = json['fcm_token']
-                user = json['id'] 
-                # device = FCMDevice()
-                # device.registration_id = fcm_token
-                # device.type = "android"
-                # device.name = "Can be anything"
-                # device.user = User.objects.get(phone=json['phone'])
-                # device.save()
+            print("user Data:", user)    
     
             return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
-            # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-            # message = client.messages.create(
-            #     body=f"Your OTP is: {otp}",
-            #     from_=settings.TWILIO_PHONE_NUMBER,
-            #     to=phone
-            # )
             
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
        
@@ -112,6 +89,7 @@ class Logoutapi(APIView):
         try:
             user =  request.user.id
             logout(request)
+            request.user.auth_token.delete()
             return Response({'msg':'Logout successfuly'}, status=status.HTTP_200_OK)
         
         except:

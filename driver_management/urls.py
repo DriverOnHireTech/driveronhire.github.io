@@ -13,7 +13,6 @@ urlpatterns = [
 
     path('api/driverprofile/', Driverprofile.as_view(), name='driverprofile'), # Driver Profile
 
-
     path('api/search_driver/', Driversearch.as_view(), name='search_driver'),
 
     path('api/driverleave/', Driverleaveapi.as_view(), name='driver_leave'),
