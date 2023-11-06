@@ -24,7 +24,7 @@ from driver_management.paginations import cutomepegination
  
 # from geopy.geocoders import Nominatim
 # import geocoder
-
+from datetime import datetime, date
 
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
@@ -110,10 +110,13 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        
+        current_date = date.today()
+        print(current_date)
+        print(request.user.id)
         booking=PlaceBooking.objects.all().order_by('-id')
+       # bookings = PlaceBooking.objects.filter(booking_time__date=current_date, status__in=['pending', 'accept'], user_id=request.user.id).order_by('-id')
         serializer = PlacebookingSerializer(booking, many=True)
-        
+        print(serializer.data, 'datata')
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class Acceptedride(APIView):
@@ -232,6 +235,20 @@ class BookingListWithId(APIView):
             return Response({'msg': "Booking Update", 'data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+class get_bookingbyid(APIView):
+    def get(self, request, id):
+        try:
+
+            get_booking= PlaceBooking.objects.get(id=id)
+            serializer=PlacebookingSerializer(get_booking)
+            return Response({'msg':"booking by id", 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+            all_booking= PlaceBooking.objects.all()
+            serializer= PlaceBooking(all_booking, many=True)
+            return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
+        
+
+
 
 class InvoiceGenerate(APIView):
     def post(self, request):
@@ -279,6 +296,8 @@ class FeedbackApi(APIView):
 
 
 class PendingBooking(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def get(self, request, *args, **kwargs):
         try:
             data=request.data
@@ -288,7 +307,7 @@ class PendingBooking(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status)
+                pending_booking=PlaceBooking.objects.filter(status=booking_status, user=user)
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
@@ -434,3 +453,17 @@ class AgentDetailView(APIView):
             return Response({'msg': 'Data with id', 'data': serializer.data})
         except:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+        
+class userprofile(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def post(sefl, request):
+        user=request.user
+        data=request.data
+        serializer=Userprofileserializer(data=data)
+        if serializer.is_valid():
+            serializer.validated_data['user']=user.id
+            serializer.save()
+            return Response({'msg':'Profile is created','data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'msg':'Unable to create profile', 'error':serializer.errors}, status=status.HTTP_401_UNAUTHORIZED)
