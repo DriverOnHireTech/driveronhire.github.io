@@ -15,10 +15,6 @@ from .utils import username_gene
 from fcm_django.models import FCMDevice
 
 
-
-# Create your views here.
-
-
 class Adduser(APIView):
     def post(self, request):
         data= request.data
