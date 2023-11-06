@@ -63,6 +63,7 @@ class PlaceBooking(models.Model):
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=100, null=True)
     drop_location=models.CharField(max_length=100, null=True)
+    notification_sent = models.BooleanField(default=False, null=True, blank=True)
     status =  models.CharField(max_length=100, choices=STATUS, default='pending')
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
@@ -80,6 +81,15 @@ class userProfile(models.Model):
     def __str__(self):
         return str(self.user.phone)
     
+"""Save notifications"""
+class Notifydrivers(models.Model):
+    driver=models.ManyToManyField(AddDriver)
+    received_at=models.DateField(auto_now=True)
+
+    def __str__(self):
+        return str(self.driver)
+
+"""End Notifications"""
 
 class Invoice(models.Model):
     # user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

@@ -26,6 +26,7 @@ from driver_management.paginations import cutomepegination
 # import geocoder
 from datetime import datetime, date
 
+
 class MyBookingList(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -75,7 +76,10 @@ class MyBookingList(APIView):
                             for new_driver in add_driver:
                                 print("Add driver id: ", new_driver.driver_user)
                                 driver_id.append(new_driver.driver_user)
-                        
+                                #Saving driver name whos received notification
+                                notify=Notifydrivers.objects.create(driver_id=driver)
+                                notify.save()
+
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
                         registration_ids = []
@@ -118,7 +122,8 @@ class MyBookingList(APIView):
         serializer = PlacebookingSerializer(booking, many=True)
         print(serializer.data, 'datata')
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
+
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -144,8 +149,6 @@ class Acceptedride(APIView):
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
         return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
-
     
 """for book leter"""
 class ScheduleBookingView(APIView):
@@ -206,7 +209,6 @@ class ScheduleBookingView(APIView):
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 """end book leter"""
 
 
@@ -217,7 +219,7 @@ class BookingListWithId(APIView):
     def get(self, request):
         try:
             user= request.user
-            booking = PlaceBooking.objects.filter(user=user)
+            booking = PlaceBooking.objects.filter(user=user).order_by('-id')
             serializer = PlacebookingSerializer(booking, many=True)
             return Response({"msg":"All Booking", 'data':serializer.data},status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
@@ -235,20 +237,18 @@ class BookingListWithId(APIView):
             return Response({'msg': "Booking Update", 'data':serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+
 class get_bookingbyid(APIView):
     def get(self, request, id):
         try:
-
             get_booking= PlaceBooking.objects.get(id=id)
             serializer=PlacebookingSerializer(get_booking)
             return Response({'msg':"booking by id", 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             all_booking= PlaceBooking.objects.all()
-            serializer= PlaceBooking(all_booking, many=True)
+            serializer= PlacebookingSerializer(all_booking, many=True)
             return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
         
-
-
 
 class InvoiceGenerate(APIView):
     def post(self, request):
@@ -292,7 +292,6 @@ class FeedbackApi(APIView):
         get_feedback = Feedback.objects.all()
         serializer = Feedbackserializer(get_feedback, many=True)
         return Response({'msg': 'All feedback list', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-
 
 
 class PendingBooking(APIView):
@@ -342,9 +341,7 @@ class UpcomingBooking(APIView):
             return Response({'msg':'No Data found', 'data':serializer.data})
 
 
-
 # Agent can book from here
-
 class Agentbookingview(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -423,10 +420,10 @@ class Agentbookingview(APIView):
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
     
 
-
 class onoffduteyview(APIView):
     def get(self, request):
         pass
+
 
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  
@@ -453,7 +450,8 @@ class AgentDetailView(APIView):
             return Response({'msg': 'Data with id', 'data': serializer.data})
         except:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
-        
+
+
 class userprofile(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
