@@ -65,14 +65,13 @@ class LoginView(APIView):
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(phone=phone, password=password)
-        # login_user=User.objects.filter(user=user)
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
             fcm_token = data.get('fcm_token')
 
             if FCMDevice.objects.filter(registration_id=fcm_token).exists():
-                return Response({'msg':'Fcm device token allready generated'}, status=status.HTTP_200_OK) 
+                return Response({'msg':'Fcm device token allready generated', 'data':data ,'token':token.key}, status=status.HTTP_200_OK) 
             else:
                 # Create and save the FCM device for the user
                 device, created = FCMDevice.objects.get_or_create(user=user)
