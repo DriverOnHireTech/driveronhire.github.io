@@ -21,6 +21,7 @@ from django.db.models import Q
 from django.core.mail import send_mail
 from rest_framework.pagination import PageNumberPagination
 from driver_management.paginations import cutomepegination
+from authentication import utils
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -131,9 +132,6 @@ class Acceptedride(APIView):
         data = request.data
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
-        print("output data:",data)
-        print("User id: ", user.id)
-        data.setdefault("accepted_driver",user.id)
 
         if booking.status == "accept":
                 return Response({'msg': 'booking already accepted by other driver'})
@@ -142,6 +140,17 @@ class Acceptedride(APIView):
             serializer= PlacebookingSerializer(booking, data=data, partial=True)
             booking.accepted_driver= user
             if serializer.is_valid():
+                
+                accepted_driver = booking.accepted_driver
+                # driver_name = AddDriver.objects.get(driver_user=7654002162)
+                print("driver name: ", accepted_driver)
+                print("output data:",data)
+                print("User id: ", user.id)
+                whatsapp_number = f"whatsapp:+919657847644"
+                msg = f"your booking is accepted. Driver number is\n 7045630679"
+                print("Whatsapp number: ", whatsapp_number)
+                data.setdefault("accepted_driver",user.id)
+                utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg )
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
