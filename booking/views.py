@@ -349,17 +349,24 @@ class Agentbookingview(APIView):
     def post(self, request):
         data=request.data
         user=request.user
+<<<<<<< HEAD
         client_name = request.data['client_name']
 	#print("client_name:", client_name)
         email=[request.data['email']]
         mobile_number=data['mobile_number']
         bookingfor=request.data['bookingfor']
+=======
+        # client_name = request.data['client_name']
+        # email=[request.data['email']]
+        # mobile_number=request.data['mobile_number']
+        # bookingfor=request.data['bookingfor']
+>>>>>>> b60c9391586de5b7eecc81ec76d051897f01e0d0
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
-            serializer.validated_data['booking_created_by']=User.objects.get(id=user.id)
-            title = "Your booking details"
-            message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
-            mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
+            # serializer.validated_data['booking_created_by']=User.objects.get(id=user.id)
+            # title = "Your booking details"
+            # message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+            # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
             serializer.save()
             return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
