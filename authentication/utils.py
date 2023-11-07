@@ -12,15 +12,15 @@ def username_gene():
 result= username_gene()
 
 # 
+def twilio_whatsapp(self, message_body, to_number):
+    account_sid = 'AC6131c8aa6b776f8b0cfb9c05bd1af0dc'
+    auth_token = 'b893c17c59715ee9b35a29f12c7772c3'
+    client = Client(account_sid, auth_token)
 
-# account_sid = 'AC14ad4a6275663b2aeb6b65e0fb8211cb'
-# auth_token = '[0ebe4b5681598dd871ac2e3239959957]'
-# client = Client(account_sid, auth_token)
+    message = client.messages.create(
+    from_='whatsapp:+14155238886',
+    body=message_body,
+    to=to_number
+    )
 
-# message = client.messages.create(
-#   from_='whatsapp:+14155238886',
-#   body='Your Twilio code is 1238432',
-#   to='whatsapp:+919657847644'
-# )
-
-# print(message.sid)
+    print(message.sid)
