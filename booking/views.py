@@ -349,18 +349,10 @@ class Agentbookingview(APIView):
     def post(self, request):
         data=request.data
         user=request.user
-<<<<<<< HEAD
-        client_name = request.data['client_name']
-	#print("client_name:", client_name)
-        email=[request.data['email']]
-        mobile_number=data['mobile_number']
-        bookingfor=request.data['bookingfor']
-=======
         # client_name = request.data['client_name']
         # email=[request.data['email']]
         # mobile_number=request.data['mobile_number']
         # bookingfor=request.data['bookingfor']
->>>>>>> b60c9391586de5b7eecc81ec76d051897f01e0d0
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
             # serializer.validated_data['booking_created_by']=User.objects.get(id=user.id)
