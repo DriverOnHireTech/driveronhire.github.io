@@ -21,6 +21,7 @@ from django.db.models import Q
 from django.core.mail import send_mail
 from rest_framework.pagination import PageNumberPagination
 from driver_management.paginations import cutomepegination
+from authentication import utils
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -131,9 +132,6 @@ class Acceptedride(APIView):
         data = request.data
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
-        print("output data:",data)
-        print("User id: ", user.id)
-        data.setdefault("accepted_driver",user.id)
 
         if booking.status == "accept":
                 return Response({'msg': 'booking already accepted by other driver'})
@@ -142,6 +140,17 @@ class Acceptedride(APIView):
             serializer= PlacebookingSerializer(booking, data=data, partial=True)
             booking.accepted_driver= user
             if serializer.is_valid():
+                
+                accepted_driver = booking.accepted_driver
+                # driver_name = AddDriver.objects.get(driver_user=7654002162)
+                print("driver name: ", accepted_driver)
+                print("output data:",data)
+                print("User id: ", user.id)
+                whatsapp_number = f"whatsapp:+919657847644"
+                msg = f"your booking is accepted. Driver number is\n 7045630679"
+                print("Whatsapp number: ", whatsapp_number)
+                data.setdefault("accepted_driver",user.id)
+                utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg )
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -349,15 +358,17 @@ class Agentbookingview(APIView):
     def post(self, request):
         data=request.data
         user=request.user
-        # client_name = request.data['client_name']
+        client_name = request.data['client_name']
         # email=[request.data['email']]
-        # mobile_number=request.data['mobile_number']
-        # bookingfor=request.data['bookingfor']
+        mobile_number=request.data['mobile_number']
+        whatsapp_number = f"whatsapp:+91{mobile_number}"
+        bookingfor=request.data['bookingfor']
         serializer= Agentbookingserailizer(data=data)
         if serializer.is_valid():
-            # serializer.validated_data['booking_created_by']=User.objects.get(id=user.id)
+            serializer.validated_data['booking_created_by']=user
             # title = "Your booking details"
-            # message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+            message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+            utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=message )
             # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
             serializer.save()
             return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
