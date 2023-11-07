@@ -18,15 +18,15 @@ from fcm_django.models import FCMDevice
 class Adduser(APIView):
     def post(self, request):
         data= request.data
-        print(data)
-
-        serailizer=NewUserSerializer(data=data)
-        if serailizer.is_valid():
-            serailizer.validated_data['username'] = username_gene()
-            user = serailizer.save()
-            print("user Data:", user)    
-    
-            return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
+        phone=request.data['phone']
+        if User.objects.filter(phone=phone).exists():
+            return Response({'msg':'Number already exists'})
+        else:
+            serailizer=NewUserSerializer(data=data)
+            if serailizer.is_valid():
+                serailizer.validated_data['username'] = username_gene()
+                user = serailizer.save()    
+                return Response({'msg':'Data is saved', 'data': serailizer.data}, status=status.HTTP_201_CREATED)
             
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
        
@@ -59,7 +59,6 @@ class Adduser(APIView):
 
 
        
-
 class LoginView(APIView):
     def post(self, request):
         data =  request.data
@@ -71,15 +70,18 @@ class LoginView(APIView):
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
             fcm_token = data.get('fcm_token')
-            # Create and save the FCM device for the user
-            device, created = FCMDevice.objects.get_or_create(user=user)
-            device.registration_id = fcm_token
-            device.type = "android"
-            device.name = user.get_username()
-            device.save()
 
-            return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK)
-                
+            if FCMDevice.objects.filter(fcm_token=fcm_token).exists():
+                return Response({'msg':'Fcm device token allready generated'}) 
+            else:
+                # Create and save the FCM device for the user
+                device, created = FCMDevice.objects.get_or_create(user=user)
+                device.registration_id = fcm_token
+                device.type = "android"
+                device.name = user.get_username()
+                device.save()
+                return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK) 
+                  
         else:
             return Response({"msg":"unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
             
