@@ -65,7 +65,6 @@ class LoginView(APIView):
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(phone=phone, password=password)
-        # login_user=User.objects.filter(user=user)
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)

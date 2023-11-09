@@ -304,7 +304,7 @@ class AddDriver(models.Model):
 
     driverlocation = gis_point.PointField(
         "Location in Map", geography=True, blank=True, null=True,
-        srid=4326, help_text="Point(longitude latitude)")
+        srid=4326, help_text="Point(latitude longitude)")
     
     driver_app_status=models.ForeignKey(Driverappstatus, on_delete=models.CASCADE, null=True, blank=True)
     driver_update_date= models.DateField(auto_now_add=True, null=True,blank=True)
