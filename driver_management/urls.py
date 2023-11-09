@@ -9,6 +9,8 @@ urlpatterns = [
 
     path('api/updatedriver/', updatedriver.as_view(), name='update_driver'),
 
+    path('api/updatedriver/<int:id>/', updatedriverwithid.as_view(), name='update_driver_with_id'),
+
     path('api/driver_location', driverlocation.as_view(), name= 'driver-locationupdate'),
 
     path('api/driverprofile/', Driverprofile.as_view(), name='driverprofile'), # Driver Profile

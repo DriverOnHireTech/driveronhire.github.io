@@ -70,12 +70,6 @@ class MyDriverList(generics.ListCreateAPIView):
 class updatedriver(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request, id):
-        driver = AddDriver.objects.get(id=id)
-        serializer = MyDriverSerializer(driver)
-        return Response(serializer.data)
-
-    
     def patch(self, request):
         data= request.data
         print("Data: ",data)
@@ -89,6 +83,14 @@ class updatedriver(APIView):
             print("Serializer Data: ", serializer.data)
             return Response({"msg":"location updated", "data":serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class updatedriverwithid(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, id):
+        driver = AddDriver.objects.get(id=id)
+        serializer = MyDriverSerializer(driver)
+        return Response(serializer.data)
 
 """End update driver"""
 class Driversearch(ListAPIView):
