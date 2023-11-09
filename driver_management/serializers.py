@@ -29,7 +29,7 @@ class MyDriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddDriver
         fields = ["id","first_name", "sex", "mobile", "driver_type", "transmission_type", "car_type", "driverlocation", 
-                  "driver_update_date", "licence_no","pan_card_no","licence_type", "date_of_birth", "driver_status"]
+                  "driver_update_date", "licence_no","pan_card_no","licence_type", "date_of_birth", "driver_status", "total_exp"]
 
 
 class DriverleaveSerializer(serializers.ModelSerializer):
