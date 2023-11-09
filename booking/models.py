@@ -144,6 +144,7 @@ class AgentBooking(models.Model):
         ("Charges issue", "Charges issue")
     )
     Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
+    id = models.AutoField(primary_key=True)
     client_name= models.CharField(max_length=200, null=True, blank=True)
     mobile_number= models.BigIntegerField(null=True, blank=True)
     Alternet_number= models.BigIntegerField(null=True, blank=True)
