@@ -95,7 +95,7 @@ class MyBookingList(APIView):
                         notify.save()
                         print("notify place booking:", notify.place_booking)
                         print("placebooking data", PlaceBooking.objects.get(id=booking_id))
-                        notify.driver.set(*driver)
+                        notify.driver.set(driver)
                         print("Notify: ",notify) 
 
                         registration_ids = []
