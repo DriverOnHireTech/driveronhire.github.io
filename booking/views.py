@@ -84,7 +84,19 @@ class MyBookingList(APIView):
                                 
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
-                           
+
+                        serializer.validated_data['user_id'] = user.id
+                        serializer.save()
+                        booking_id = serializer.data['id']
+                        print("Serializer id: ",serializer.data['id'])
+                        
+                        notify=Notifydrivers.objects.create()
+                        notify.place_booking = PlaceBooking.objects.get(id=booking_id)
+                        notify.save()
+                        print("notify place booking:", notify.place_booking)
+                        print("placebooking data", PlaceBooking.objects.get(id=booking_id))
+                        notify.driver.set(*driver)
+                        print("Notify: ",notify) 
 
                         registration_ids = []
                         for device in devices:
@@ -107,18 +119,7 @@ class MyBookingList(APIView):
                             response = messaging.send(message)
                             print("Notification sent:", response) 
                     
-                    serializer.validated_data['user_id'] = user.id
-                    serializer.save()
-                    booking_id = serializer.data['id']
-                    print("Serializer id: ",serializer.data['id'])
                     
-                    notify=Notifydrivers.objects.create()
-                    notify.place_booking = PlaceBooking.objects.get(id=booking_id)
-                    notify.save()
-                    print("notify place booking:", notify.place_booking)
-                    print("placebooking data", PlaceBooking.objects.get(id=booking_id))
-                    notify.driver.set(*driver)
-                    print("Notify: ",notify)
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
