@@ -57,7 +57,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=10)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -117,7 +117,7 @@ class MyBookingList(APIView):
                     notify.save()
                     print("notify place booking:", notify.place_booking)
                     print("placebooking data", PlaceBooking.objects.get(id=booking_id))
-                    notify.driver.set(driver)
+                    notify.driver.set(*driver)
                     print("Notify: ",notify)
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
