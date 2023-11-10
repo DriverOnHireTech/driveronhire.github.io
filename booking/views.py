@@ -117,7 +117,7 @@ class MyBookingList(APIView):
                     notify.save()
                     print("notify place booking:", notify.place_booking)
                     print("placebooking data", PlaceBooking.objects.get(id=booking_id))
-                    notify.driver.set(driver)
+                    notify.driver.set(*driver)
                     print("Notify: ",notify)
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
