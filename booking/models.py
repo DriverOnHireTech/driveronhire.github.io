@@ -30,8 +30,8 @@ class bookinguser(models.Model):
 
     def __str__(self):
         return self.full_name
-    
-  
+
+
 class PlaceBooking(models.Model):
     STATUS=(
         ('accept','accept'),
@@ -68,9 +68,22 @@ class PlaceBooking(models.Model):
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
     booking_time=models.DateTimeField(auto_now_add=True)
+
    
     def __str__(self):
-        return self.trip_type
+        return f"{self.id}"
+    
+"""Save notifications"""
+class Notifydrivers(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    place_booking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
+    driver=models.ManyToManyField(AddDriver)
+    received_at=models.DateField(auto_now=True)
+
+    def __str__(self):
+        return str(self.place_booking)
+
+"""End Notifications"""
 
 class userProfile(models.Model):
     user= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
@@ -81,15 +94,7 @@ class userProfile(models.Model):
     def __str__(self):
         return str(self.user.phone)
     
-"""Save notifications"""
-class Notifydrivers(models.Model):
-    driver=models.ManyToManyField(AddDriver)
-    received_at=models.DateField(auto_now=True)
 
-    def __str__(self):
-        return str(self.driver)
-
-"""End Notifications"""
 
 class Invoice(models.Model):
     # user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

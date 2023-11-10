@@ -37,6 +37,16 @@ class PlacebookingSerializer(serializers.ModelSerializer):
     #     return user_seri.data
 
    
+class NotifyDriverSerializer(serializers.ModelSerializer):
+    place_booking_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notifydrivers
+        fields = "__all__"
+
+    def get_place_booking_id(self, obj):
+        place_booking = obj.place_booking
+        return place_booking.id if place_booking else None
     
 
 class DriverSerializer(serializers.ModelSerializer):

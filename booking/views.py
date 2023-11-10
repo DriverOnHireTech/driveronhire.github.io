@@ -76,12 +76,15 @@ class MyBookingList(APIView):
                             add_driver = AddDriver.objects.filter(id=drive['id'])
                             for new_driver in add_driver:
                                 print("Add driver id: ", new_driver.driver_user)
+                                print("Notification received: ",new_driver.has_received_notification)
+                                new_driver.has_received_notification = True
                                 driver_id.append(new_driver.driver_user)
+                                
                                 #Saving driver name whos received notification
-                                # notify=Notifydrivers.objects.create(driver_id=driver)
-                                # notify.save()
+                                
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
+                           
 
                         registration_ids = []
                         for device in devices:
@@ -106,6 +109,16 @@ class MyBookingList(APIView):
                     
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
+                    booking_id = serializer.data['id']
+                    print("Serializer id: ",serializer.data['id'])
+                    
+                    notify=Notifydrivers.objects.create()
+                    notify.place_booking = PlaceBooking.objects.get(id=booking_id)
+                    notify.save()
+                    print("notify place booking:", notify.place_booking)
+                    print("placebooking data", PlaceBooking.objects.get(id=booking_id))
+                    notify.driver.set(driver)
+                    print("Notify: ",notify)
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
@@ -115,14 +128,40 @@ class MyBookingList(APIView):
         
 
     def get(self, request):
-        current_date = date.today()
-        print(current_date)
-        print(request.user.id)
-        booking=PlaceBooking.objects.all().order_by('-id')
-       # bookings = PlaceBooking.objects.filter(booking_time__date=current_date, status__in=['pending', 'accept'], user_id=request.user.id).order_by('-id')
-        serializer = PlacebookingSerializer(booking, many=True)
-        print(serializer.data, 'datata')
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        user = request.user
+        print("User data: ",user)
+        print(user.phone)
+        xyz = AddDriver.objects.filter(driver_user=user)
+        driver_ids = [driver.id for driver in xyz]
+        print("adddriver details:", driver_ids)
+
+        # Check if the user is a notified driver
+        try:
+            is_notified_driver = Notifydrivers.objects.filter(driver=driver_ids[0]).exists()
+            notify_driver_data = Notifydrivers.objects.filter(driver=driver_ids[0])
+            print("is notified", is_notified_driver)
+            print("is notified driver: ", notify_driver_data)
+            if is_notified_driver:
+                # Get bookings for notified drivers
+                # notify_driver_serializer = NotifyDriverSerializer()
+                # print("notified drivers:", Notifydrivers.place_booking.id)
+                # booking = Notifydrivers.objects.filter(place_booking=driver_ids[0], place_booking__status='pending').order_by('-id')
+                data_list = []
+                for booking_idd in notify_driver_data:
+                    print("Booking id:", booking_idd)
+                    booking = PlaceBooking.objects.get(id=booking_idd.place_booking.id)
+                    print("booking data: ", booking)
+                    serializer = PlacebookingSerializer(booking)
+                    print(serializer.data)
+                    data_list.append(serializer.data)
+                return Response({'data ':data_list}, status=status.HTTP_200_OK)
+            
+            
+            else:
+                return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+            
+        except:
+            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
 
 
 class Acceptedride(APIView):
