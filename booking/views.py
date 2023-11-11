@@ -148,7 +148,8 @@ class MyBookingList(APIView):
                     
                     serializer = PlacebookingSerializer(booking)
                     data_list.append(serializer.data)
-                return Response({'data ':data_list}, status=status.HTTP_200_OK)
+                revers_recors= data_list.reverse()
+                return Response({'data ':revers_recors}, status=status.HTTP_200_OK)
             
             
             else:
