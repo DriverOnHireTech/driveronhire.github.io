@@ -119,7 +119,6 @@ class MyBookingList(APIView):
                             response = messaging.send(message)
                             print("Notification sent:", response) 
                     
-                    
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
@@ -140,22 +139,17 @@ class MyBookingList(APIView):
         try:
             is_notified_driver = Notifydrivers.objects.filter(driver=driver_ids[0]).exists()
             notify_driver_data = Notifydrivers.objects.filter(driver=driver_ids[0])
-            print("is notified", is_notified_driver)
-            print("is notified driver: ", notify_driver_data)
+           
             if is_notified_driver:
-                # Get bookings for notified drivers
-                # notify_driver_serializer = NotifyDriverSerializer()
-                # print("notified drivers:", Notifydrivers.place_booking.id)
-                # booking = Notifydrivers.objects.filter(place_booking=driver_ids[0], place_booking__status='pending').order_by('-id')
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    print("Booking id:", booking_idd)
+                    
                     booking = PlaceBooking.objects.get(id=booking_idd.place_booking.id)
-                    print("booking data: ", booking)
+                    
                     serializer = PlacebookingSerializer(booking)
-                    print(serializer.data)
                     data_list.append(serializer.data)
-                return Response({'data ':data_list}, status=status.HTTP_200_OK)
+                revers_recors= data_list.reverse()
+                return Response({'data ':revers_recors}, status=status.HTTP_200_OK)
             
             
             else:
@@ -183,12 +177,8 @@ class Acceptedride(APIView):
                 
                 accepted_driver = booking.accepted_driver
                 # driver_name = AddDriver.objects.get(driver_user=7654002162)
-                print("driver name: ", accepted_driver)
-                print("output data:",data)
-                print("User id: ", user.id)
                 whatsapp_number = f"whatsapp:+919657847644"
                 msg = f"your booking is accepted. Driver number is\n 7045630679"
-                print("Whatsapp number: ", whatsapp_number)
                 data.setdefault("accepted_driver",user.id)
                 utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg )
                 serializer.save()
@@ -399,7 +389,6 @@ class Agentbookingview(APIView):
         data=request.data
         user=request.user
         id = request.data.get('id')
-
         client_name = request.data['client_name']
         # email=[request.data['email']]
         mobile_number=request.data['mobile_number']
