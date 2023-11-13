@@ -49,4 +49,30 @@ class senddriverenquiry(APIView):
             return Response({'msg':'Enquiry has been sent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Not sent', 'data':serializer.errors}, status= status.HTTP_406_NOT_ACCEPTABLE)
-        
+    
+    """Get enquiry endpoint"""
+    def get(self, request):
+        try:
+            enq_data=driverenquiry.objects.all().order_by('-id')
+            serializer = DriverEnquiryserializer(enq_data, many=True)
+            return Response({'msg':'Driver enquiry', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+          serializer = DriverEnquiryserializer()
+          return Response({'msg':'No enquiry found', 'data':serializer.errors}, status=status.HTTP_204_NO_CONTENT)      
+    """End endpoint"""
+
+    def patch(self, request,id):
+        pass
+
+class Getsingle_enq(APIView):
+      def get(self, request, id):
+        try:
+            enq_data=driverenquiry.objects.get(id=id)
+            
+            serializer = DriverEnquiryserializer(enq_data)
+            
+            return Response({'msg':'Driver enquiry', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+          serializer = DriverEnquiryserializer()
+          return Response({'msg':'No enquiry found',}, status=status.HTTP_204_NO_CONTENT)      
+    
