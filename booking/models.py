@@ -82,6 +82,8 @@ class Notifydrivers(models.Model):
 
     def __str__(self):
         return str(self.place_booking)
+    
+    # Testing purpose
 
 """End Notifications"""
 
