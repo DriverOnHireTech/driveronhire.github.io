@@ -15,4 +15,5 @@ urlpatterns = [
     path('generate_otp/', views.GenerateOTP.as_view(), name='generate_otp'),
     path('validate_otp/', views.ValidateOTP.as_view(), name='validate_otp'),
     path('fcm-data/', views.GetFCM.as_view(), name="get-fcm"),
+    path('delete/', views.DeleteUser.as_view(), name="Delete-user"),
 ]
