@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from .utils import username_gene
 from fcm_django.models import FCMDevice
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Adduser(APIView):
@@ -56,6 +57,18 @@ class Adduser(APIView):
         serializer = NewUserSerializer(user)
 
         return Response({'msg': 'User password is updated', 'data': serializer.data}, status=status.HTTP_200_OK)
+    
+ 
+
+
+    def delete(self, request, id):
+        try:
+            user_data = User.objects.get(id=id)
+            user_data.delete()
+            return Response({'msg': 'User Deleted', 'data': user_data}, status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response({'msg': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 
        
@@ -83,6 +96,7 @@ class LoginView(APIView):
                   
         else:
             return Response({"msg":"unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
+
             
 
 class Logoutapi(APIView):
