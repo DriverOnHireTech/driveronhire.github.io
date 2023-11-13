@@ -60,6 +60,9 @@ class senddriverenquiry(APIView):
           return Response({'msg':'No enquiry found', 'data':serializer.errors}, status=status.HTTP_204_NO_CONTENT)      
     """End endpoint"""
 
+    def patch(self, request,id):
+        pass
+
 class Getsingle_enq(APIView):
       def get(self, request, id):
         try:
