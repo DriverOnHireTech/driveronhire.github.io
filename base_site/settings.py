@@ -18,7 +18,7 @@ SECRET_KEY = "django-insecure-q&qhlk_^z#n5nqmymkrezl(2c7unn3qw_g7ok(+!w#6gnzq7ab
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.224.98.224', '*']
+ALLOWED_HOSTS = ['18.224.98.224', '*','https://driversonhire.com']
 AUTH_USER_MODEL='authentication.User'
 
 CORS_ORIGIN_ALLOW_ALL=True
