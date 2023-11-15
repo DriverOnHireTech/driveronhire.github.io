@@ -69,9 +69,6 @@ class Adduser(APIView):
         except ObjectDoesNotExist:
             return Response({'msg': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-
-
-       
 class LoginView(APIView):
     def post(self, request):
         data =  request.data
