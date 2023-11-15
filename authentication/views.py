@@ -65,7 +65,8 @@ class Adduser(APIView):
         try:
             user_data = User.objects.get(id=id)
             user_data.delete()
-            return Response({'msg': 'User Deleted', 'data': user_data}, status=status.HTTP_200_OK)
+            serializer = NewUserSerializer(user_data)
+            return Response({'msg': 'User Deleted', 'data': serializer.data}, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response({'msg': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
