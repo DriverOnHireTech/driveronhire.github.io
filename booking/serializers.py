@@ -58,7 +58,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
     
     driver =  serializers.SerializerMethodField()
     placebooking = serializers.SerializerMethodField()
-
     class Meta:
         model = Invoice
         fields = ('driver','placebooking', 'add_favourite')
@@ -85,8 +84,8 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 
 class Agentbookingserailizer(serializers.ModelSerializer):
+    # driver_name=serializers.SerializerMethodField()
     class Meta:
-        driver_name=serializers.SerializerMethodField()
         model= AgentBooking
         fields= "__all__"
 
