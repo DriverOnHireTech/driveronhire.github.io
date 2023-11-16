@@ -180,7 +180,7 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+919657847644"
                 msg = f"your booking is accepted. Driver number is\n 7045630679"
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg )
+                utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
