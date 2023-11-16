@@ -79,10 +79,11 @@ MIDDLEWARE = [
 
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'https://driversonhire.com',
-    'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com',
-    'https://d2nevejjxy6v7u.cloudfront.net',
+    'http://localhost:3000', # Local frontend
+    'https://driversonhire.com', # Backend
+    'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com', # Backend
+    'https://d2nevejjxy6v7u.cloudfront.net',  # Website frontend
+    'http://driveronhire.s3-website.ap-south-1.amazonaws.com' # CRM LINK
     # 'http://driversonhire.com/'
 )
 
