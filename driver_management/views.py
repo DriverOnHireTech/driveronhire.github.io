@@ -63,7 +63,7 @@ class MyDriverList(generics.ListCreateAPIView):
     pagination_class=PageNumberPagination
     queryset = AddDriver.objects.all().order_by('id').reverse()
     serializer_class = MyDriverSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    # parser_classes = [MultiPartParser, FormParser]
 
 
 """Update Driver"""
