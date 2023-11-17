@@ -180,7 +180,7 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+919657847644"
                 msg = f"your booking is accepted. Driver number is\n 7045630679"
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg)
+                utils.twilio_whatsapp(self, to_number=whatsapp_number, message=msg)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -401,7 +401,7 @@ class Agentbookingview(APIView):
                 # title = "Your booking details"
                 message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
                 print(message)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message_body=message )
+                utils.twilio_whatsapp(to_number=whatsapp_number, message_body=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 serializer.save()

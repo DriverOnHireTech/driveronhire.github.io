@@ -12,14 +12,14 @@ def username_gene():
 result= username_gene()
 
 # 
-def twilio_whatsapp(message_body, to_number):
+def twilio_whatsapp(message, to_number):
     account_sid = 'AC5c39741c6c06ec1915938a3065465e46'
     auth_token = 'a1715dfe516b118117334960626c30ca'
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
     from_='whatsapp:+14155238886',
-    body=message_body,
+    body=message,
     to=to_number
     )
 
