@@ -450,14 +450,21 @@ class Agentbookingview(APIView):
         
     
     def patch(self, request, id):
-        
-            agent_booking= AgentBooking.objects.get(id=id)
-            serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+             agent_booking= AgentBooking.objects.get(id=id)
+             data = request.data.get('driver_name', None)
+
+             if data:
+            # Validate and update the driver_name field
+                driver_name_serializer = MyDriverSerializer(agent_booking.driver_name, data=data)
+                if driver_name_serializer.is_valid():
+                    driver_name_serializer.save()
+
+                serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+                if serializer.is_valid():
+                        serializer.save()
+                        return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
     
     def delete(self, request, id):
         agentdata=AgentBooking.objects.get(id=id)
