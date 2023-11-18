@@ -57,7 +57,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=5)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -107,6 +107,10 @@ class MyBookingList(APIView):
 
                         # Send notification using FCM
                         for token in registration_ids:
+                            if token is None or not token.strip():
+                                print("Invalid token")
+                                continue
+
                             print("Token value", token)
                             message = messaging.Message(
                                 notification=messaging.Notification(
@@ -116,8 +120,12 @@ class MyBookingList(APIView):
                                 token= token 
                             )
                             # Send the message
-                            response = messaging.send(message)
-                            print("Notification sent:", response) 
+                            try:
+
+                                response = messaging.send(message)
+                                print("Notification sent:", response) 
+                            except Exception as e:
+                                print(f"Error sending notification to token {token}:{e}")
                     
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
