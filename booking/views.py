@@ -57,7 +57,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=5)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -107,8 +107,8 @@ class MyBookingList(APIView):
 
                         # Send notification using FCM
                         for token in registration_ids:
-                            if token is None or not token.strip():  # Check if the token is None or empty
-                                print("Invalid token, skipping.")
+                            if token is None or not token.strip():
+                                print("Invalid token")
                                 continue
 
                             print("Token value", token)
@@ -122,10 +122,11 @@ class MyBookingList(APIView):
                             )
                             # Send the message
                             try:
+
                                 response = messaging.send(message)
                                 print("Notification sent:", response) 
                             except Exception as e:
-                                print(f"Error sending notification to token {token}: {e}")
+                                print(f"Error sending notification to token {token}:{e}")
                     
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
@@ -188,7 +189,7 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+919657847644"
                 msg = f"your booking is accepted. Driver number is\n 7045630679"
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(self, to_number=whatsapp_number, message_body=msg )
+                utils.twilio_whatsapp(self, to_number=whatsapp_number, message=msg)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -409,7 +410,7 @@ class Agentbookingview(APIView):
                 # title = "Your booking details"
                 message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
                 print(message)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message_body=message )
+                utils.twilio_whatsapp(to_number=whatsapp_number, message_body=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 serializer.save()
@@ -458,14 +459,13 @@ class Agentbookingview(APIView):
         
     
     def patch(self, request, id):
-        
-            agent_booking= AgentBooking.objects.get(id=id)
-            serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
-            if serializer.is_valid():
+        agent_booking= AgentBooking.objects.get(id=id)
+        serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+        if serializer.is_valid():
                 serializer.save()
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
     
     def delete(self, request, id):
         agentdata=AgentBooking.objects.get(id=id)

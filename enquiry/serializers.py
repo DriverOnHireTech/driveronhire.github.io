@@ -12,5 +12,5 @@ class MyEnquirySerializer(serializers.ModelSerializer):
 class DriverEnquiryserializer(serializers.ModelSerializer):
     class Meta:
         model= driverenquiry
-        fields = ('id','phone_number', 'name', 'message', 'email')
+        fields = ('phone_number', 'name', 'message', 'email')
         

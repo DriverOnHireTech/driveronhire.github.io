@@ -18,14 +18,18 @@ SECRET_KEY = "django-insecure-q&qhlk_^z#n5nqmymkrezl(2c7unn3qw_g7ok(+!w#6gnzq7ab
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['18.224.98.224', '*','https://driversonhire.com']
+ALLOWED_HOSTS = ['18.224.98.224','*']
 AUTH_USER_MODEL='authentication.User'
 
-CORS_ORIGIN_ALLOW_ALL=True
+CORS_ORIGIN_ALLOW_ALL=False
 
 CSRF_TRUSTED_ORIGINS=[
-    'https://driversonhire.com'
+    'https://driversonhire.com',
+    'https://d2nevejjxy6v7u.cloudfront.net'
+    'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com'
 ]
+
+# SECURE_SSL_REDIRECT=True
 
 # Application definition
 
