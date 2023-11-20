@@ -107,7 +107,12 @@ class MyBookingList(APIView):
 
                         # Send notification using FCM
                         for token in registration_ids:
+                            if token is None or not token.strip():  # Check if the token is None or empty
+                                print("Invalid token, skipping.")
+                                continue
+
                             print("Token value", token)
+
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
@@ -116,8 +121,11 @@ class MyBookingList(APIView):
                                 token= token 
                             )
                             # Send the message
-                            response = messaging.send(message)
-                            print("Notification sent:", response) 
+                            try:
+                                response = messaging.send(message)
+                                print("Notification sent:", response) 
+                            except Exception as e:
+                                print(f"Error sending notification to token {token}: {e}")
                     
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
