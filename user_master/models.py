@@ -251,6 +251,62 @@ class region(models.Model):
     def __str__(self):
         return self.region_name
     
+class localtwohrscharges(models.Model):
+    CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic") ,("Luxury", "Luxury"))
+    cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
+    charge=models.IntegerField(null=True, blank=True)
+    perour_ot=models.IntegerField(null=True, blank=True)
+    night_allownce=models.IntegerField(null=True, blank=True) # After 11pm to 6am
+    drop_location_change=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.cartype
+    
+
+class localfourhrscharges(models.Model):
+    CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
+    cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
+    charge=models.IntegerField(null=True, blank=True)
+    perour_ot=models.IntegerField(null=True, blank=True)
+    night_allownce=models.IntegerField(null=True, blank=True) # After 11pm to 6am
+    drop_location_change=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.cartype
+    
+class localeigthhrscharges(models.Model):
+    CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
+    cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
+    charge=models.IntegerField(null=True, blank=True)
+    perour_ot=models.IntegerField(null=True, blank=True)
+    night_allownce=models.IntegerField(null=True, blank=True) # After 11pm to 6am
+    drop_location_change=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.cartype
+    
+class out_stn_sday_returncharges(models.Model):
+    CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
+    cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
+    charge=models.IntegerField(null=True, blank=True)
+    perour_ot=models.IntegerField(null=True, blank=True)
+    night_allownce=models.IntegerField(null=True, blank=True) # After 11pm to 6am
+    drop_location_change=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.cartype
+
+class out_stn_charges_stay(models.Model):
+    CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
+    cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
+    charge=models.IntegerField(null=True, blank=True)
+    perour_ot=models.IntegerField(null=True, blank=True)
+    night_allownce=models.IntegerField(null=True, blank=True) # After 11pm to 6am
+    drop_location_change=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.cartype
+    
 # class driverpackege(models.Model):
 #     PACKEGES=(
 #         ('Platinum', 'Platinum'),

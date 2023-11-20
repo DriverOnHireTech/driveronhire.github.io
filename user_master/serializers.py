@@ -82,3 +82,7 @@ class Regionserializer(serializers.ModelSerializer):
         model = region
         fields = '__all__'
 
+class chargestwohrsserailizer(serializers.ModelSerializer):
+    class Meta:
+        model= localtwohrscharges
+        fields="__all__"

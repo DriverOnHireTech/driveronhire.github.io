@@ -19,7 +19,7 @@ class CustomAccountManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, user_name, first_name, password, **other_fields):
-        other_fields.setdefault('is_staff', False )
+        other_fields.setdefault('is_staff', True )
         other_fields.setdefault('is_superuser', True)
         other_fields.setdefault('is_user', True)
 
