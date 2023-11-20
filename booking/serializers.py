@@ -84,20 +84,22 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 
 class Agentbookingserailizer(serializers.ModelSerializer):
-    #driver_name=serializers.SerializerMethodField()
+    driver_name=serializers.SerializerMethodField()
     class Meta:
         model= AgentBooking
         fields= "__all__"
 
-    # def get_driver_name(self,obj):
-    #     driver_name=obj.driver_name
-    #     adddriver_seri= MyDriverSerializer(driver_name)
-    #     return adddriver_seri.data
+    def get_driver_name(self,obj):
+        driver_name=obj.driver_name
+        adddriver_seri= MyDriverSerializer(driver_name)
+        return adddriver_seri.data
     
     # def update(self, instance, validated_data):
     #     # Update only the driver_name field
     #     instance.driver_name = validated_data.get('driver_name', instance.driver_name)
     #     instance.save()
+    #     print("-----------------------")
+    #     print("instance:", instance.driver_name)
     #     return instance
     
    
