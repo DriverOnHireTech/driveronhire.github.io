@@ -226,3 +226,13 @@ class Subscription(admin.ModelAdmin):
         return formfield
 
 admin.site.register(region)
+
+class loclatwohrsadmin(admin.ModelAdmin):
+    list_display=("cartype", "charge", "perour_ot", "night_allownce", "drop_location_change")
+admin.site.register(localtwohrscharges,loclatwohrsadmin)
+
+admin.site.register(localfourhrscharges)
+admin.site.register(localeigthhrscharges)
+admin.site.register(out_stn_sday_returncharges)
+admin.site.register(out_stn_charges_stay)
+

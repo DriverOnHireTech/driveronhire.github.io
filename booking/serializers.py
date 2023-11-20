@@ -29,7 +29,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         
         fields= ('id','trip_type', 'booking_date','no_of_days',
                    'car_type', 'gear_type', 
-                  'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile')
+                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile')
 
     # def get_user(self, obj):
     #     user =  obj.driver
@@ -84,21 +84,34 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 
 class Agentbookingserailizer(serializers.ModelSerializer):
-    #driver_name=serializers.SerializerMethodField()
+    driver_name=serializers.SerializerMethodField()
     class Meta:
+        driver_name=serializers.SerializerMethodField()
+        driver_name1 = MyDriverSerializer()
         model= AgentBooking
         fields= "__all__"
 
-    # def get_driver_name(self,obj):
-    #     driver_name=obj.driver_name
-    #     adddriver_seri= MyDriverSerializer(driver_name)
-    #     return adddriver_seri.data
+    def get_driver_name(self,obj):
+        driver_name=obj.driver_name
+        adddriver_seri= MyDriverSerializer(driver_name)
+        return adddriver_seri.data
     
     # def update(self, instance, validated_data):
     #     # Update only the driver_name field
     #     instance.driver_name = validated_data.get('driver_name', instance.driver_name)
     #     instance.save()
+    #     print("-----------------------")
+    #     print("instance:", instance.driver_name)
     #     return instance
+    
+    def to_representation(self, instance):
+        data = super(Agentbookingserailizer, self).to_representation(instance)
+        driver_data = MyDriverSerializer(instance.driver_name).data
+        data.update({
+            'driver_name': driver_data
+        })
+        print("data updated: ", data)
+        return data
     
    
 class BookLaterSerializer(serializers.ModelSerializer):

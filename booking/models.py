@@ -10,6 +10,8 @@ from django.conf import settings
 from authentication.models import User
 # from client_management.models import AddClient
 from driver_management.models import AddDriver
+from datetime import time
+
 
 
 class bookinguser(models.Model):
@@ -57,6 +59,7 @@ class PlaceBooking(models.Model):
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     packege= models.CharField(max_length=100, null=True, blank=True)
     booking_date= models.DateField(auto_now_add=False, null=True, blank=True)
+    client_booking_time = models.TimeField(default=time(12,0), null=True, blank=True)
     no_of_days= models.PositiveIntegerField(null=True, blank=True)
     currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
     car_type=models.CharField(max_length=100, null=True)

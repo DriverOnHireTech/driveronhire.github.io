@@ -25,6 +25,9 @@ urlpatterns = [
     path('subscription/', MySubscriptionList.as_view(), name='subscription_list'),
     path('subscription/<int:id>/', MySubscriptionGetList.as_view(), name='subscription-list-id'),
     path('region/', Regionapi.as_view(), name='region'),
+    
+    # Charges 
+    path('twohrs/', twohrscharges.as_view(), name='two_hrs_charges'),
 
     # URL for User
     path('createuser/', createUsermaster.as_view(), name='createuser'),

@@ -10,6 +10,8 @@ from .models import *
 from .serializers import *
 import requests
 
+def home(request):
+    return render(request, 'user_master/index.html')
 
 # Registering New user
 class createUsermaster(APIView):
@@ -455,5 +457,11 @@ class Regionapi(APIView):
 
 
 
-def home(request):
-    return render(request, 'user_master/index.html')
+class twohrscharges(APIView):
+    def get(self, request):
+        try:
+            _2hrs =localtwohrscharges.objects.all()
+            serializer = chargestwohrsserailizer(_2hrs, many=True)
+            return Response({"msg":"Local 2hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
+        except chargestwohrsserailizer.DoesNotExist:
+            return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
