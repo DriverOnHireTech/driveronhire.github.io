@@ -57,7 +57,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=300)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=5)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -107,7 +107,12 @@ class MyBookingList(APIView):
 
                         # Send notification using FCM
                         for token in registration_ids:
+                            if token is None or not token.strip():
+                                print("Invalid token")
+                                continue
+
                             print("Token value", token)
+
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
@@ -116,8 +121,12 @@ class MyBookingList(APIView):
                                 token= token 
                             )
                             # Send the message
-                            response = messaging.send(message)
-                            print("Notification sent:", response) 
+                            try:
+
+                                response = messaging.send(message)
+                                print("Notification sent:", response) 
+                            except Exception as e:
+                                print(f"Error sending notification to token {token}:{e}")
                     
 
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
@@ -450,6 +459,7 @@ class Agentbookingview(APIView):
         
     
     def patch(self, request, id):
+<<<<<<< HEAD
            agent_booking= AgentBooking.objects.get(id=id)
            driver_data = request.data.get('driver_name', {})
            driver_serializer = MyDriverSerializer(agent_booking.driver_name, data=driver_data)
@@ -467,6 +477,15 @@ class Agentbookingview(APIView):
                     return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
            else:
                 return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+=======
+        agent_booking= AgentBooking.objects.get(id=id)
+        serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+        if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+>>>>>>> bb21cf0e6d105513a4ea566a601265224845c036
     
     def delete(self, request, id):
         agentdata=AgentBooking.objects.get(id=id)
