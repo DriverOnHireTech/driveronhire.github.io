@@ -156,7 +156,9 @@ class MyBookingList(APIView):
                     booking = PlaceBooking.objects.get(id=booking_idd.place_booking.id)
                     
                     serializer = PlacebookingSerializer(booking)
+                    
                     data_list.append(serializer.data)
+                    
                 revers_recors= data_list.reverse()
                 return Response({'data ':data_list}, status=status.HTTP_200_OK)
             
@@ -358,6 +360,7 @@ class PendingBooking(APIView):
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
+                
                 return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
             else:
                 bookings = PlaceBooking.objects.all()
@@ -408,10 +411,10 @@ class Agentbookingview(APIView):
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
                 # title = "Your booking details"
-                message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
-                print(message)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message_body=message)
-                print("message send")
+                # message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+                # print(message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message_body=message)
+                # print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
