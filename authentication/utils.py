@@ -24,3 +24,9 @@ def twilio_whatsapp(message, to_number):
     )
 
     print(message.sid)
+    
+
+def generate_otp(length=4):
+    # Generate a random OTP with the specified length (default is 6 digits)
+    otp = ''.join(str(random.randint(0, 9)) for _ in range(length))
+    return otp
