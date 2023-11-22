@@ -148,6 +148,8 @@ class VerifyOTPAPIView(APIView):
         # Retrieve OTP from the session
         saved_otp = request.session.get('otp')
         phone = request.session.get('phone')
+        print("otp_attempt", otp_attempt)
+        print("saved_otp", saved_otp)
 
         if saved_otp == otp_attempt:
              # Clear the OTP from the session after successful verification
