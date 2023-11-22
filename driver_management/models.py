@@ -161,18 +161,7 @@ class RmVerification(models.Model):
     driver_rating= models.PositiveBigIntegerField()
 
 
-"""Driver App Status"""
-class Driverappstatus(models.Model):
-    Status=(('active','active'), ('inactive', 'inactive'))
-    drivername=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,null=True, blank=True)
-    package=models.CharField(max_length=100, null=True, blank=True)
-    paymentamount=models.BigIntegerField(null=True, blank=True)
-    is_paid=models.BooleanField(null=True, blank=True, default=False)
-    status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
 
-    def __str__(self):
-        return str(self.is_paid)
-"""End App Status"""
 
 transmission_option=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
 car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"))
@@ -306,7 +295,7 @@ class AddDriver(models.Model):
         "Location in Map", geography=True, blank=True, null=True,
         srid=4326, help_text="Point(latitude longitude)")
     total_exp=models.IntegerField(null=True, blank=True)
-    driver_app_status=models.ForeignKey(Driverappstatus, on_delete=models.CASCADE, null=True, blank=True)
+    #driver_app_status=models.ForeignKey(Driverappstatus, on_delete=models.CASCADE, null=True, blank=True)
     driver_update_date= models.DateField(auto_now_add=True, null=True,blank=True)
     has_received_notification = models.BooleanField(default=False, null=True, blank=True)
 
@@ -314,21 +303,19 @@ class AddDriver(models.Model):
         return self.first_name
 
 
-class ViewDriver(models.Model):
-    """This is for viewing driver"""
+"""Driver App Status"""
+class Driverappstatus(models.Model):
+    PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("silver", "silver"))
+    Status=(('active','active'), ('inactive', 'inactive'))
+    drivername=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
+    package=models.CharField(choices=PACKAGE,max_length=100, null=True, blank=True)
+    paymentamount=models.BigIntegerField(null=True, blank=True)
+    is_paid=models.BooleanField(null=True, blank=True, default=False)
+    status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
 
-
-# class Bookingstatus(models.Model):
-#     STATUS=(
-#         ('accept','accept'),
-#         ('decline', 'decline'),
-#         ('pending', 'pending'),
-#         ('completed', 'completed')
-#     )
-#     #booking_details = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE)
-#     drivername= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     booking_status= models.CharField(choices=STATUS, max_length=50, null=True, blank=True)
-
+    def __str__(self):
+        return str(self.is_paid)
+"""End App Status"""
 
 class ReferDriver(models.Model):
     """Refer driver class"""

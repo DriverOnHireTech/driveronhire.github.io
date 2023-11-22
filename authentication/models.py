@@ -45,6 +45,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=30, blank=True, null=True)
 
     USERNAME_FIELD = 'phone'
+    objects = CustomAccountManager()
     REQUIRED_FIELDS = ['usertype']
 
     db_table = "User"
