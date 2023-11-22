@@ -22,6 +22,8 @@ class Adduser(APIView):
         phone=request.data['phone']
         if User.objects.filter(phone=phone).exists():
             return Response({'msg':'Number already exists'})
+            
+        
         else:
             serailizer=NewUserSerializer(data=data)
             if serailizer.is_valid():
@@ -58,7 +60,6 @@ class Adduser(APIView):
 
         return Response({'msg': 'User password is updated', 'data': serializer.data}, status=status.HTTP_200_OK)
     
- 
 
 
     def delete(self, request, id):
