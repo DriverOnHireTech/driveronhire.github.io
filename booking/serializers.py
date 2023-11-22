@@ -96,14 +96,6 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         adddriver_seri= MyDriverSerializer(driver_name)
         return adddriver_seri.data
     
-    # def update(self, instance, validated_data):
-    #     # Update only the driver_name field
-    #     instance.driver_name = validated_data.get('driver_name', instance.driver_name)
-    #     instance.save()
-    #     print("-----------------------")
-    #     print("instance:", instance.driver_name)
-    #     return instance
-    
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
         driver_data = MyDriverSerializer(instance.driver_name).data

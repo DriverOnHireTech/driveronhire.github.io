@@ -153,11 +153,14 @@ class MyBookingList(APIView):
                 data_list = []
                 for booking_idd in notify_driver_data:
                     
-                    booking = PlaceBooking.objects.get(id=booking_idd.place_booking.id)
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
                     
                     serializer = PlacebookingSerializer(booking)
+                    
+
                     data_list.append(serializer.data)
                 revers_recors= data_list.reverse()
+
                 return Response({'data ':data_list}, status=status.HTTP_200_OK)
             
             
@@ -472,10 +475,6 @@ class Agentbookingview(APIView):
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
     
-
-class onoffduteyview(APIView):
-    def get(self, request):
-        pass
 
 
 # Filter driver based on package
