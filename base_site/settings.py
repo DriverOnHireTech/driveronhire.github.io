@@ -82,7 +82,6 @@ MIDDLEWARE = [
     
 ]
 
-
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000', # Local frontend
     'https://driversonhire.com', # Backend
