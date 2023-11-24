@@ -58,13 +58,25 @@ class BasicDetailView(generics.ListCreateAPIView):
     queryset = BasicDetail.objects.all().order_by('id').reverse()
     serializer_class = BasicDetailSerializer
 
-
+"""Get 10 records and create driver"""
 class MyDriverList(generics.ListCreateAPIView):
     pagination_class=PageNumberPagination
     queryset = AddDriver.objects.all().order_by('id').reverse()
     serializer_class = MyDriverSerializer
     # parser_classes = [MultiPartParser, FormParser]
+"""End"""
 
+"""Get All drivers list"""
+class Getalldrivers(APIView):
+    def get(self, request):
+        try:
+
+            driver_list=AddDriver.objects.all().order_by('-id')
+            serializer= MyDriverSerializer(driver_list, many=True)
+            return Response({'msg':"All Driver List", 'data':serializer.data}, status=status.HTTP_200_OK)
+        except AddDriver.DoesNotExist:
+            return Response({'error':'No driver found'}, status=status.HTTP_204_NO_CONTENT)
+"""End driver list"""
 
 """Update Driver"""
 class updatedriver(APIView):
