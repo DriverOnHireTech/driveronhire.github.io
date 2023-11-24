@@ -91,10 +91,6 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         fields= "__all__"
 
     
-<<<<<<< HEAD
-    
-=======
->>>>>>> ebb114e66c35ae56a278afb48bb995e484f5b768
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
         driver_data = MyDriverSerializer(instance.driver_name).data
