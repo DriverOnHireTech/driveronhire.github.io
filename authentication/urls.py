@@ -13,8 +13,7 @@ urlpatterns = [
     path('login/',views.LoginView.as_view(), name="login"),
     path('logout/', views.Logoutapi.as_view(), name='logout'),
     path('token-auth/', obtain_auth_token, name='api_token_auth'),  
-    path('generate_otp/', views.GenerateOTP.as_view(), name='generate_otp'),
-    path('validate_otp/', views.ValidateOTP.as_view(), name='validate_otp'),
-    path('fcm-data/', views.GetFCM.as_view(), name="get-fcm"),
+    path('generate_otp/', views.SendOTPAPIView.as_view(), name='generate_otp'),
+    path('validate_otp/', views.VerifyOTPAPIView.as_view(), name='validate_otp'),
     path('delete/<int:id>/', views.Adduser.as_view(), name="Delete-user"),
 ]

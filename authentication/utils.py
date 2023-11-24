@@ -12,7 +12,7 @@ def username_gene():
 result= username_gene()
 
 # 
-def twilio_whatsapp(message, to_number):
+def twilio_whatsapp(to_number, message):
     account_sid = 'AC5c39741c6c06ec1915938a3065465e46'
     auth_token = 'a1715dfe516b118117334960626c30ca'
     client = Client(account_sid, auth_token)
@@ -21,6 +21,26 @@ def twilio_whatsapp(message, to_number):
     from_='whatsapp:+14155238886',
     body=message,
     to=to_number
+    )
+
+    print(message.sid)
+    
+
+def generate_otp(length=4):
+    # Generate a random OTP with the specified length (default is 6 digits)
+    otp = ''.join(str(random.randint(0, 9)) for _ in range(length))
+    return otp
+
+
+def twilio_message(to_number, message):
+    account_sid = 'AC5c39741c6c06ec1915938a3065465e46'
+    auth_token = 'a1715dfe516b118117334960626c30ca'
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        body=message,
+        from_='+12107141446',
+        to=to_number
     )
 
     print(message.sid)

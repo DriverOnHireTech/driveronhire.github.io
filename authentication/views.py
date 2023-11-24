@@ -11,7 +11,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
-from .utils import username_gene
+from .utils import username_gene, generate_otp
 from fcm_django.models import FCMDevice
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -110,106 +110,63 @@ class Logoutapi(APIView):
         
         except:
             return Response({'msg':'unable to logout'}, status=status.HTTP_404_NOT_FOUND)
+    
 
+class SendOTPAPIView(APIView):
 
-class GenerateOTP(APIView):
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         phone = request.data.get('phone')
+        send_phone = f"+91{phone}"
+        
+        try:
+            driver = User.objects.get(phone=phone)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        if not phone:
-            return Response({"message": "Mobile number is required."}, status=status.HTTP_400_BAD_REQUEST)
-        user = User.objects.filter(phone=phone).first()
-        # Generate a 4-digit OTP
-        otp = user.otp
+        # Generate OTP and save it in the user profile
+        otp = generate_otp()  # Replace with your OTP generation logic
+        print("otp: ",otp)
 
-        # Here, you should send the OTP to the provided mobile number using an SMS gateway or a library like twilio
+        # Save the OTP in the session
+        request.session['otp'] = otp
+        request.session['phone'] = phone
+
+        # Send OTP via Twilio
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         message = client.messages.create(
-            body=f"Your OTP is: {otp}",
+            body=f'Your OTP is: {otp}',
             from_=settings.TWILIO_PHONE_NUMBER,
-            to=phone
+            to=send_phone
         )
 
-        return Response({"message": "OTP generated and sent successfully."}, status=status.HTTP_200_OK)
+        return Response({'message': 'OTP sent successfully'}, status=status.HTTP_200_OK)
+
+class VerifyOTPAPIView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        otp_attempt = request.data.get('otp')
 
 
+        # Retrieve OTP from the session
+        saved_otp = request.session.get('otp')
+        phone = request.session.get('phone')
+        print("otp_attempt", otp_attempt)
+        print("saved_otp", saved_otp)
 
-class ValidateOTP(APIView):
-    def post(self, request):
-        entered_otp = request.data.get('otp')
-        print(entered_otp)
+        if saved_otp == otp_attempt:
+             # Clear the OTP from the session after successful verification
+            request.session.pop('otp', None)
+            request.session.pop('phone', None)
 
-        
+            # Authenticate and login the driver
+            user = authenticate(request, phone=phone)
 
-        # Retrieve the generated OTP and mobile number from the session
-        generated_otp = request.session.get('generated_otp')
-        mobile_number = request.session.get('mobile_number')
-
-        if not generated_otp or not mobile_number:
-            return Response({"message": "OTP is not generated or mobile number is missing."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        if entered_otp == generated_otp:
-           
-            try:
-                user = User.objects.get(phone=mobile_number)
-                # Update the phone number if it exists
-                user.phone = mobile_number
-            except User.DoesNotExist:
-                # Create a new user if the phone number doesn't exist
-                user = User(username=mobile_number, phone=mobile_number, usertype="Customer")
-
-            user.save()
-
-            return Response({"message": "OTP validated successfully and user updated/created."},
-                            status=status.HTTP_200_OK)
+            if user:
+                login(request, user)
+                # Generate or retrieve a token for the authenticated user
+                token, created = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response({"message": "Invalid OTP. Please try again."}, status=status.HTTP_400_BAD_REQUEST)
-
-# # Login with OTP
-# class LoginWithOTP(APIView):
-#     def post(self, request):
-#         phone = request.data.get('phone', '')
-#         # try:
-#         #     user = User.objects.get(phone=phone)
-#         # except User.DoesNotExist:
-#         #     return Response({'error': 'User with this phone number does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-#         otp = generate_otp()
-#         user.otp = otp
-#         user.save()
-
-#         send_otp_phone(phone, otp)
-
-#         return Response({'message': 'OTP has been sent to your phone.'}, status=status.HTTP_200_OK)
-
-
-# # Validate OTP
-# class ValidateOTP(APIView):
-#     def post(self, request):
-#         phone = request.data.get('phone', '')
-#         otp = request.data.get('otp', '')
-
-#         try:
-#             user = User.objects.get(phone=phone)
-#         except User.DoesNotExist:
-#             return Response({'error': 'User with this phone number does not exist.'}, status=status.HTTP_404_NOT_FOUND)
-
-#         if user.otp == otp:
-#             user.otp = None  # Reset the OTP field after successful validation
-#             user.save()
-
-#             # Authenticate the user and create or get an authentication token
-#             token, _ = Token.objects.get_or_create(user=user)
-
-#             return Response({'token': token.key}, status=status.HTTP_200_OK)
-#         else:
-#             return Response({'error': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class GetFCM(APIView):
-    def get(self, request):
-        obj = FCMDevice.objects.all()
-        serializer = Fcmserializer(obj, many=True)
-
-        return Response(serializer.data)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
