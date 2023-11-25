@@ -161,7 +161,7 @@ class MyBookingList(APIView):
                     data_list.append(serializer.data)
                 revers_recors= data_list.reverse()
 
-                return Response({'data ':data_list}, status=status.HTTP_200_OK)
+                return Response({'data ':data_list[0]}, status=status.HTTP_200_OK)
             
             
             else:
@@ -404,18 +404,21 @@ class Agentbookingview(APIView):
         client_name = request.data['client_name']
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
-        mobile_number=request.data['mobile_number']
-        message_number = f"whatsapp:+91{mobile_number}"
+        # email=[request.data['email']]
+        mobile_number=request.data.get('mobile_number')
+        message_number = f"+91{mobile_number}"
+        # whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
                 # title = "Your booking details"
-                message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"   
-                #utils.twilio_message(to_number=message_number, message=message)
-                utils.twilio_whatsapp(to_number=message_number, message=message)
-               
+                message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+                print(message)
+                utils.twilio_message(to_number=message_number, message=message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 # for sending notifiction
                 driver =AddDriver.objects.all()
