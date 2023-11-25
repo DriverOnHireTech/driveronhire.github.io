@@ -11,6 +11,7 @@ from authentication.models import User
 # from client_management.models import AddClient
 from driver_management.models import AddDriver
 from datetime import time
+from twilio.rest import Client
 
 
 
@@ -178,6 +179,7 @@ class AgentBooking(models.Model):
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
+
 
     def __str__(self):
         return self.client_name

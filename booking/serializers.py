@@ -22,19 +22,13 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
 class PlacebookingSerializer(serializers.ModelSerializer):
     #user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
     # add_driver = serializers.PrimaryKeyRelatedField(queryset=AddDriver.objects.all(), many=False, read_only=False)
-
-    # drivers = serializers.SerializerMethodField()
     class Meta:
         model = PlaceBooking
         
         fields= ('id','trip_type', 'booking_date','no_of_days',
                    'car_type', 'gear_type', 
                   'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile')
-
-    # def get_user(self, obj):
-    #     user =  obj.driver
-    #     user_seri = MyDriverSerializer(user)
-    #     return user_seri.data
+   
 
    
 class NotifyDriverSerializer(serializers.ModelSerializer):
@@ -85,6 +79,7 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 class Agentbookingserailizer(serializers.ModelSerializer):
     driver_name=serializers.SerializerMethodField()
+    booking_created_by=NewUserSerializer()
     class Meta:
         driver_name=serializers.SerializerMethodField()
         driver_name1 = MyDriverSerializer()
@@ -102,7 +97,6 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         data.update({
             'driver_name': driver_data
         })
-        print("data updated: ", data)
         return data
     
    
