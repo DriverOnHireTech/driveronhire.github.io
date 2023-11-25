@@ -133,26 +133,27 @@ class MyBookingList(APIView):
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-             
+        
+        
 
     def get(self, request):
         user = request.user
         print("User data: ",user)
         print(user.phone)
-        xyz = AddDriver.objects.all()
+        xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
         print("adddriver details:", driver_ids)
 
         # Check if the user is a notified driver
         try:
             is_notified_driver = Notifydrivers.objects.filter(driver=driver_ids[0]).exists()
-            notify_driver_data = Notifydrivers.objects.all()
+            notify_driver_data = Notifydrivers.objects.filter(driver=driver_ids[0])
            
-            if True:
+            if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
                     
-                    booking = PlaceBooking.objects.all()
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
                     
                     serializer = PlacebookingSerializer(booking, many=True)
                     
@@ -160,7 +161,7 @@ class MyBookingList(APIView):
                     data_list.append(serializer.data)
                 revers_recors= data_list.reverse()
 
-                return Response({'data ':data_list[0]}, status=status.HTTP_200_OK)
+                return Response({'data ':data_list}, status=status.HTTP_200_OK)
             
             
             else:
@@ -405,7 +406,8 @@ class Agentbookingview(APIView):
         booking_for = request.data['bookingfor']
         # email=[request.data['email']]
         mobile_number=request.data.get('mobile_number')
-        message_number = f"whatsapp:+91{mobile_number}"
+        message_number = f"+91{mobile_number}"
+        # whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
@@ -414,7 +416,8 @@ class Agentbookingview(APIView):
                 # title = "Your booking details"
                 message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
                 print(message)
-                utils.twilio_whatsapp(to_number=message_number, message=message)
+                utils.twilio_message(to_number=message_number, message=message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
 
@@ -464,7 +467,7 @@ class Agentbookingview(APIView):
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
-                                body="This is test message."
+                                body=f"Trip Type:{booking_for}\n Car Type:{car_type}"
                             ),
                             token= token 
                         )
@@ -537,6 +540,7 @@ class Agentbookingview(APIView):
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
     
+
 
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  
