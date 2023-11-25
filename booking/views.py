@@ -170,6 +170,17 @@ class MyBookingList(APIView):
         except:
             return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
 
+"""Endpoint for web CRM"""
+class getbooking(APIView):
+    def get(self, request):
+        try:
+            booking_data= PlaceBooking.objects.all().order_by('-id')
+            serializer=PlacebookingSerializer(booking_data, many=True)
+            return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
+
+"""End endpoint"""
 
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
