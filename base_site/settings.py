@@ -20,11 +20,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['18.224.98.224','*']
 AUTH_USER_MODEL='authentication.User'
+AUTHENTICATION_BACKENDS = ('base_site.backend.AuthBackend',) # Custome auth model
 
-AUTHENTICATION_BACKENDS = [
-    'authentication.custom_auth.CustomAuth',
-    'django.contrib.auth.backends.ModelBackend',
-]
+
 
 CORS_ORIGIN_ALLOW_ALL=False
 
