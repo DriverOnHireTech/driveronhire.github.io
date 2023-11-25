@@ -6,6 +6,8 @@ urlpatterns = [
 
     path('booking/', views.MyBookingList.as_view(), name='booking'),
 
+    path('allbooking/', views.getbooking.as_view(), name='all_booking'),
+
     path('book_leter/', views.ScheduleBookingView.as_view(), name='book_leter'),
 
     path('userbooking/', views.BookingListWithId.as_view(), name='booking-id'), # Get logged user booking

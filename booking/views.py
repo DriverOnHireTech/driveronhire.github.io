@@ -166,6 +166,17 @@ class MyBookingList(APIView):
         except:
             return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
 
+"""Endpoint for web CRM"""
+class getbooking(APIView):
+    def get(self, request):
+        try:
+            booking_data= PlaceBooking.objects.all().order_by('-id')
+            serializer=PlacebookingSerializer(booking_data, many=True)
+            return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
+
+"""End endpoint"""
 
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
@@ -392,13 +403,13 @@ class UpcomingBooking(APIView):
 class Agentbookingview(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
-
     def post(self, request):
         data=request.data
+        print("Aget Data",data)
         user=request.user
         id = request.data.get('id')
         client_name = request.data['client_name']
-        car_type= request.data['car_type']
+        car_type=data['car_type']
         booking_for = request.data['bookingfor']
         # email=[request.data['email']]
         mobile_number=request.data.get('mobile_number')
@@ -416,7 +427,6 @@ class Agentbookingview(APIView):
                 # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
-
                 # for sending notifiction
                 driver =AddDriver.objects.all()
                 if driver:
