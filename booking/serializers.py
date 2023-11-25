@@ -31,10 +31,10 @@ class PlacebookingSerializer(serializers.ModelSerializer):
                    'car_type', 'gear_type', 
                   'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile')
 
-    # def get_user(self, obj):
-    #     user =  obj.driver
-    #     user_seri = MyDriverSerializer(user)
-    #     return user_seri.data
+    #    def get_agent_booking(self,obj):
+    #     agent_booking=obj.driver_name
+    #     agent_booking_seri= Agentbookingserailizer(agent_booking)
+    #     return agent_booking.data
 
    
 class NotifyDriverSerializer(serializers.ModelSerializer):

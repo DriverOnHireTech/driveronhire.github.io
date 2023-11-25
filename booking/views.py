@@ -404,7 +404,7 @@ class Agentbookingview(APIView):
         id = request.data.get('id')
         client_name = request.data['client_name']
         car_type= request.data['car_type']
-        booking_for = request.data['bookingfor']
+        booking_for = data['bookingfor']
         # email=[request.data['email']]
         mobile_number=request.data.get('mobile_number')
         message_number = f"+91{mobile_number}"
@@ -435,7 +435,7 @@ class Agentbookingview(APIView):
 
                     devices = FCMDevice.objects.filter(user__in=driver_id)
 
-                    serializer.validated_data['user_id'] = user.id
+                    #serializer.validated_data['user_id'] = user
                     serializer.save()
                     booking_id = serializer.data['id']
                     print("Serializer id: ",serializer.data['id'])
