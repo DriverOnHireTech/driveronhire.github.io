@@ -161,7 +161,7 @@ class MyBookingList(APIView):
                     
                 revers_recors= data_list.reverse()
 
-                return Response({'data ':data_list[0]}, status=status.HTTP_200_OK)
+                return Response({'data':data_list}, status=status.HTTP_200_OK)
             
             
             else:
@@ -450,6 +450,7 @@ class Agentbookingview(APIView):
                     #serializer.validated_data['user_id'] = user
                     serializer.save()
                     booking_id = serializer.data['id']
+                    print("--------Driver on hire")
                     print("Serializer id: ",serializer.data['id'])
                         
                     notify=Notifydrivers.objects.create()

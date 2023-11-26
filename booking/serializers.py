@@ -79,13 +79,17 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 class Agentbookingserailizer(serializers.ModelSerializer):
     driver_name=serializers.SerializerMethodField()
-    booking_created_by=NewUserSerializer()
+    # booking_created_by=NewUserSerializer()
     class Meta:
         driver_name=serializers.SerializerMethodField()
         driver_name1 = MyDriverSerializer()
         model= AgentBooking
         fields= "__all__"
 
+    def get_driver_name(self, obj):
+        driver_name=obj.driver_name
+        add_driver_seri=MyDriverSerializer(driver_name)
+        return add_driver_seri.data
     
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
