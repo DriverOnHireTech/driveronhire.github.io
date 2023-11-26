@@ -152,9 +152,7 @@ class MyBookingList(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    
                     booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
-                    
                     serializer = PlacebookingSerializer(booking, many=True)
                     
                     data_list.append(serializer.data)
