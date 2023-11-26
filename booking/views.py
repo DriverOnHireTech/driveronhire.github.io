@@ -155,11 +155,12 @@ class MyBookingList(APIView):
                     booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
                     serializer = PlacebookingSerializer(booking, many=True)
                     
-                    data_list.append(serializer.data)
+                    data_list.extend(serializer.data)
                     
-                revers_recors= data_list.reverse()
+                    
+                revers_recors= data_list[::-1]
 
-                return Response({'data':data_list}, status=status.HTTP_200_OK)
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
             
             
             else:
@@ -201,7 +202,7 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+919657847644"
                 msg = f"your booking is accepted. Driver number is\n 7045630679"
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(self, to_number=whatsapp_number, message=msg)
+                #utils.twilio_whatsapp(to_number=whatsapp_number, message=msg)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -426,7 +427,7 @@ class Agentbookingview(APIView):
                 # title = "Your booking details"
                 message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
                 print(message)
-                utils.twilio_message(to_number=message_number, message=message)
+                #utils.twilio_message(to_number=message_number, message=message)
                 # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
@@ -452,11 +453,8 @@ class Agentbookingview(APIView):
                     print("Serializer id: ",serializer.data['id'])
                         
                     notify=Notifydrivers.objects.create()
-                    notify.place_booking = AgentBooking.objects.get(id=booking_id)
+                    notify.agent_booking = AgentBooking.objects.get(id=booking_id)
                     notify.save()
-                    print("notify place booking:", notify.place_booking)
-                    print("placebooking data", PlaceBooking.objects.get(id=booking_id))
-                    notify.driver.set(driver)
                     print("Notify: ",notify) 
 
                     registration_ids = []
@@ -491,7 +489,7 @@ class Agentbookingview(APIView):
 
                 
 
-                serializer.save()
+                # serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
             else:
                     return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
