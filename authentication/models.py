@@ -37,7 +37,9 @@ class User(AbstractUser):
         ('Driver', 'Driver'), 
         ('Staff', 'Staff')
     )
-    phone = models.BigIntegerField(unique=True)
+    #email=None
+    phone=models.CharField(max_length=25, unique=True)
+    #phone = models.BigIntegerField(unique=True)
     usertype = models.CharField(choices=user_type, max_length=100, null=True, blank=True)
     otp= models.CharField(max_length=6, null=True, blank=True)
     # _id = models.IntegerField(null=True, blank=True)
@@ -45,7 +47,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=30, blank=True, null=True)
 
     USERNAME_FIELD = 'phone'
-    objects = CustomAccountManager()
+    # objects = CustomAccountManager()
     REQUIRED_FIELDS = ['usertype']
 
     db_table = "User"

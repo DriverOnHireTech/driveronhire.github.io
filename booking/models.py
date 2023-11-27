@@ -76,11 +76,62 @@ class PlaceBooking(models.Model):
    
     def __str__(self):
         return f"{self.id}"
+"""Agent booking"""
+class AgentBooking(models.Model):
+    booking_type= (
+        ('local', 'local'),
+        ('drop', 'drop'),
+        ('outstation', 'outstation')
+    )
+    reason=(
+        ("Not in Uniform", "Not in Uniform"),
+        ("Plan got cancel", "Plan got cancel"),
+        ("Driver was not looking good","Driver was not looking good"),
+        ("Asking advance money", "Asking advance money"),
+        ("Driver was smelling", "Driver was smelling"),
+        ("Isolation cover not there", "Isolation cover not there"),
+        ("Not reach on time", "Not reach on time"),
+        ("Driver not received my call", "Driver not received my call"),
+        ("Booked by mistake", "Booked by mistake"),
+        ("Charges issue", "Charges issue")
+    )
+    Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
+    # id = models.AutoField(primary_key=True)
+    client_name= models.CharField(max_length=200, null=True, blank=True)
+    mobile_number= models.BigIntegerField(null=True, blank=True)
+    Alternet_number= models.BigIntegerField(null=True, blank=True)
+    email=models.EmailField(null=True, blank=True)
+    address=models.CharField(max_length=500, null=True, blank=True)
+    car_company= models.CharField(max_length=100, null=True, blank=True)
+    car_type = models.CharField(max_length=100, blank=True, null=True)
+    car_transmission = models.CharField(max_length=100, blank=True, null=True)
+    bookingfor= models.CharField(choices=booking_type,max_length=150, null=True, blank=True)
+    source= models.CharField(max_length=100, null=True,blank=True)
+    #from_date= models.DateField(auto_now_add=False, null=True, blank=True)
+    to_date=models.DateField(auto_now_add=False,null=True, blank=True)
+    start_time=models.TimeField(auto_now_add=False, null=True, blank=True)
+    religion= models.CharField(max_length=100, null=True,blank=True)
+    request_type=models.CharField(max_length=200, null=True, blank=True)
+    trip_type=models.CharField(max_length=200, null=True, blank=True)
+    packege=  models.CharField(max_length=100, null=True, blank=True)
+    visiting_location= models.CharField(max_length=200, null=True, blank=True)
+    status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
+    cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
+    driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
+    booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
+
+
+    def __str__(self):
+        return self.client_name
+    
+"""End Agent booking"""
     
 """Save notifications"""
 class Notifydrivers(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     place_booking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
+    agent_booking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
     driver=models.ManyToManyField(AddDriver)
     received_at=models.DateField(auto_now=True)
 
@@ -134,55 +185,6 @@ class AddfavoriteDriver(models.Model):
 
     def __str__(self):
         return str(self.user.phone)
-
-
-class AgentBooking(models.Model):
-    booking_type= (
-        ('local', 'local'),
-        ('drop', 'drop'),
-        ('outstation', 'outstation')
-    )
-    reason=(
-        ("Not in Uniform", "Not in Uniform"),
-        ("Plan got cancel", "Plan got cancel"),
-        ("Driver was not looking good","Driver was not looking good"),
-        ("Asking advance money", "Asking advance money"),
-        ("Driver was smelling", "Driver was smelling"),
-        ("Isolation cover not there", "Isolation cover not there"),
-        ("Not reach on time", "Not reach on time"),
-        ("Driver not received my call", "Driver not received my call"),
-        ("Booked by mistake", "Booked by mistake"),
-        ("Charges issue", "Charges issue")
-    )
-    Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
-    id = models.AutoField(primary_key=True)
-    client_name= models.CharField(max_length=200, null=True, blank=True)
-    mobile_number= models.BigIntegerField(null=True, blank=True)
-    Alternet_number= models.BigIntegerField(null=True, blank=True)
-    email=models.EmailField(null=True, blank=True)
-    address=models.CharField(max_length=500, null=True, blank=True)
-    car_company= models.CharField(max_length=100, null=True, blank=True)
-    car_type = models.CharField(max_length=100, blank=True, null=True)
-    car_transmission = models.CharField(max_length=100, blank=True, null=True)
-    bookingfor= models.CharField(choices=booking_type,max_length=150, null=True, blank=True)
-    source= models.CharField(max_length=100, null=True,blank=True)
-    #from_date= models.DateField(auto_now_add=False, null=True, blank=True)
-    to_date=models.DateField(auto_now_add=False,null=True, blank=True)
-    start_time=models.TimeField(auto_now_add=False, null=True, blank=True)
-    religion= models.CharField(max_length=100, null=True,blank=True)
-    request_type=models.CharField(max_length=200, null=True, blank=True)
-    trip_type=models.CharField(max_length=200, null=True, blank=True)
-    packege=  models.CharField(max_length=100, null=True, blank=True)
-    visiting_location= models.CharField(max_length=200, null=True, blank=True)
-    status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
-    cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
-    driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
-    booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
-    bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
-
-
-    def __str__(self):
-        return self.client_name
 
 
 class BookLater(models.Model):

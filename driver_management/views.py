@@ -18,6 +18,7 @@ from .utils import leavecalcu
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
 from rest_framework.pagination import PageNumberPagination
+from .paginations import cutomepegination
 
 
 
@@ -60,7 +61,8 @@ class BasicDetailView(generics.ListCreateAPIView):
 
 """Get 10 records and create driver"""
 class MyDriverList(generics.ListCreateAPIView):
-    pagination_class=PageNumberPagination
+    # pagination_class=PageNumberPagination
+    pagination_class=cutomepegination
     queryset = AddDriver.objects.all().order_by('id').reverse()
     serializer_class = MyDriverSerializer
     # parser_classes = [MultiPartParser, FormParser]
