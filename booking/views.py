@@ -75,8 +75,6 @@ class MyBookingList(APIView):
                         for drive in driver_data:
                             add_driver = AddDriver.objects.filter(id=drive['id'])
                             for new_driver in add_driver:
-                                print("Add driver id: ", new_driver.driver_user)
-                                print("Notification received: ",new_driver.has_received_notification)
                                 new_driver.has_received_notification = True
                                 driver_id.append(new_driver.driver_user)
                                 
@@ -94,7 +92,7 @@ class MyBookingList(APIView):
                         notify.place_booking = PlaceBooking.objects.get(id=booking_id)
                         notify.save()
                         print("notify place booking:", notify.place_booking)
-                        print("placebooking data", PlaceBooking.objects.get(id=booking_id))
+                        bookingId=PlaceBooking.objects.get(id=booking_id)
                         notify.driver.set(driver)
                         print("Notify: ",notify) 
 
@@ -116,7 +114,8 @@ class MyBookingList(APIView):
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
-                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
+                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}",
+                                    data=bookingId
                                 ),
                                 token= token 
                             )
@@ -445,13 +444,10 @@ class Agentbookingview(APIView):
                     serializer.validated_data['user_id'] = user.id
                     serializer.save()
                     booking_id = serializer.data['id']
-                    print("Serializer id: ",serializer.data['id'])
                         
                     notify=Notifydrivers.objects.create()
                     notify.place_booking = AgentBooking.objects.get(id=booking_id)
                     notify.save()
-                    print("notify place booking:", notify.place_booking)
-                    print("placebooking data", PlaceBooking.objects.get(id=booking_id))
                     notify.driver.set(driver)
                     print("Notify: ",notify) 
 
@@ -467,13 +463,11 @@ class Agentbookingview(APIView):
                         if token is None or not token.strip():
                             print("Invalid token")
                             continue
-
-                        print("Token value", token)
-
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
-                                body=f"Trip Type:{booking_for}\n Car Type:{car_type}"
+                                body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
+                                
                             ),
                             token= token 
                         )

@@ -72,7 +72,7 @@ class PlaceBooking(models.Model):
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
     booking_time=models.DateTimeField(auto_now_add=True)
-
+    
    
     def __str__(self):
         return f"{self.id}"
