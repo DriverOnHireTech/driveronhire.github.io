@@ -9,9 +9,10 @@ from base_site import settings
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from rest_framework.authtoken.models import Token
 from .utils import username_gene, generate_otp
+from base_site.backend import authenticate
 from fcm_django.models import FCMDevice
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -76,7 +77,7 @@ class LoginView(APIView):
         data =  request.data
         phone = data.get('phone')
         password = data.get('password')
-        user = authenticate(phone=phone, password=password)
+        user = authenticate(request, phone,password)
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
@@ -140,7 +141,7 @@ class SendOTPAPIView(APIView):
         return Response({'message': 'OTP sent successfully'}, status=status.HTTP_200_OK)
 
 class VerifyOTPAPIView(APIView):
-
+    
     def post(self, request, *args, **kwargs):
         otp_attempt = request.data.get('otp')
 
