@@ -8,12 +8,12 @@ admin.site.register(Feedback)
 admin.site.register(userProfile)
 admin.site.register(BookLater)
 admin.site.register(Notifydrivers)
+admin.site.register(GuestBooking)
 
 class Addfavoritedriveradmin(admin.ModelAdmin):
     fields=['user', 'driver_name', 'add_favorite']
 
 admin.site.register(AddfavoriteDriver, Addfavoritedriveradmin)
-
 
 
 admin.site.register(AgentBooking)

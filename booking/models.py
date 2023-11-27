@@ -213,3 +213,18 @@ class BookLater(models.Model):
    
     def __str__(self):
         return self.trip_type
+    
+"""Geust Booking"""
+class GuestBooking(models.Model):
+    TRIP_TYPE=(('Local','Local'),('outstation', 'outstation'))
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    trip_type=models.CharField(choices=TRIP_TYPE,max_length=50, null=True ,blank=True)
+    required_driver=models.DateTimeField(auto_now_add=False)
+    client_phone= models.PositiveBigIntegerField(null=True, blank=True)
+    request_date=models.DateTimeField(auto_now_add=False)
+    request_time=models.TimeField(auto_now_add=False)
+
+    def __str__(self):
+        return self.trip_type
+
+"""End"""

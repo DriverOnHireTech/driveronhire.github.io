@@ -108,4 +108,10 @@ class BookLaterSerializer(serializers.ModelSerializer):
         
 class Userprofileserializer(serializers.ModelSerializer):
     model= userProfile
-    field='__all__'
+    fields='__all__'
+
+
+class GuestBookingserialzer(serializers.ModelSerializer):
+    class Meta:
+        model=GuestBooking
+        fields="__all__"
