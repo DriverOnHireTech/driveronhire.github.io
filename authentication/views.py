@@ -144,7 +144,7 @@ class SendOTPAPIView(APIView):
 
 class VerifyOTPAPIView(APIView):
     
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         otp_attempt = request.data.get('otp')
         phone = request.data.get('phone')
         print("Phone number",phone)
@@ -162,10 +162,11 @@ class VerifyOTPAPIView(APIView):
 
         if saved_otp == otp_attempt:
              # Clear the OTP from the User model after successful verification
-
+            print("Before authentication")
             # Authenticate and login the driver
-            user = authenticate(request, phone=user.phone, otp=user.otp)
-            print(user)
+            user = authenticate(request, phone=phone, saved_otp=saved_otp)
+            print("After authentication")
+            print("User",user)
 
             if user:
                 login(request, user)
