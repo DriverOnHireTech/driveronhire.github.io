@@ -147,32 +147,21 @@ class VerifyOTPAPIView(APIView):
     def post(self, request, *args, **kwargs):
         otp_attempt = request.data.get('otp')
         phone = request.data.get('phone')
-        print("Phone number",phone)
 
         try:
             user = User.objects.get(phone=phone)
-            print("User data: ",user)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Retrieve OTP from the session
         saved_otp = user.otp
-        print("otp_attempt", otp_attempt)
-        print("saved_otp", saved_otp)
 
         if saved_otp == otp_attempt:
              # Clear the OTP from the User model after successful verification
+            user.otp = None
+            user.save()
 
-            # Authenticate and login the driver
-            user = authenticate(request, phone=user.phone, otp=user.otp)
-            print(user)
-
-            if user:
-                login(request, user)
-                # Generate or retrieve a token for the authenticated user
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key}, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
