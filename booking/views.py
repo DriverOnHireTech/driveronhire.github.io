@@ -606,3 +606,23 @@ class Guestbookingapi(APIView):
         except:
             # serializer=GuestBookingserialzer()
             return Response({'msg':'Unable to save'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def get(self, request):
+        try:
+            guestbooking=GuestBooking.objects.all()
+            serializer=GuestBookingserialzer(guestbooking, many=True)
+            return Response({'msg':'All guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
+
+        except:
+            return Response({'msg': 'Error getting data'})
+            
+
+
+class SingleGuestbookingapi(APIView):
+    def get(self, request,id):
+        try:
+            guestbooking=GuestBooking.objects.get(id=id)
+            serializer=GuestBookingserialzer(guestbooking)
+            return Response({'msg':'guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+            return Response({'msg': 'Data doesnot exist'})

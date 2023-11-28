@@ -9,10 +9,10 @@ from base_site import settings
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import HttpResponse
-from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from .utils import username_gene, generate_otp
-from base_site.backend import authenticate
+# from base_site.backend import authenticate
 from fcm_django.models import FCMDevice
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -128,46 +128,40 @@ class SendOTPAPIView(APIView):
         otp = generate_otp()  # Replace with your OTP generation logic
         print("otp: ",otp)
 
-        # Save the OTP in the session
-        request.session['otp'] = otp
-        request.session['phone'] = phone
+        # Save the OTP in the  user model
+        driver.otp = otp
+        driver.save()
 
         # Send OTP via Twilio
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            body=f'Your OTP is: {otp}',
-            from_=settings.TWILIO_PHONE_NUMBER,
-            to=send_phone
-        )
+        # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        # message = client.messages.create(
+        #     body=f'Your OTP is: {otp}',
+        #     from_=settings.TWILIO_PHONE_NUMBER,
+        #     to=send_phone
+        # )
 
         return Response({'message': 'OTP sent successfully'}, status=status.HTTP_200_OK)
 
 class VerifyOTPAPIView(APIView):
     
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         otp_attempt = request.data.get('otp')
+        phone = request.data.get('phone')
 
+        try:
+            user = User.objects.get(phone=phone)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Retrieve OTP from the session
-        saved_otp = request.session.get('otp')
-        phone = request.session.get('phone')
-        print("otp_attempt", otp_attempt)
-        print("saved_otp", saved_otp)
+        saved_otp = user.otp
 
         if saved_otp == otp_attempt:
-             # Clear the OTP from the session after successful verification
-            request.session.pop('otp', None)
-            request.session.pop('phone', None)
+             # Clear the OTP from the User model after successful verification
+            user.otp = None
+            user.save()
 
-            # Authenticate and login the driver
-            user = authenticate(request, phone=phone)
-
-            if user:
-                login(request, user)
-                # Generate or retrieve a token for the authenticated user
-                token, created = Token.objects.get_or_create(user=user)
-                return Response({'token': token.key}, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
