@@ -40,5 +40,5 @@ urlpatterns = [
 
     path('guestbooking/', views.Guestbookingapi.as_view(), name='guest_booking'),
 
-    path('guestbooking/<int:id>/', views.Guestbookingapi.as_view(), name="get_guest_booking"),
+    path('guestbooking/<int:id>/', views.SingleGuestbookingapi.as_view(), name="get_guest_booking"),
 ]
