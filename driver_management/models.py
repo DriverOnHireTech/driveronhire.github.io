@@ -164,7 +164,7 @@ class RmVerification(models.Model):
 
 
 transmission_option=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
-car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"))
+car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"), ("Sedan Luxury", "Sedan Luxury"), ("SUV Luxury","SUV Luxury"))
 
 
 class AddDriver(models.Model):
