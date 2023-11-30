@@ -415,9 +415,10 @@ class Agentbookingview(APIView):
         client_name = request.data['client_name']
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
+        trip_type=request.data['trip_type']
         # email=[request.data['email']]
         mobile_number=request.data.get('mobile_number')
-        #message_number = f"+91{mobile_number}"
+        message_number = f"+91{mobile_number}"
         whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
         if AgentBooking.objects.filter(id=id).exists:
@@ -425,10 +426,10 @@ class Agentbookingview(APIView):
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
                 # title = "Your booking details"
-                #message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
-                message='This is test message'
+                message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+                #message='This is test message.'
                 print(message)
-               # utils.twilio_message(to_number=message_number, message=message)
+                #utils.twilio_message(to_number=message_number, message=message)
                 utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
