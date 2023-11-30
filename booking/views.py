@@ -199,9 +199,10 @@ class Acceptedride(APIView):
                 accepted_driver = booking.accepted_driver
                 # driver_name = AddDriver.objects.get(driver_user=7654002162)
                 whatsapp_number = f"whatsapp:+919657847644"
-                msg = f"your booking is accepted. Driver number is\n 7045630679"
+                #msg = f"your booking is accepted. Driver number is\n 7045630679"
+                msg='This is test message'
                 data.setdefault("accepted_driver",user.id)
-                #utils.twilio_whatsapp(to_number=whatsapp_number, message=msg)
+                utils.twilio_whatsapp(to_number=whatsapp_number, message=msg)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -416,18 +417,19 @@ class Agentbookingview(APIView):
         booking_for = request.data['bookingfor']
         # email=[request.data['email']]
         mobile_number=request.data.get('mobile_number')
-        message_number = f"+91{mobile_number}"
-        # whatsapp_number = f"whatsapp:+91{mobile_number}"
+        #message_number = f"+91{mobile_number}"
+        whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
                 # title = "Your booking details"
-                message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+                #message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
+                message='This is test message'
                 print(message)
-                #utils.twilio_message(to_number=message_number, message=message)
-                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+               # utils.twilio_message(to_number=message_number, message=message)
+                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 # for sending notifiction
