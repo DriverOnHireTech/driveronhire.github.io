@@ -12,6 +12,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from collections import OrderedDict
 from django.contrib.gis.measure import D
+from collections import OrderedDict
 
 class ClientregistrationSerializer(serializers.ModelSerializer):
     
@@ -96,7 +97,7 @@ class Agentbookingserailizer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
-        driver_name_data = instance.get('driver_name')
+        driver_name_data = instance.driver_name
 
         if isinstance(driver_name_data, OrderedDict):
             # If it's an OrderedDict, use it directly
@@ -111,6 +112,29 @@ class Agentbookingserailizer(serializers.ModelSerializer):
             })
 
         return data
+
+
+# class Agentbookingserailizer(serializers.ModelSerializer):
+#     #driver_name=serializers.SerializerMethodField()
+#     # booking_created_by=NewUserSerializer()
+#     class Meta:
+#         driver_name=serializers.SerializerMethodField()
+#         driver_name1 = MyDriverSerializer()
+#         model= AgentBooking
+#         fields= "__all__"
+
+#     def get_driver_name(self, obj):
+#         driver_name=obj.driver_name
+#         add_driver_seri=MyDriverSerializer(driver_name)
+#         return add_driver_seri.data
+    
+#     def to_representation(self, instance):
+#         data = super(Agentbookingserailizer, self).to_representation(instance)
+#         driver_data = MyDriverSerializer(instance.driver_name).data
+#         data.update({
+#             'driver_name': driver_data
+#         })
+#         return data
     
    
 class BookLaterSerializer(serializers.ModelSerializer):

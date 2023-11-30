@@ -114,8 +114,8 @@ class MyBookingList(APIView):
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
-                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}",
-                                    data=bookingId
+                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
+                                    
                                 ),
                                 token= token 
                             )
