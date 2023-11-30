@@ -426,7 +426,7 @@ class Agentbookingview(APIView):
                 serializer.validated_data['booking_created_by']=user
                 # title = "Your booking details"
                 #message = f"Your name: {client_name}\n mobile number: {mobile_number}\n booking for: {bookingfor}"
-                message='This is test message'
+                message='This is test message.'
                 print(message)
                # utils.twilio_message(to_number=message_number, message=message)
                 utils.twilio_whatsapp(to_number=whatsapp_number, message=message)

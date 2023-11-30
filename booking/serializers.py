@@ -11,6 +11,7 @@ from authentication.models import  User
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import D
+from collections import OrderedDict
 
 class ClientregistrationSerializer(serializers.ModelSerializer):
     
@@ -81,23 +82,58 @@ class Agentbookingserailizer(serializers.ModelSerializer):
     #driver_name=serializers.SerializerMethodField()
     # booking_created_by=NewUserSerializer()
     class Meta:
-        driver_name=serializers.SerializerMethodField()
-        driver_name1 = MyDriverSerializer()
+        #driver_name=serializers.SerializerMethodField()
+        #driver_name1 = MyDriverSerializer()
         model= AgentBooking
         fields= "__all__"
 
-    def get_driver_name(self, obj):
-        driver_name=obj.driver_name
-        add_driver_seri=MyDriverSerializer(driver_name)
-        return add_driver_seri.data
-    
+    # def get_driver_name(self, obj):
+    #     #driver_name=obj.driver_name
+    #     driver_name = obj.get('driver_name')
+    #     add_driver_seri=MyDriverSerializer(driver_name)
+    #     return add_driver_seri.data
+
+
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
-        driver_data = MyDriverSerializer(instance.driver_name).data
-        data.update({
-            'driver_name': driver_data
-        })
+        driver_name_data = instance.driver_name
+
+        if isinstance(driver_name_data, OrderedDict):
+            # If it's an OrderedDict, use it directly
+            data.update({
+                'driver_name': driver_name_data
+            })
+        else:
+            # If it's a model instance, serialize it
+            driver_data = MyDriverSerializer(driver_name_data).data
+            data.update({
+                'driver_name': driver_data
+            })
+
         return data
+
+
+# class Agentbookingserailizer(serializers.ModelSerializer):
+#     #driver_name=serializers.SerializerMethodField()
+#     # booking_created_by=NewUserSerializer()
+#     class Meta:
+#         driver_name=serializers.SerializerMethodField()
+#         driver_name1 = MyDriverSerializer()
+#         model= AgentBooking
+#         fields= "__all__"
+
+#     def get_driver_name(self, obj):
+#         driver_name=obj.driver_name
+#         add_driver_seri=MyDriverSerializer(driver_name)
+#         return add_driver_seri.data
+    
+#     def to_representation(self, instance):
+#         data = super(Agentbookingserailizer, self).to_representation(instance)
+#         driver_data = MyDriverSerializer(instance.driver_name).data
+#         data.update({
+#             'driver_name': driver_data
+#         })
+#         return data
     
    
 class BookLaterSerializer(serializers.ModelSerializer):
