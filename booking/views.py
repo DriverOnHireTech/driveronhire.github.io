@@ -187,7 +187,10 @@ class Acceptedride(APIView):
         data = request.data
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
-
+        client_name=booking.user
+        mobile=booking.mobile
+        driver=booking.accepted_driver
+        date=booking.booking_date
         if booking.status == "accept":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -198,11 +201,27 @@ class Acceptedride(APIView):
                 
                 accepted_driver = booking.accepted_driver
                 # driver_name = AddDriver.objects.get(driver_user=7654002162)
-                whatsapp_number = f"whatsapp:+919657847644"
-                #msg = f"your booking is accepted. Driver number is\n 7045630679"
-                msg='This is test message'
+                whatsapp_number = f"whatsapp:+91{mobile}"
+                msg="""Dear {client_name}
+
+                                Mr. {driver}
+                                Mobile - {driver}
+                                Will be arriving at your destination.
+
+                                Date -{date}
+                                Time -
+
+                                Our rates - https://www.driveronhire.com/rates
+
+                                *T&C Apply
+                                https://www.driveronhire.com/privacy-policy
+
+                                Thanks 
+                                Driveronhire.com
+                                Any issue or feedback call us 02243439090"""
+                message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date)
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message=msg)
+                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
