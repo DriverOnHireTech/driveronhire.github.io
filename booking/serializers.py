@@ -10,6 +10,7 @@ from authentication.serializers import NewUserSerializer
 from authentication.models import  User
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
+from collections import OrderedDict
 from django.contrib.gis.measure import D
 from collections import OrderedDict
 
