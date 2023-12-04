@@ -97,19 +97,15 @@ class Agentbookingserailizer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
-        driver_name_data = instance.driver_name
+        driver_name_data = data.get('driver_name')
 
-        if isinstance(driver_name_data, OrderedDict):
-            # If it's an OrderedDict, use it directly
-            data.update({
-                'driver_name': driver_name_data
-            })
-        else:
+        if isinstance(driver_name_data, dict):
+            # If it's already a serialized dictionary, use it directly
+            data['driver_name'] = driver_name_data
+        elif driver_name_data is not None:
             # If it's a model instance, serialize it
             driver_data = MyDriverSerializer(driver_name_data).data
-            data.update({
-                'driver_name': driver_data
-            })
+            data['driver_name'] = driver_data
 
         return data
 
