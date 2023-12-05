@@ -140,7 +140,7 @@ class Driverprofile(APIView):
         try:
             user=request.user
             driver = AddDriver.objects.filter(driver_user=user)
-            serializer = MyDriverSerializer(driver)
+            serializer = MyDriverSerializer(driver, many=True)
             return Response({'msg': 'Here is your profile', 'data':serializer.data}, status=status.HTTP_200_OK)
         
         except AddDriver.DoesNotExist:
