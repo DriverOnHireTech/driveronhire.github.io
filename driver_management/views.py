@@ -149,11 +149,10 @@ class Driverprofile(APIView):
     # Delete Driver Profile
     def delete(self, request, id):
         try:
-
             user=request.user
             driverdata=AddDriver.objects.get(id=id)
-            driverdata.delete
-            serializer=MyDriverSerializer(driverdata, user)
+            driverdata.delete()
+            serializer=MyDriverSerializer(driverdata, context={'request': user})
             return Response({'msg':'Driver profile delete', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response({'msg':'Profile not found'}, status=status.HTTP_204_NO_CONTENT)
