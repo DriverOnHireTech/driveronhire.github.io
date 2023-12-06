@@ -99,7 +99,7 @@ class MyBookingList(APIView):
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
-                        serializer.validated_data['user_id'] = user.id
+                        serializer.validated_data['user'] = user
                         serializer.save()
                         booking_id = serializer.data['id']
                         print("Serializer id: ",serializer.data['id'])
