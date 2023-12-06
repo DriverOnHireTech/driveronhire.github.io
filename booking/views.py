@@ -466,11 +466,6 @@ class Agentbookingview(APIView):
         message_number = f"+91{mobile_number}"
         whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
-<<<<<<< HEAD
-        trip_type=request.data['trip_type']
-=======
-
->>>>>>> 5f3cf898248118d95f43ac03da0ed39c2ae53b29
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
 
