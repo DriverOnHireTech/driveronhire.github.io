@@ -188,6 +188,7 @@ class Acceptedride(APIView):
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
         client_name=booking.user
+        print("client name:", client_name)
         mobile=booking.mobile
         driver=booking.accepted_driver
         date=booking.booking_date
@@ -221,7 +222,7 @@ class Acceptedride(APIView):
                                 Any issue or feedback call us 02243439090"""
                 message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date)
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
