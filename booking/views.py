@@ -22,6 +22,7 @@ from django.core.mail import send_mail
 from rest_framework.pagination import PageNumberPagination
 from driver_management.paginations import cutomepegination
 from authentication import utils
+from geopy import Nominatim
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -43,10 +44,25 @@ class MyBookingList(APIView):
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
-                currant_location = serializer.validated_data.get('currant_location')
-                # driver_type=serializer.validated_data.get('driver_type')
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
+
+                # Converting Current location latitude and longitude to user address using geopy
+                currant_location = serializer.validated_data.get('currant_location')
+                print("current location: ", currant_location)
+                print("Type of current location: ", type(currant_location))
+                currant_location_str = str(currant_location)
+                coordinates_str = currant_location_str.split("(")[1].split(")")[0]
+                latitude, longitude = map(float, coordinates_str.split())
+
+                def get_address(latitude, longitude):
+                    """ Function for getting address using latitude and longitude"""
+                    geolocator = Nominatim(user_agent="MyGeocodingApp") 
+                    location = geolocator.reverse((latitude, longitude), language="en")
+                    return location.address if location else "Location not found"
+
+                address = get_address(latitude, longitude)
+                serializer.validated_data['user_address'] = address # saving address in user address
 
                 if currant_location:
                     if currant_location is None:
@@ -188,6 +204,7 @@ class Acceptedride(APIView):
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
         client_name=booking.user
+        print("client name:", client_name)
         mobile=booking.mobile
         driver=booking.accepted_driver
         date=booking.booking_date
@@ -221,7 +238,7 @@ class Acceptedride(APIView):
                                 Any issue or feedback call us 02243439090"""
                 message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date)
                 data.setdefault("accepted_driver",user.id)
-                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -432,6 +449,15 @@ class Agentbookingview(APIView):
         user=request.user
         id = request.data.get('id')
         client_name = request.data['client_name']
+
+        # converting address to latitude and longitude
+        address = request.data['address']
+        print("address: ", address)
+        geolocator = Nominatim(user_agent="GeoLocationApp")
+        location = geolocator.geocode(address)
+        print(location.address)
+        print((location.latitude, location.longitude))
+
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
         trip_type=request.data['trip_type']
@@ -440,29 +466,58 @@ class Agentbookingview(APIView):
         message_number = f"+91{mobile_number}"
         whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
+<<<<<<< HEAD
         trip_type=request.data['trip_type']
+=======
+
+>>>>>>> 5f3cf898248118d95f43ac03da0ed39c2ae53b29
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
+
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
+
+                user_location_point = Point(location.latitude, location.longitude, srid=4326)
+                # serializer.validated_data['currant_location'] = user_location_point
+                print("user location point: ", user_location_point)
+                print("location type: ", type(user_location_point))
+
+
                 # title = "Your booking details"
                 message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
                 #message='This is test message.'
                 print(message)
                 #utils.twilio_message(to_number=message_number, message=message)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 # for sending notifiction
                 driver =AddDriver.objects.all()
                 if driver:
-                        driver = driver.filter(car_type__contains=car_type)
+                    driver = driver.filter(car_type__contains=car_type)
+
+                driver=driver.annotate(
+                            distance = Distance('driverlocation', user_location_point)
+                             ).filter(distance__lte=D(km=5))
+                
+                driver_data = []
+                for driver_obj in driver:
+                    driver_location = driver_obj.driverlocation
+                    if driver_location:
+                        location_dict = {
+                            "id": driver_obj.id, 
+                            "longitude": driver_location.x,
+                            "latitude": driver_location.y,
+                        }
+                        driver_data.append(location_dict)
 
                 driver_id = []
                 if driver.exists():
-                    for new_driver in driver:
-                        new_driver.has_received_notification = True
-                        driver_id.append(new_driver.driver_user)
+                    for drive in driver_data:
+                            add_driver = AddDriver.objects.filter(id=drive['id'])
+                            for new_driver in add_driver:
+                                new_driver.has_received_notification = True
+                                driver_id.append(new_driver.driver_user)
                             
                             
 

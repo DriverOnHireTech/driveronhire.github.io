@@ -12,6 +12,7 @@ from authentication.models import User
 from driver_management.models import AddDriver
 from datetime import time
 from twilio.rest import Client
+from geopy.geocoders import Nominatim
 
 
 
@@ -63,6 +64,7 @@ class PlaceBooking(models.Model):
     client_booking_time = models.TimeField(default=time(12,0), null=True, blank=True)
     no_of_days= models.PositiveIntegerField(null=True, blank=True)
     currant_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
+    user_address=models.CharField(max_length=500, null=True, blank=True)
     car_type=models.CharField(max_length=100, null=True)
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=500, null=True, blank=True)
@@ -71,11 +73,27 @@ class PlaceBooking(models.Model):
     status =  models.CharField(max_length=100, choices=STATUS, default='pending')
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
+    deuty_started=models.DateTimeField(auto_now_add=True)
     booking_time=models.DateTimeField(auto_now_add=True)
     
    
     def __str__(self):
         return f"{self.id}"
+    
+    """Save method"""
+    #Write here
+    def save(self, *args, **kwargs):
+        if self.currant_location:
+            geolocator = Nominatim(user_agent="booking")
+            location = geolocator.geocode(self.currant_location)
+
+            if location:
+                self.latitude = location.latitude
+                self.longitude = location.longitude
+
+        super().save(*args, **kwargs)
+    """"end save method"""
+
 """Agent booking"""
 class AgentBooking(models.Model):
     booking_type= (
