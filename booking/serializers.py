@@ -29,21 +29,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         
         fields= ('id','trip_type', 'booking_date','no_of_days', 'user',
                    'car_type', 'gear_type', 
-                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile')
-        
-        def to_representation(self, instance):
-            data = super(PlacebookingSerializer, self).to_representation(instance)
-            client_name_data = data.get('client_name')
-
-            if isinstance(client_name_data, dict):
-                # If it's already a serialized dictionary, use it directly
-                data['client_name'] = client_name_data
-            elif client_name_data is not None:
-                # If it's a model instance, serialize it
-                client_data = MyDriverSerializer(client_name_data).data
-                data['client_name'] = client_data
-
-            return data
+                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile', 'user_address', 'deuty_started')
    
 
    
