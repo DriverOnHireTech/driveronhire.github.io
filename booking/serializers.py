@@ -27,9 +27,9 @@ class PlacebookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceBooking
         
-        fields= ('id','trip_type', 'booking_date','no_of_days', 'user',
+        fields= ('id','trip_type', 'booking_date','no_of_days',
                    'car_type', 'gear_type', 
-                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile', 'user_address', 'deuty_started')
+                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege',  'user_address', 'deuty_started')
    
 
    

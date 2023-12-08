@@ -46,6 +46,7 @@ class MyBookingList(APIView):
         if serializer.is_valid():
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
+                serializer.validated_data['mobile'] = user.phone
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -183,6 +184,7 @@ class MyBookingList(APIView):
             
         except:
             return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
+
 
 """Endpoint for web CRM"""
 class getbooking(APIView):
@@ -620,7 +622,6 @@ class Agentbookingview(APIView):
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
     
 
-
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  
     def get(self, request):
@@ -690,7 +691,6 @@ class Guestbookingapi(APIView):
         except:
             return Response({'msg': 'Error getting data'})
             
-
 
 class SingleGuestbookingapi(APIView):
     def get(self, request,id):
