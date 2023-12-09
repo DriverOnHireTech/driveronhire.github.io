@@ -238,7 +238,7 @@ class Acceptedride(APIView):
                                 Any issue or feedback call us 02243439090"""
                 message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date)
                 data.setdefault("accepted_driver",user.id)
-                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -484,7 +484,7 @@ class Agentbookingview(APIView):
                 #message='This is test message.'
                 print(message)
                 #utils.twilio_message(to_number=message_number, message=message)
-                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 # for sending notifiction
