@@ -100,12 +100,15 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         driver_name_data = data.get('driver_name')
 
         if isinstance(driver_name_data, dict):
-            # If it's already a serialized dictionary, use it directly
+        # If it's already a serialized dictionary, use it directly
             data['driver_name'] = driver_name_data
+        elif isinstance(driver_name_data, int):
+        # Handle the case where driver_name_data is an integer
+            data['driver_name'] = {'driver_id': driver_name_data}
         elif driver_name_data is not None:
-            # If it's a model instance, serialize it
-            driver_data = MyDriverSerializer(driver_name_data).data
-            data['driver_name'] = driver_data
+        # If it's a model instance, serialize it
+         driver_data = MyDriverSerializer(driver_name_data).data
+         data['driver_name'] = driver_data
 
         return data
 

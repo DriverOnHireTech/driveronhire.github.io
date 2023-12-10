@@ -134,11 +134,11 @@ class SendOTPAPIView(APIView):
 
         # Send OTP via Twilio
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            body=f'Your OTP is: {otp}',
-            from_=settings.TWILIO_PHONE_NUMBER,
-            to=send_phone
-        )
+        # message = client.messages.create(
+        #     body=f'Your OTP is: {otp}',
+        #     from_=settings.TWILIO_PHONE_NUMBER,
+        #     to=send_phone
+        # )
 
         return Response({'message': 'OTP sent successfully'}, status=status.HTTP_200_OK)
 
