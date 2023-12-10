@@ -45,7 +45,7 @@ def main():
     delivery_reports = channel.get_outbound_sms_delivery_reports(query_parameters)
 
     # See the delivery reports.
-    print(delivery_reports)
+    print("message:",delivery_reports)
 
 
 if __name__ == "__main__":
