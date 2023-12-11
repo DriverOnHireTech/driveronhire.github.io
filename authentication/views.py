@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import make_password
 from .models import User
 from .serializers import NewUserSerializer, UserLoginserializer, Fcmserializer
 import random
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from twilio.rest import Client
 from base_site import settings
 from rest_framework.response import Response
@@ -102,6 +104,8 @@ class LoginView(APIView):
             
 
 class Logoutapi(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
             user =  request.user.id
