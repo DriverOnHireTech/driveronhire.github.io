@@ -23,3 +23,6 @@ def send_otp_via_infobip(phone_number, otp):
     print("response",response)
 
     return response.json()
+
+sms=send_otp_via_infobip("919657847644", "2345")
+print("message send:", sms)
