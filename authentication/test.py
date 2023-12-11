@@ -20,7 +20,7 @@ def send_otp_via_infobip(phone_number, otp):
     }
 
     response =requests.post(INFOBIP_BASE_URL, json=payload, headers=headers)
-    print("response",response)
+    # print("response",response)
 
     return response.json()
 
