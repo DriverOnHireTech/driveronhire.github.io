@@ -27,5 +27,12 @@ class Userprofileview(APIView):
                 return Response({'msg': 'Invalid data', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
        
-        
+    def get(self, request):
+         try:
+              user=request.user
+              user_profile=UserProfile.objects.filter(user=user)
+              serializer=UserProfileSerializer(user_profile, many=True)
+              return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
+         except UserProfile.DoesNotExist:
+              return Response({'msg':'No data found'}, status=status.HTTP_204_NO_CONTENT)
 # End User Profile
