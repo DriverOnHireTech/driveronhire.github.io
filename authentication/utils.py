@@ -2,6 +2,8 @@ import random
 import string
 from django.conf import settings
 from twilio.rest import Client  # Import the Twilio Client if using Twilio
+import requests
+
 
 
 def username_gene():
@@ -44,3 +46,29 @@ def twilio_message(to_number, message):
     )
 
     print(message.sid)
+
+# Send OTP using infobip
+# utils.py
+
+
+
+def send_otp_via_infobip(phone_number, otp):
+    api_key = settings.INFOBIP_API_KEY
+    base_url = settings.INFOBIP_BASE_URL
+
+    headers = {
+        'Authorization': f'App {api_key}',
+        'Content-Type': 'application/json',
+    }
+
+    message = f'Your OTP is: {otp}'
+
+    payload = {
+        'from': '447491163443',
+        'to': phone_number,
+        'text': message,
+    }
+
+    response = requests.post(base_url, json=payload, headers=headers)
+
+    return response.json()

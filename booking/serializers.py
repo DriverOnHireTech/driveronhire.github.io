@@ -27,7 +27,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceBooking
         
-        fields= ('id','trip_type', 'booking_date','no_of_days',
+        fields= ('id','trip_type', 'booking_date','no_of_days', 
                    'car_type', 'gear_type', 
                   'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege',  'user_address', 'deuty_started')
    
@@ -79,58 +79,61 @@ class Feedbackserializer(serializers.ModelSerializer):
     
 
 
-class Agentbookingserailizer(serializers.ModelSerializer):
-    #driver_name=serializers.SerializerMethodField()
-    # booking_created_by=NewUserSerializer()
-    class Meta:
-        #driver_name=serializers.SerializerMethodField()
-        #driver_name1 = MyDriverSerializer()
-        model= AgentBooking
-        fields= "__all__"
-
-    # def get_driver_name(self, obj):
-    #     #driver_name=obj.driver_name
-    #     driver_name = obj.get('driver_name')
-    #     add_driver_seri=MyDriverSerializer(driver_name)
-    #     return add_driver_seri.data
-
-
-    def to_representation(self, instance):
-        data = super(Agentbookingserailizer, self).to_representation(instance)
-        driver_name_data = data.get('driver_name')
-
-        if isinstance(driver_name_data, dict):
-            # If it's already a serialized dictionary, use it directly
-            data['driver_name'] = driver_name_data
-        elif driver_name_data is not None:
-            # If it's a model instance, serialize it
-            driver_data = MyDriverSerializer(driver_name_data).data
-            data['driver_name'] = driver_data
-
-        return data
-
-
 # class Agentbookingserailizer(serializers.ModelSerializer):
 #     #driver_name=serializers.SerializerMethodField()
 #     # booking_created_by=NewUserSerializer()
 #     class Meta:
-#         driver_name=serializers.SerializerMethodField()
-#         driver_name1 = MyDriverSerializer()
+#         #driver_name=serializers.SerializerMethodField()
+#         #driver_name1 = MyDriverSerializer()
 #         model= AgentBooking
 #         fields= "__all__"
 
-#     def get_driver_name(self, obj):
-#         driver_name=obj.driver_name
-#         add_driver_seri=MyDriverSerializer(driver_name)
-#         return add_driver_seri.data
-    
+#     # def get_driver_name(self, obj):
+#     #     #driver_name=obj.driver_name
+#     #     driver_name = obj.get('driver_name')
+#     #     add_driver_seri=MyDriverSerializer(driver_name)
+#     #     return add_driver_seri.data
+
+
 #     def to_representation(self, instance):
 #         data = super(Agentbookingserailizer, self).to_representation(instance)
-#         driver_data = MyDriverSerializer(instance.driver_name).data
-#         data.update({
-#             'driver_name': driver_data
-#         })
+#         print("Data value: ", data)
+#         driver_name_data = data.get('driver_name')
+#         print("driver name: ", driver_name_data)
+
+#         if isinstance(driver_name_data, dict):
+#             # If it's already a serialized dictionary, use it directly
+#             data['driver_name'] = driver_name_data
+#         elif driver_name_data is not None:
+#             # If it's a model instance, serialize it
+#             driver_data = MyDriverSerializer(driver_name_data).data
+#             print("driver data: ", driver_data)
+#             data['driver_name'] = driver_data
+
 #         return data
+
+
+class Agentbookingserailizer(serializers.ModelSerializer):
+    #driver_name=serializers.SerializerMethodField()
+    # booking_created_by=NewUserSerializer()
+    class Meta:
+        driver_name=serializers.SerializerMethodField()
+        driver_name1 = MyDriverSerializer()
+        model= AgentBooking
+        fields= "__all__"
+
+    def get_driver_name(self, obj):
+        driver_name=obj.driver_name
+        add_driver_seri=MyDriverSerializer(driver_name)
+        return add_driver_seri.data
+    
+    def to_representation(self, instance):
+        data = super(Agentbookingserailizer, self).to_representation(instance)
+        driver_data = MyDriverSerializer(instance.driver_name).data
+        data.update({
+            'driver_name': driver_data
+        })
+        return data
     
    
 class BookLaterSerializer(serializers.ModelSerializer):
