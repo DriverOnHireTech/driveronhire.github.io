@@ -25,7 +25,8 @@ class UserCar(models.Model):
 class UserProfile(models.Model):
     user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
     user_name=models.CharField(max_length=200, null=True, blank=True)
-    usercar=models.ManyToManyField(UserCar)
+    usercar=models.CharField(max_length=200, null=True, blank=True)
+    cartype=models.CharField(max_length=200, null=True, blank=True)
     useraddress=models.CharField(max_length=500, null=True, blank=True)
     addprofile=models.DateTimeField(auto_now_add=True)
 
