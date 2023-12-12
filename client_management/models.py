@@ -29,6 +29,7 @@ class UserProfile(models.Model):
     cartype=models.CharField(max_length=200, null=True, blank=True)
     useraddress=models.CharField(max_length=500, null=True, blank=True)
     addprofile=models.DateTimeField(auto_now_add=True)
+    mobile_number = models.CharField(max_length=50, null=True, blank=True)
 
 
     def __str__(self):
