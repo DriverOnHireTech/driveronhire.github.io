@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import make_password
 from .models import User
 from .serializers import NewUserSerializer, UserLoginserializer, Fcmserializer
 import random
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from twilio.rest import Client
 from base_site import settings
 from rest_framework.response import Response
@@ -15,6 +17,8 @@ from .utils import username_gene, generate_otp
 # from base_site.backend import authenticate
 from fcm_django.models import FCMDevice
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.exceptions import AuthenticationFailed
+
 
 
 class Adduser(APIView):
@@ -102,15 +106,18 @@ class LoginView(APIView):
             
 
 class Logoutapi(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
     def post(self, request):
         try:
-            user =  request.user.id
+            user = request.user
             logout(request)
-            request.user.auth_token.delete()
-            return Response({'msg':'Logout successfuly'}, status=status.HTTP_200_OK)
-        
-        except:
-            return Response({'msg':'unable to logout'}, status=status.HTTP_404_NOT_FOUND)
+            request.auth.delete()  # Delete the token directly
+            return Response({'msg': 'Logout successful'}, status=status.HTTP_200_OK)
+        except AuthenticationFailed:
+            return Response({'msg': 'Authentication failed'}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'msg': f'Unable to logout: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 class SendOTPAPIView(APIView):
