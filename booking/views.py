@@ -455,8 +455,8 @@ class Agentbookingview(APIView):
         print("address: ", address)
         geolocator = Nominatim(user_agent="GeoLocationApp")
         location = geolocator.geocode(address)
-        print(location.address)
-        print((location.latitude, location.longitude))
+        #print(location.address)
+       # print((location.latitude, location.longitude))
 
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
