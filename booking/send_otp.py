@@ -16,10 +16,10 @@ from infobip_channels.sms.channel import SMSChannel
 
 BASE_URL = "https://vv1yd1.api.infobip.com"
 API_KEY = "1f9d940b581346389b8b853128de460c-b4c1a547-e85a-42d2-b32f-5ef8696765d0"
-RECIPIENT = "919657847644"
+RECIPIENT = "+918210533337"
 
 
-def main():
+def send_sms():
     # Initialize the SMS channel with your credentials.
     channel = SMSChannel.from_auth_params(
         {
@@ -47,6 +47,3 @@ def main():
     # See the delivery reports.
     print("message:",delivery_reports)
 
-
-if __name__ == "__main__":
-    main()
