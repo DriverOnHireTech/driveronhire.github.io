@@ -454,13 +454,14 @@ class Agentbookingview(APIView):
         client_name = request.data['client_name']
         print("client name: ", client_name)
 
-        # converting address to latitude and longitude
-        address = request.data['address']
-        print("address: ", address)
-        geolocator = Nominatim(user_agent="GeoLocationApp")
-        location = geolocator.geocode(address)
-        print(location.address)
-        print((location.latitude, location.longitude))
+       # Extracting latitude and longitude from Point field data
+        coordinates = data['client_location']['coordinates']
+        longitude, latitude = coordinates  # Note: order is (longitude, latitude)
+
+        print("Latitude:", latitude)
+        print("Longitude:", longitude)
+        
+        # print((location.latitude, location.longitude))
 
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
@@ -477,10 +478,10 @@ class Agentbookingview(APIView):
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
 
-                user_location_point = Point(location.latitude, location.longitude, srid=4326)
-                # serializer.validated_data['currant_location'] = user_location_point
-                print("user location point: ", user_location_point)
-                print("location type: ", type(user_location_point))
+                user_location_point = Point(latitude, longitude, srid=4326)
+                # # serializer.validated_data['currant_location'] = user_location_point
+                # print("user location point: ", user_location_point)
+                # print("location type: ", type(user_location_point))
 
 
                 # title = "Your booking details"
