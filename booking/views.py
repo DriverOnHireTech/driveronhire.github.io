@@ -23,6 +23,7 @@ from rest_framework.pagination import PageNumberPagination
 from driver_management.paginations import cutomepegination
 from authentication import utils
 from geopy import Nominatim
+from .send_otp import send_sms
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -46,6 +47,7 @@ class MyBookingList(APIView):
         if serializer.is_valid():
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
+                serializer.validated_data['mobile'] = user.phone
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -183,6 +185,7 @@ class MyBookingList(APIView):
             
         except:
             return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
+
 
 """Endpoint for web CRM"""
 class getbooking(APIView):
@@ -449,22 +452,24 @@ class Agentbookingview(APIView):
         user=request.user
         id = request.data.get('id')
         client_name = request.data['client_name']
+        print("client name: ", client_name)
 
-        # converting address to latitude and longitude
-        address = request.data['address']
-        print("address: ", address)
-        geolocator = Nominatim(user_agent="GeoLocationApp")
-        location = geolocator.geocode(address)
-        print(location.address)
-        print((location.latitude, location.longitude))
+       # Extracting latitude and longitude from Point field data
+        coordinates = data['client_location']['coordinates']
+        longitude, latitude = coordinates  # Note: order is (longitude, latitude)
+
+        print("Latitude:", latitude)
+        print("Longitude:", longitude)
+        
+        # print((location.latitude, location.longitude))
 
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
         trip_type=request.data['trip_type']
         # email=[request.data['email']]
-        mobile_number=request.data.get('mobile_number')
-        message_number = f"+91{mobile_number}"
-        whatsapp_number = f"whatsapp:+91{mobile_number}"
+        # mobile_number=request.data.get('mobile_number')
+        # message_number = f"+91{mobile_number}"
+        # whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
 
         if AgentBooking.objects.filter(id=id).exists:
@@ -473,10 +478,10 @@ class Agentbookingview(APIView):
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by']=user
 
-                user_location_point = Point(location.latitude, location.longitude, srid=4326)
-                # serializer.validated_data['currant_location'] = user_location_point
-                print("user location point: ", user_location_point)
-                print("location type: ", type(user_location_point))
+                user_location_point = Point(latitude, longitude, srid=4326)
+                # # serializer.validated_data['currant_location'] = user_location_point
+                # print("user location point: ", user_location_point)
+                # print("location type: ", type(user_location_point))
 
 
                 # title = "Your booking details"
@@ -485,16 +490,23 @@ class Agentbookingview(APIView):
                 print(message)
                 #utils.twilio_message(to_number=message_number, message=message)
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                send_sms()
                 print("message send")
                 # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
                 # for sending notifiction
+                # serializer.save()
                 driver =AddDriver.objects.all()
+                print("driver:", driver)
                 if driver:
                     driver = driver.filter(car_type__contains=car_type)
 
+                print("filter driver: ", driver)
+
                 driver=driver.annotate(
                             distance = Distance('driverlocation', user_location_point)
-                             ).filter(distance__lte=D(km=5))
+                             ).filter(distance__lte=D(km=5000))
+                
+                print("Driver with in radius: ", driver)
                 
                 driver_data = []
                 for driver_obj in driver:
@@ -507,6 +519,7 @@ class Agentbookingview(APIView):
                         }
                         driver_data.append(location_dict)
 
+                print("driver data: ", driver_data)
                 driver_id = []
                 if driver.exists():
                     for drive in driver_data:
@@ -514,13 +527,11 @@ class Agentbookingview(APIView):
                             for new_driver in add_driver:
                                 new_driver.has_received_notification = True
                                 driver_id.append(new_driver.driver_user)
-                            
-                            
 
                     devices = FCMDevice.objects.filter(user__in=driver_id)
 
                     #serializer.validated_data['user_id'] = user
-                    serializer.save()
+                    
                     booking_id = serializer.data['id']
                     print("--------Driver on hire")
                     print("Serializer id: ",serializer.data['id'])
@@ -557,7 +568,7 @@ class Agentbookingview(APIView):
                             print("Notification sent:", response) 
                         except Exception as e:
                             print(f"Error sending notification to token {token}:{e}")
-
+                serializer.save()
                 
 
                 # serializer.save()
@@ -619,7 +630,6 @@ class Agentbookingview(APIView):
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
     
-
 
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  
@@ -690,7 +700,6 @@ class Guestbookingapi(APIView):
         except:
             return Response({'msg': 'Error getting data'})
             
-
 
 class SingleGuestbookingapi(APIView):
     def get(self, request,id):

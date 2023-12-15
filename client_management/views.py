@@ -30,8 +30,11 @@ class Userprofileview(APIView):
     def get(self, request):
          try:
               user=request.user
-              user_profile=UserProfile.objects.filter(user=user)
-              serializer=UserProfileSerializer(user_profile, many=True)
+              print("user: ", user.phone)
+              user_profile=UserProfile.objects.get(user=user)
+              user_profile.mobile_number = user.phone
+              user_profile.save()
+              serializer=UserProfileSerializer(user_profile)
               return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
          except UserProfile.DoesNotExist:
               return Response({'msg':'No data found'}, status=status.HTTP_204_NO_CONTENT)
