@@ -475,8 +475,10 @@ class Agentbookingview(APIView):
 
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
-
+            
             if serializer.is_valid():
+                print("serializer data line 477: ", serializer.data)
+
                 serializer.validated_data['booking_created_by']=user
 
                 user_location_point = Point(latitude, longitude, srid=4326)
@@ -495,17 +497,17 @@ class Agentbookingview(APIView):
                 print("message send")
                 
                 driver =AddDriver.objects.all()
-                print("driver:", driver)
+                # print("driver:", driver)
                 if driver:
                     driver = driver.filter(car_type__contains=car_type)
 
-                print("filter driver: ", driver)
+                # print("filter driver: ", driver)
 
                 driver=driver.annotate(
                             distance = Distance('driverlocation', user_location_point)
-                             ).filter(distance__lte=D(km=5000))
+                             ).filter(distance__lte=D(km=500000))
                 
-                print("Driver with in radius: ", driver)
+                # print("Driver with in radius: ", driver)
                 
                 driver_data = []
                 for driver_obj in driver:
@@ -518,7 +520,7 @@ class Agentbookingview(APIView):
                         }
                         driver_data.append(location_dict)
 
-                print("driver data: ", driver_data)
+                # print("driver data: ", driver_data)
                 driver_id = []
                 if driver.exists():
                     for drive in driver_data:
@@ -526,14 +528,19 @@ class Agentbookingview(APIView):
                             for new_driver in add_driver:
                                 new_driver.has_received_notification = True
                                 driver_id.append(new_driver.driver_user)
-
-                    devices = FCMDevice.objects.filter(user__in=driver_id)
-
-                    #serializer.validated_data['user_id'] = user
                     
-                    booking_id = serializer.data['id']
+                    devices = FCMDevice.objects.filter(user__in=driver_id)
+                    
+                    #serializer.validated_data['user_id'] = user
+                    # print("Now i am here..")
+                    # print(serializer.errors)
+                    # print("now here.")
+                    print("serializer data: ",serializer.data)
+                    booking_id = serializer.data('id')
+                    #print("booking id:", booking_id)
+                    
                     print("--------Driver on hire")
-                    print("Serializer id: ",serializer.data['id'])
+                    # print("Serializer id: ",serializer.data['id'])
                         
                     notify=Notifydrivers.objects.create()
                     notify.agent_booking = AgentBooking.objects.get(id=booking_id)
