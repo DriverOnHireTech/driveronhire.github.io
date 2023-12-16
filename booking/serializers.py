@@ -31,7 +31,6 @@ class PlacebookingSerializer(serializers.ModelSerializer):
                    'car_type', 'gear_type', 
                   'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'currant_location', 'status','packege',  'user_address', 'deuty_started', 'cancelbooking_reason', 'cancelbooking_message')
    
-
    
 class NotifyDriverSerializer(serializers.ModelSerializer):
     place_booking_id = serializers.SerializerMethodField()
@@ -49,6 +48,7 @@ class DriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = AddDriver
         fields = '__all__'
+
 
 class InvoiceSerializer(serializers.ModelSerializer):
     
@@ -77,7 +77,6 @@ class Feedbackserializer(serializers.ModelSerializer):
         model =  Feedback
         fields = "__all__"
     
-
 
 # class Agentbookingserailizer(serializers.ModelSerializer):
 #     #driver_name=serializers.SerializerMethodField()
@@ -116,6 +115,7 @@ class Feedbackserializer(serializers.ModelSerializer):
 class Agentbookingserailizer(serializers.ModelSerializer):
     # driver_name=serializers.SerializerMethodField()
     # booking_created_by=NewUserSerializer()
+
     class Meta:
         driver_name=serializers.SerializerMethodField()
         driver_name1 = MyDriverSerializer()
@@ -130,8 +130,13 @@ class Agentbookingserailizer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
         driver_data = MyDriverSerializer(instance.driver_name).data
+
+         # Get the name from the related user model
+        created_by_name = instance.booking_created_by.phone if instance.booking_created_by else None
+
         data.update({
-            'driver_name': driver_data
+            'created_by_name': created_by_name,
+            'driver_name': driver_data,
         })
         return data
     
@@ -141,7 +146,8 @@ class BookLaterSerializer(serializers.ModelSerializer):
         model = BookLater
         fields = ['id','trip_type', 'from_date',
                   'to_date', 'car_type', 'gear_type', 'pickup_location', 'drop_location', 'booking_time', 'currant_location', 'status','packege', 'mobile', 'accepted_driver', "schedule_booking"]
-        
+
+
 class Userprofileserializer(serializers.ModelSerializer):
     model= userProfile
     fields='__all__'
