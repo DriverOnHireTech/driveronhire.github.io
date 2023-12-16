@@ -231,6 +231,14 @@ class loclatwohrsadmin(admin.ModelAdmin):
     list_display=("cartype", "charge", "perour_ot", "night_allownce", "drop_location_change")
 admin.site.register(localtwohrscharges,loclatwohrsadmin)
 
+class AdminZoneA(admin.ModelAdmin):
+    list_display=('location', 'pincode')
+admin.site.register(ZoneA,AdminZoneA)
+
+class AdminZoneB(admin.ModelAdmin):
+    list_display=('location', 'pincode')
+admin.site.register(ZoneB,AdminZoneB)
+
 admin.site.register(localfourhrscharges)
 admin.site.register(localeigthhrscharges)
 admin.site.register(out_stn_sday_returncharges)

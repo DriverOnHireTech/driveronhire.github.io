@@ -306,6 +306,24 @@ class out_stn_charges_stay(models.Model):
 
     def __str__(self):
         return self.cartype
+
+# Zone model for Churchgate to Kandiwali  
+class ZoneA(models.Model):
+    location=models.CharField(max_length=200, null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
+
+#Borivali to 
+class ZoneB(models.Model):
+    location=models.CharField(max_length=200,null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
+    
+
     
 # class driverpackege(models.Model):
 #     PACKEGES=(
