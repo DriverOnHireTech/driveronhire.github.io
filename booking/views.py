@@ -24,6 +24,7 @@ from driver_management.paginations import cutomepegination
 from authentication import utils
 from geopy import Nominatim
 from .send_otp import send_sms
+from user_master.models import ZoneA, ZoneB
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -492,9 +493,7 @@ class Agentbookingview(APIView):
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 send_sms()
                 print("message send")
-                # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
-                # for sending notifiction
-                # serializer.save()
+                
                 driver =AddDriver.objects.all()
                 print("driver:", driver)
                 if driver:
@@ -709,3 +708,4 @@ class SingleGuestbookingapi(APIView):
             return Response({'msg':'guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response({'msg': 'Data doesnot exist'})
+
