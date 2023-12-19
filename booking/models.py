@@ -139,6 +139,7 @@ class AgentBooking(models.Model):
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    booking_created_by_name = models.CharField(max_length=255, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
 
 

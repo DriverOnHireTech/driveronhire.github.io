@@ -113,15 +113,12 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 
 class Agentbookingserailizer(serializers.ModelSerializer):
-    # driver_name=serializers.SerializerMethodField()
-    # booking_created_by=NewUserSerializer()
-    # driver_name = MyDriverSerializer(many=False, read_only=True)
 
     class Meta:
         # driver_name=serializers.SerializerMethodField()
         driver_name = MyDriverSerializer()
         model= AgentBooking
-        fields= ['id', 'client_name', 'mobile_number', 'Alternet_number', 'email', 'address', 'client_location', 'car_company', 'car_type', 'car_transmission', 'bookingfor', 'source', 'to_date',  'start_time',  'religion', 'request_type', 'trip_type', 'packege', 'visiting_location', 'status', 'cancelbooking_reason' ,'bookingdt', 'driver_name', 'booking_created_by']
+        fields= "__all__"
 
 
     # def get_driver_name(self, obj):
@@ -131,11 +128,10 @@ class Agentbookingserailizer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
-        # print("data: ", data) 
-        # print("new data")
-        # print("new instance: ", instance)
+        data['id'] = instance.id
+
         if 'driver_name' in data:
-            driver_instance = data['driver_name']
+            driver_instance = instance.driver_name
             if driver_instance:
                 driver_data = MyDriverSerializer(driver_instance).data
                 data['driver_name'] = driver_data
@@ -144,7 +140,6 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         
 
          # Get the name from the related user model
-        print("we are at this place")
         # data.update({
         #     'driver_name': driver_data,
         # })
