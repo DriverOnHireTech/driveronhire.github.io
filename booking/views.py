@@ -498,7 +498,7 @@ class Agentbookingview(APIView):
 
             driver=driver.annotate(
                         distance = Distance('driverlocation', user_location_point)
-                            ).filter(distance__lte=D(km=500000))
+                            ).filter(distance__lte=D(km=5))
             
             print("Driver with in radius: ", driver)
             
