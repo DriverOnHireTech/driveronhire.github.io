@@ -475,7 +475,6 @@ class Agentbookingview(APIView):
 
         if AgentBooking.objects.filter(id=id).exists:
             serializer= Agentbookingserailizer(data=data)
-            
             if serializer.is_valid():
                 print("serializer data line 477: ", serializer.data)
 
@@ -483,18 +482,13 @@ class Agentbookingview(APIView):
 
                 user_location_point = Point(latitude, longitude, srid=4326)
                 # # serializer.validated_data['currant_location'] = user_location_point
-                # print("user location point: ", user_location_point)
-                # print("location type: ", type(user_location_point))
-
-
+        
                 # title = "Your booking details"
-                message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
-                #message='This is test message.'
-                print(message)
+                # message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+                # #message='This is test message.'
+                # print(message)
                 #utils.twilio_message(to_number=message_number, message=message)
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-                send_sms()
-                print("message send")
                 
                 driver =AddDriver.objects.all()
                 # print("driver:", driver)
@@ -532,17 +526,19 @@ class Agentbookingview(APIView):
                     devices = FCMDevice.objects.filter(user__in=driver_id)
                     
                     #serializer.validated_data['user_id'] = user
-                    # print("Now i am here..")
-                    # print(serializer.errors)
-                    # print("now here.")
                     print("serializer data: ",serializer.data)
-                    booking_id = serializer.data('id')
-                    #print("booking id:", booking_id)
+                    booking_id = serializer.data.get('id', None)
+                    print("booking id:", booking_id)
                     
                     print("--------Driver on hire")
-                    # print("Serializer id: ",serializer.data['id'])
-                        
                     notify=Notifydrivers.objects.create()
+                    if AgentBooking.objects.filter(id=booking_id).exists():
+                    # Fetch the AgentBooking object
+                        notify.agent_booking = AgentBooking.objects.get(id=booking_id)
+                        notify.save()
+                    # ...
+                else:
+                    print(f"AgentBooking with id {booking_id} does not exist.")
                     notify.agent_booking = AgentBooking.objects.get(id=booking_id)
                     notify.save()
                     print("Notify: ",notify) 
@@ -575,8 +571,6 @@ class Agentbookingview(APIView):
                         except Exception as e:
                             print(f"Error sending notification to token {token}:{e}")
                 serializer.save()
-                
-
                 # serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
             else:
