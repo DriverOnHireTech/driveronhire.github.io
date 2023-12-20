@@ -113,31 +113,36 @@ class Feedbackserializer(serializers.ModelSerializer):
 
 
 class Agentbookingserailizer(serializers.ModelSerializer):
-    # driver_name=serializers.SerializerMethodField()
-    # booking_created_by=NewUserSerializer()
 
     class Meta:
-        driver_name=serializers.SerializerMethodField()
-        driver_name1 = MyDriverSerializer()
+        # driver_name=serializers.SerializerMethodField()
+        driver_name = MyDriverSerializer()
         model= AgentBooking
         fields= "__all__"
 
-    def get_driver_name(self, obj):
-        driver_name=obj.driver_name
-        add_driver_seri=MyDriverSerializer(driver_name)
-        return add_driver_seri.data
+
+    # def get_driver_name(self, obj):
+    #     driver_name=obj.driver_name
+    #     add_driver_seri=MyDriverSerializer(driver_name)
+    #     return add_driver_seri.data
     
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
-        driver_data = MyDriverSerializer(instance.driver_name).data
+        data['id'] = instance.id
+
+        if 'driver_name' in data:
+            driver_instance = instance.driver_name
+            if driver_instance:
+                driver_data = MyDriverSerializer(driver_instance).data
+                data['driver_name'] = driver_data
+            else:
+                data['driver_name'] = None
+        
 
          # Get the name from the related user model
-        created_by_name = instance.booking_created_by.phone if instance.booking_created_by else None
-
-        data.update({
-            'created_by_name': created_by_name,
-            'driver_name': driver_data,
-        })
+        # data.update({
+        #     'driver_name': driver_data,
+        # })
         return data
     
    

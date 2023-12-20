@@ -450,7 +450,7 @@ class Agentbookingview(APIView):
         data=request.data
         print("Aget Data",data)
         user=request.user
-        id = request.data.get('id')
+        print("user", user.first_name)
         client_name = request.data['client_name']
         print("client name: ", client_name)
 
@@ -471,110 +471,110 @@ class Agentbookingview(APIView):
         # message_number = f"+91{mobile_number}"
         # whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
-        if AgentBooking.objects.filter(id=id).exists:
-            serializer= Agentbookingserailizer(data=data)
 
-            if serializer.is_valid():
-                serializer.validated_data['booking_created_by']=user
+        # if AgentBooking.objects.filter(id=id).exists():
+        serializer= Agentbookingserailizer(data=data)
+        if serializer.is_valid():
+            serializer.validated_data['booking_created_by_name']=user.first_name
+            serializer.save()
 
-                user_location_point = Point(latitude, longitude, srid=4326)
-                # # serializer.validated_data['currant_location'] = user_location_point
-                # print("user location point: ", user_location_point)
-                # print("location type: ", type(user_location_point))
+            user_location_point = Point(latitude, longitude, srid=4326)
 
+            message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+            #message='This is test message.'
+            print(message)
+            #utils.twilio_message(to_number=message_number, message=message)
+            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            send_sms()
+            print("message send")
+            # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
+            # for sending notifiction
+            # serializer.save()
+            driver =AddDriver.objects.all()
+            if driver:
+                driver = driver.filter(car_type__contains=car_type)
 
-                # title = "Your booking details"
-                message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
-                #message='This is test message.'
-                print(message)
-                #utils.twilio_message(to_number=message_number, message=message)
-                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-                send_sms()
-                print("message send")
-                # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
-                # for sending notifiction
-                # serializer.save()
-                driver =AddDriver.objects.all()
-                print("driver:", driver)
-                if driver:
-                    driver = driver.filter(car_type__contains=car_type)
+            print("filter driver: ", driver)
 
-                print("filter driver: ", driver)
-
-                driver=driver.annotate(
-                            distance = Distance('driverlocation', user_location_point)
-                             ).filter(distance__lte=D(km=5000))
-                
-                print("Driver with in radius: ", driver)
-                
-                driver_data = []
-                for driver_obj in driver:
-                    driver_location = driver_obj.driverlocation
-                    if driver_location:
-                        location_dict = {
-                            "id": driver_obj.id, 
-                            "longitude": driver_location.x,
-                            "latitude": driver_location.y,
-                        }
-                        driver_data.append(location_dict)
-
-                print("driver data: ", driver_data)
-                driver_id = []
-                if driver.exists():
-                    for drive in driver_data:
-                            add_driver = AddDriver.objects.filter(id=drive['id'])
-                            for new_driver in add_driver:
-                                new_driver.has_received_notification = True
-                                driver_id.append(new_driver.driver_user)
-
-                    devices = FCMDevice.objects.filter(user__in=driver_id)
-
-                    #serializer.validated_data['user_id'] = user
-                    
-                    booking_id = serializer.data['id']
-                    print("--------Driver on hire")
-                    print("Serializer id: ",serializer.data['id'])
-                        
-                    notify=Notifydrivers.objects.create()
-                    notify.agent_booking = AgentBooking.objects.get(id=booking_id)
-                    notify.save()
-                    print("Notify: ",notify) 
-
-                    registration_ids = []
-                    for device in devices:
-                        registration_id = device.registration_id
-                        registration_ids.append(registration_id)
-                        
-                    print("registration id:", registration_ids)
-
-                    # Send notification using FCM
-                    for token in registration_ids:
-                        if token is None or not token.strip():
-                            print("Invalid token")
-                            continue
-                        message = messaging.Message(
-                            notification=messaging.Notification(
-                                title="New Booking",
-                                body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
-                                
-                            ),
-                            token= token 
-                        )
-                            # Send the message
-                        try:
-
-                            response = messaging.send(message)
-                            print("Notification sent:", response) 
-                        except Exception as e:
-                            print(f"Error sending notification to token {token}:{e}")
-                serializer.save()
-                
-
-                # serializer.save()
-                return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
-            else:
-                    return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            driver=driver.annotate(
+                        distance = Distance('driverlocation', user_location_point)
+                            ).filter(distance__lte=D(km=5))
             
+            print("Driver with in radius: ", driver)
+            
+            driver_data = []
+            for driver_obj in driver:
+                driver_location = driver_obj.driverlocation
+                if driver_location:
+                    location_dict = {
+                        "id": driver_obj.id, 
+                        "longitude": driver_location.x,
+                        "latitude": driver_location.y,
+                    }
+                    driver_data.append(location_dict)
+
+            print("driver data: ", driver_data)
+            driver_id = []
+            if driver.exists():
+                for drive in driver_data:
+                        add_driver = AddDriver.objects.filter(id=drive['id'])
+                        for new_driver in add_driver:
+                            new_driver.has_received_notification = True
+                            driver_id.append(new_driver.driver_user)
+                
+                devices = FCMDevice.objects.filter(user__in=driver_id)
+                
+                #serializer.validated_data['user_id'] = user
+                # print("Now i am here..")
+                # print(serializer.errors)
+                # print("now here.")
+                print("serializer data: ",serializer.data)
+                booking_id = serializer.data.get('id')
+                print("booking id:", booking_id)
+                
+                print("--------Driver on hire")
+                # print("Serializer id: ",serializer.data['id'])
+                    
+                notify=Notifydrivers.objects.create()
+                notify.agent_booking = AgentBooking.objects.get(id=booking_id)
+                notify.save()
+                print("Notify: ",notify) 
+
+                registration_ids = []
+                for device in devices:
+                    registration_id = device.registration_id
+                    registration_ids.append(registration_id)
+                    
+                print("registration id:", registration_ids)
+
+                # Send notification using FCM
+                for token in registration_ids:
+                    if token is None or not token.strip():
+                        print("Invalid token")
+                        continue
+                    message = messaging.Message(
+                        notification=messaging.Notification(
+                            title="New Booking",
+                            body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
+                            
+                        ),
+                        token= token 
+                    )
+                        # Send the message
+                    try:
+
+                        response = messaging.send(message)
+                        print("Notification sent:", response) 
+                    except Exception as e:
+                        print(f"Error sending notification to token {token}:{e}")
+            # serializer.save()
+            
+
+            # serializer.save()
+            return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+                return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        
 
     pagination_class = PageNumberPagination
 
@@ -586,7 +586,7 @@ class Agentbookingview(APIView):
             mobile_number= request.GET.get('mobile_number')
             client_name= request.GET.get('client_name')
             if(mobile_number or client_name):
-                clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name))
+                clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name)).order_by('-id')
                 serializer = Agentbookingserailizer(clinet_data, many=True)
                 pagination = cutomepegination()
                 paginated_queryset = pagination.paginate_queryset(clinet_data, request)
