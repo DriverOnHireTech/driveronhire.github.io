@@ -24,6 +24,7 @@ from driver_management.paginations import cutomepegination
 from authentication import utils
 from geopy import Nominatim
 from .send_otp import send_sms
+from user_master.models import ZoneA, ZoneB
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -468,7 +469,7 @@ class Agentbookingview(APIView):
         trip_type=request.data['trip_type']
         # email=[request.data['email']]
         mobile_number=request.data['mobile_number']
-        print("mobile number: ",mobile_number)
+        # print("mobile number: ",mobile_number)
         message_number = f"+91{mobile_number}"
         # whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
@@ -481,13 +482,13 @@ class Agentbookingview(APIView):
 
             user_location_point = Point(latitude, longitude, srid=4326)
 
-            message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+           # message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
             #message='This is test message.'
-            print(message)
+            # print(message)
             utils.twilio_message(to_number=message_number, message=message)
             #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-            send_sms()
-            print("message send")
+           # send_sms()
+           # print("message send")
             # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
             # for sending notifiction
             # serializer.save()
@@ -526,28 +527,17 @@ class Agentbookingview(APIView):
                 devices = FCMDevice.objects.filter(user__in=driver_id)
                 
                 #serializer.validated_data['user_id'] = user
-                # print("Now i am here..")
-                # print(serializer.errors)
-                # print("now here.")
-                print("serializer data: ",serializer.data)
-                booking_id = serializer.data.get('id')
-                print("booking id:", booking_id)
                 
-                print("--------Driver on hire")
-                # print("Serializer id: ",serializer.data['id'])
-                    
+                booking_id = serializer.data.get('id')
+               
                 notify=Notifydrivers.objects.create()
                 notify.agent_booking = AgentBooking.objects.get(id=booking_id)
                 notify.save()
-                print("Notify: ",notify) 
-
                 registration_ids = []
                 for device in devices:
                     registration_id = device.registration_id
                     registration_ids.append(registration_id)
                     
-                print("registration id:", registration_ids)
-
                 # Send notification using FCM
                 for token in registration_ids:
                     if token is None or not token.strip():
@@ -709,3 +699,4 @@ class SingleGuestbookingapi(APIView):
             return Response({'msg':'guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response({'msg': 'Data doesnot exist'})
+
