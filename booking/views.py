@@ -467,8 +467,9 @@ class Agentbookingview(APIView):
         booking_for = request.data['bookingfor']
         trip_type=request.data['trip_type']
         # email=[request.data['email']]
-        # mobile_number=request.data.get('mobile_number')
-        # message_number = f"+91{mobile_number}"
+        mobile_number=request.data['mobile_number']
+        print("mobile number: ",mobile_number)
+        message_number = f"+91{mobile_number}"
         # whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
 
@@ -483,7 +484,7 @@ class Agentbookingview(APIView):
             message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
             #message='This is test message.'
             print(message)
-            #utils.twilio_message(to_number=message_number, message=message)
+            utils.twilio_message(to_number=message_number, message=message)
             #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
             send_sms()
             print("message send")
