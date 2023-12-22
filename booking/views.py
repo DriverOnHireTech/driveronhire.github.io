@@ -470,8 +470,8 @@ class Agentbookingview(APIView):
         # email=[request.data['email']]
         mobile_number=request.data['mobile_number']
         # print("mobile number: ",mobile_number)
-        message_number = f"+91{mobile_number}"
-        # whatsapp_number = f"whatsapp:+91{mobile_number}"
+        # message_number = f"+91{mobile_number}"
+        whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
 
         # if AgentBooking.objects.filter(id=id).exists():
@@ -482,11 +482,11 @@ class Agentbookingview(APIView):
 
             user_location_point = Point(latitude, longitude, srid=4326)
 
-           # message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+            message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
             #message='This is test message.'
             # print(message)
-            utils.twilio_message(to_number=message_number, message=message)
-            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            # utils.twilio_message(to_number=message_number, message=message)
+            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
            # send_sms()
            # print("message send")
             # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
