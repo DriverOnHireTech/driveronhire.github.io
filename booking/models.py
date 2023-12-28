@@ -83,7 +83,6 @@ class PlaceBooking(models.Model):
     booking_time=models.DateTimeField(auto_now_add=True)
     pickup_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="pickup_zone", null=True, blank=True)
     drop_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="drop_zone", null=True, blank=True)
-    
    
     def __str__(self):
         return f"{self.id}"

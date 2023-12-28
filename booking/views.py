@@ -25,6 +25,7 @@ from authentication import utils
 from geopy import Nominatim
 from .send_otp import send_sms
 from user_master.models import ZoneA, ZoneB
+from .zone_logic import zone_get, return_charges
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -42,6 +43,14 @@ class MyBookingList(APIView):
         gear_type=request.data['gear_type']
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
+
+        pickup_zone = zone_get(pickup_location)
+        drop_zone = zone_get(drop_location)
+        print("pick up zone: ",pickup_zone)
+        print("drop zone: ",drop_zone)
+
+        extra_charges = return_charges(pickup_zone, drop_zone)
+        print("Extra charge: ", extra_charges)
 
         serializer=PlacebookingSerializer(data=data)
         
@@ -699,4 +708,3 @@ class SingleGuestbookingapi(APIView):
             return Response({'msg':'guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response({'msg': 'Data doesnot exist'})
-
