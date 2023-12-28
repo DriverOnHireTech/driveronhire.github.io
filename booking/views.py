@@ -613,6 +613,34 @@ class Agentbookingview(APIView):
         agentdata=AgentBooking.objects.get(id=id)
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
+
+#Get booking by status
+class Agentbooking_bystatus(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def get(self, request, *args, **kwargs):
+        try:
+            data=request.data
+            user=request.user
+            booking_status= request.GET.get('booking_status')
+            print("booking status", booking_status)
+
+            #Fetching pending records
+            if booking_status is not None:
+                pending_booking=AgentBooking.objects.filter(status=booking_status)
+                number_of_booking= pending_booking.count()
+                
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                
+                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+            else:
+                bookings = AgentBooking.objects.all()
+
+                serializer = Agentbookingserailizer(bookings, many=True)
+                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
+        
+        except AgentBooking.DoesNotExist:
+            return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)
     
 
 # Filter driver based on package
