@@ -15,6 +15,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .utils import leavecalcu
+from authentication.models import User
 from booking.models import PlaceBooking
 from booking.serializers import PlacebookingSerializer
 from rest_framework.pagination import PageNumberPagination
@@ -238,6 +239,11 @@ class DriverreferView(APIView):
 class DriverappstatusView(APIView):
     def post(self, request):
         data=request.data
+        drivername_id = request.data.get('drivername')
+        print("driver name:", drivername_id)
+        # Check if the user with the given primary key exists
+        if not User.objects.filter(id=drivername_id).exists():
+            return Response({'msg': f'User with id={drivername_id} does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         serializer=Driverappstatusserializer(data=data)
         if serializer.is_valid():
             serializer.save()
