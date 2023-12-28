@@ -488,7 +488,7 @@ class Agentbookingview(APIView):
             # utils.twilio_message(to_number=message_number, message=message)
             utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
            # send_sms()
-           # print("message send")
+            print("message send")
             # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
             # for sending notifiction
             # serializer.save()
