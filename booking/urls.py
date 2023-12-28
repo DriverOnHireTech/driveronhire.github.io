@@ -30,6 +30,8 @@ urlpatterns = [
 
     path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'),
 
+    path('agent_booking_app/', views.AgentBookingApp.as_view(), name='agent-booking-app'), # this is for get request for mobile app
+
     path('agent_booking/<int:id>/', views.AgentDetailView.as_view(), name='agent-booking-id'),
 
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
@@ -43,4 +45,6 @@ urlpatterns = [
     path('guestbooking/', views.Guestbookingapi.as_view(), name='guest_booking'),
 
     path('guestbooking/<int:id>/', views.SingleGuestbookingapi.as_view(), name="get_guest_booking"),
+
+    path('combine_data/', views.AllZoneData.as_view(), name='combine-data') # this is for combining zone data that can show on pickup and drop location
 ]

@@ -13,6 +13,7 @@ from django.contrib.gis.geos import Point
 from collections import OrderedDict
 from django.contrib.gis.measure import D
 from collections import OrderedDict
+from user_master.models import ZoneA, ZoneB, ZoneC
 
 class ClientregistrationSerializer(serializers.ModelSerializer):
     
@@ -166,3 +167,21 @@ class GuestBookingserialzer(serializers.ModelSerializer):
 class place_agent_booking_serializer(serializers.Serializer):
     table1_data = PlacebookingSerializer(many=True)
     table2_data = Agentbookingserailizer(many=True)
+
+
+class ZoneASerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZoneA
+        fields = "__all__"
+
+    
+class ZoneBSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZoneB
+        fields = "__all__"
+
+
+class ZoneCSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZoneC
+        fields = "__all__"
