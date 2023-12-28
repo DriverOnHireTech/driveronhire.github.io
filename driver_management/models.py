@@ -307,7 +307,8 @@ class AddDriver(models.Model):
 class Driverappstatus(models.Model):
     PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("silver", "silver"),("DiwaliScheme", "DiwaliScheme"))
     Status=(('active','active'), ('inactive', 'inactive'))
-    drivername=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
+    driver_name=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
+    drivername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
     package=models.CharField(choices=PACKAGE,max_length=100, null=True, blank=True)
     paymentamount=models.BigIntegerField(null=True, blank=True)
     is_paid=models.BooleanField(null=True, blank=True, default=False)
