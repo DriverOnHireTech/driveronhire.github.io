@@ -162,3 +162,7 @@ class GuestBookingserialzer(serializers.ModelSerializer):
     class Meta:
         model=GuestBooking
         fields="__all__"
+
+class place_agent_booking_serializer(serializers.Serializer):
+    table1_data = PlacebookingSerializer(many=True)
+    table2_data = Agentbookingserailizer(many=True)
