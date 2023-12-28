@@ -18,7 +18,7 @@ admin.site.register(AddDriver, Adddriveradmin)
 
 
 class Driverappstatusadmin(admin.ModelAdmin):
-    list_display=['drivername', 'package', 'paymentamount', 'is_paid', 'status']
+    list_display=['driver_name','driverusername', 'package', 'paymentamount', 'is_paid', 'status']
 admin.site.register(Driverappstatus, Driverappstatusadmin)
 
 
