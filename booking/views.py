@@ -473,13 +473,6 @@ class Agentbookingview(APIView):
             # print(message)
             # utils.twilio_message(to_number=message_number, message=message)
             utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-<<<<<<< HEAD
-           # send_sms()
-            print("message send")
-            # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
-            # for sending notifiction
-=======
->>>>>>> 5f1cc34c3512e7991b88882212e1e69643b74bfd
             # serializer.save()
             driver =AddDriver.objects.all()
             if driver:
