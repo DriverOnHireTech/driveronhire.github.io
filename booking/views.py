@@ -156,8 +156,6 @@ class MyBookingList(APIView):
 
     def get(self, request):
         user = request.user
-        print("User data: ",user)
-        print(user.phone)
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
         print("adddriver details:", driver_ids)
@@ -458,11 +456,7 @@ class Agentbookingview(APIView):
        # Extracting latitude and longitude from Point field data
         coordinates = data['client_location']['coordinates']
         longitude, latitude = coordinates  # Note: order is (longitude, latitude)
-
-        print("Latitude:", latitude)
-        print("Longitude:", longitude)
-        
-        # print((location.latitude, location.longitude))
+      
 
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
