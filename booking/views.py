@@ -25,6 +25,8 @@ from authentication import utils
 from geopy import Nominatim
 from .send_otp import send_sms
 from user_master.models import ZoneA, ZoneB
+from .zone_logic import zone_get, return_charges
+
  
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -42,6 +44,14 @@ class MyBookingList(APIView):
         gear_type=request.data['gear_type']
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
+
+        pickup_zone = zone_get(pickup_location)
+        drop_zone = zone_get(drop_location)
+        print("pick up zone: ",pickup_zone)
+        print("drop zone: ",drop_zone)
+
+        extra_charges = return_charges(pickup_zone, drop_zone)
+        print("Extra charge: ", extra_charges)
 
         serializer=PlacebookingSerializer(data=data)
         
@@ -110,25 +120,19 @@ class MyBookingList(APIView):
                         notify=Notifydrivers.objects.create()
                         notify.place_booking = PlaceBooking.objects.get(id=booking_id)
                         notify.save()
-                        print("notify place booking:", notify.place_booking)
                         bookingId=PlaceBooking.objects.get(id=booking_id)
                         notify.driver.set(driver)
-                        print("Notify: ",notify) 
 
                         registration_ids = []
                         for device in devices:
                             registration_id = device.registration_id
                             registration_ids.append(registration_id)
-                        
-                        print("registration id:", registration_ids)
 
                         # Send notification using FCM
                         for token in registration_ids:
                             if token is None or not token.strip():
                                 print("Invalid token")
                                 continue
-
-                            print("Token value", token)
 
                             message = messaging.Message(
                                 notification=messaging.Notification(
@@ -142,7 +146,6 @@ class MyBookingList(APIView):
                             try:
 
                                 response = messaging.send(message)
-                                print("Notification sent:", response) 
                             except Exception as e:
                                 print(f"Error sending notification to token {token}:{e}")
                     
@@ -158,7 +161,6 @@ class MyBookingList(APIView):
         user = request.user
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
-        print("adddriver details:", driver_ids)
 
         # Check if the user is a notified driver
         try:
@@ -206,7 +208,6 @@ class Acceptedride(APIView):
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
         client_name=booking.user
-        print("client name:", client_name)
         mobile=booking.mobile
         driver=booking.accepted_driver
         date=booking.booking_date
@@ -263,7 +264,6 @@ class ScheduleBookingView(APIView):
             car_type= serializer.validated_data.get('car_type')
             transmission_type=serializer.validated_data.get('gear_type')   
             driver=AddDriver.objects.filter( car_type=car_type, transmission_type=transmission_type).values('first_name', 'mobile')
-            print("Driver Details: ", driver)
 
             if driver.exists():
                 devices = FCMDevice.objects.all()
@@ -273,7 +273,6 @@ class ScheduleBookingView(APIView):
                 for device in devices:
                     registration_id = device.registration_id
                     registration_ids.append(registration_id)
-                print("registration id:", registration_ids)
 
                 # Send notification using FCM
                 message = messaging.Message(
@@ -286,7 +285,6 @@ class ScheduleBookingView(APIView):
 
                 # Send the message
                 response = messaging.send(message)
-                print("Notification sent:", response) 
 
                 status = serializer.validated_data.get('status')
 
@@ -401,7 +399,6 @@ class PendingBooking(APIView):
             data=request.data
             user=request.user
             booking_status= request.GET.get('booking_status')
-            print("booking status", booking_status)
 
             #Fetching pending records
             if booking_status is not None:
@@ -447,11 +444,8 @@ class Agentbookingview(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         data=request.data
-        print("Aget Data",data)
         user=request.user
-        print("user", user.first_name)
         client_name = request.data['client_name']
-        print("client name: ", client_name)
 
        # Extracting latitude and longitude from Point field data
         coordinates = data['client_location']['coordinates']
@@ -461,9 +455,7 @@ class Agentbookingview(APIView):
         car_type=data['car_type']
         booking_for = request.data['bookingfor']
         trip_type=request.data['trip_type']
-        # email=[request.data['email']]
         mobile_number=request.data['mobile_number']
-        # print("mobile number: ",mobile_number)
         # message_number = f"+91{mobile_number}"
         whatsapp_number = f"whatsapp:+91{mobile_number}"
         bookingfor=request.data['bookingfor']
@@ -481,22 +473,21 @@ class Agentbookingview(APIView):
             # print(message)
             # utils.twilio_message(to_number=message_number, message=message)
             utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+<<<<<<< HEAD
            # send_sms()
             print("message send")
             # mail_send= send_mail( title, message, settings.EMAIL_HOST_USER, email, fail_silently=False)
             # for sending notifiction
+=======
+>>>>>>> 5f1cc34c3512e7991b88882212e1e69643b74bfd
             # serializer.save()
             driver =AddDriver.objects.all()
             if driver:
                 driver = driver.filter(car_type__contains=car_type)
 
-            print("filter driver: ", driver)
-
             driver=driver.annotate(
                         distance = Distance('driverlocation', user_location_point)
                             ).filter(distance__lte=D(km=5))
-            
-            print("Driver with in radius: ", driver)
             
             driver_data = []
             for driver_obj in driver:
@@ -508,8 +499,6 @@ class Agentbookingview(APIView):
                         "latitude": driver_location.y,
                     }
                     driver_data.append(location_dict)
-
-            print("driver data: ", driver_data)
             driver_id = []
             if driver.exists():
                 for drive in driver_data:
@@ -519,14 +508,14 @@ class Agentbookingview(APIView):
                             driver_id.append(new_driver.driver_user)
                 
                 devices = FCMDevice.objects.filter(user__in=driver_id)
-                
                 #serializer.validated_data['user_id'] = user
                 
                 booking_id = serializer.data.get('id')
                
-                notify=Notifydrivers.objects.create()
+                notify=NotifydriversAgent.objects.create()
                 notify.agent_booking = AgentBooking.objects.get(id=booking_id)
                 notify.save()
+                notify.driver.set(driver)
                 registration_ids = []
                 for device in devices:
                     registration_id = device.registration_id
@@ -614,6 +603,38 @@ class Agentbookingview(APIView):
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
 
+
+class AgentBookingApp(APIView):
+    """This class is for making get request for mobile app"""
+    def get(self, request):
+        user = request.user
+        xyz = AddDriver.objects.filter(driver_user=user)
+        driver_ids = [driver.id for driver in xyz]
+
+        # Check if the user is a notified driver
+        try:
+            is_notified_driver = NotifydriversAgent.objects.filter(driver=driver_ids[0]).exists()
+            notify_driver_data = NotifydriversAgent.objects.filter(driver=driver_ids[0])
+           
+            if is_notified_driver:
+                data_list = []
+                for booking_idd in notify_driver_data:
+                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id))
+                    serializer = Agentbookingserailizer(booking, many=True)
+                    data_list.extend(serializer.data)                    
+                revers_recors= data_list[::-1]
+
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
+            
+            
+            else:
+                return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+            
+        except:
+            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
+
+
+
 #Get booking by status
 class Agentbooking_bystatus(APIView):
     authentication_classes=[TokenAuthentication]
@@ -623,7 +644,6 @@ class Agentbooking_bystatus(APIView):
             data=request.data
             user=request.user
             booking_status= request.GET.get('booking_status')
-            print("booking status", booking_status)
 
             #Fetching pending records
             if booking_status is not None:
@@ -691,9 +711,7 @@ class Guestbookingapi(APIView):
     def post(self, request):
         try:
             data=request.data
-            print("data:", data)
             user=request.user
-            print("user", user)
             serializer=GuestBookingserialzer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['user']=user
@@ -721,4 +739,20 @@ class SingleGuestbookingapi(APIView):
             return Response({'msg':'guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             return Response({'msg': 'Data doesnot exist'})
+
+
+class AllZoneData(APIView):
+    def get(self, request):
+        zone_a_data = ZoneA.objects.all()
+        zone_b_data = ZoneB.objects.all()
+        zone_c_data = ZoneC.objects.all()
+
+        zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
+        zone_b_serializer = ZoneBSerializer(zone_b_data, many=True)
+        zone_c_serializer = ZoneCSerializer(zone_c_data, many=True)
+
+        combined_data = zone_a_serializer.data + zone_b_serializer.data + zone_c_serializer.data
+        sorted_data = sorted(combined_data, key=lambda x: x['location'])
+
+        return Response(sorted_data)
 

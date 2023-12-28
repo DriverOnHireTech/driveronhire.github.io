@@ -239,6 +239,10 @@ class AdminZoneB(admin.ModelAdmin):
     list_display=('location', 'pincode')
 admin.site.register(ZoneB,AdminZoneB)
 
+class AdminZoneC(admin.ModelAdmin):
+    list_display=('location', 'pincode')
+admin.site.register(ZoneC,AdminZoneC)
+
 admin.site.register(localfourhrscharges)
 admin.site.register(localeigthhrscharges)
 admin.site.register(out_stn_sday_returncharges)
