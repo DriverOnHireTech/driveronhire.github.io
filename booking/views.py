@@ -402,7 +402,7 @@ class PendingBooking(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status)
+                pending_booking=PlaceBooking.objects.filter(status=booking_status, accepted_driver=user.id)
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
