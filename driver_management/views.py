@@ -239,7 +239,7 @@ class DriverreferView(APIView):
 class DriverappstatusView(APIView):
     def post(self, request):
         data=request.data
-        drivername_id = request.data.get('drivername')
+        drivername_id = request.data.get('driverusername')
         print("driver name:", drivername_id)
         # Check if the user with the given primary key exists
         if not User.objects.filter(id=drivername_id).exists():
