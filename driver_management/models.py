@@ -313,6 +313,8 @@ class Driverappstatus(models.Model):
     paymentamount=models.BigIntegerField(null=True, blank=True)
     is_paid=models.BooleanField(null=True, blank=True, default=False)
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
+    recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)
+    expiry_date=models.DateField(auto_now_add=False,null=True, blank=True)
 
     def __str__(self):
         return str(self.is_paid)
