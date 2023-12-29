@@ -83,7 +83,6 @@ class PlaceBooking(models.Model):
     booking_time=models.DateTimeField(auto_now_add=True)
     pickup_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="pickup_zone", null=True, blank=True)
     drop_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="drop_zone", null=True, blank=True)
-    
    
     def __str__(self):
         return f"{self.id}"
@@ -151,7 +150,7 @@ class AgentBooking(models.Model):
 
 
     def __str__(self):
-        return self.client_name
+         return f"{self.id}"
     
 """End Agent booking"""
     
@@ -159,12 +158,24 @@ class AgentBooking(models.Model):
 class Notifydrivers(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     place_booking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
-    agent_booking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
     driver=models.ManyToManyField(AddDriver)
     received_at=models.DateField(auto_now=True)
 
     def __str__(self):
         return str(self.place_booking)
+    
+    # Testing purpose
+
+"""End Notifications"""
+
+class NotifydriversAgent(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    agent_booking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
+    driver=models.ManyToManyField(AddDriver)
+    received_at=models.DateField(auto_now=True)
+
+    def __str__(self):
+        return str(self.agent_booking)
     
     # Testing purpose
 
