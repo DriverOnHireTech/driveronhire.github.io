@@ -240,7 +240,7 @@ class DriverappstatusView(APIView):
     def post(self, request):
         data=request.data
         print("All data: ", data)
-        drivername_id = request.data.get('drivername')
+        drivername_id = request.data.get('driverusername')
         # driverusername = request.data.get()
         print("driver name:", drivername_id)
         # Check if the user with the given primary key exists
