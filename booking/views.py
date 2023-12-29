@@ -402,17 +402,17 @@ class PendingBooking(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=PlaceBooking.objects.filter(status=booking_status, accepted_driver=user.id)
+                pending_booking=PlaceBooking.objects.filter(status=booking_status, accepted_driver=user.id).order_by('-id')
                 number_of_booking= pending_booking.count()
                 
                 serializer = PlacebookingSerializer(pending_booking, many=True)
                 
-                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'Your bookings', 'data':serializer.data, 'numbe_of_booking':number_of_booking}, status=status.HTTP_200_OK)
             else:
                 bookings = PlaceBooking.objects.all()
 
                 serializer = PlacebookingSerializer(bookings, many=True)
-                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'Data found', 'data':serializer.data}, status=status.HTTP_200_OK)
         
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)
