@@ -239,7 +239,9 @@ class DriverreferView(APIView):
 class DriverappstatusView(APIView):
     def post(self, request):
         data=request.data
+        print("All data: ", data)
         drivername_id = request.data.get('driverusername')
+        # driverusername = request.data.get()
         print("driver name:", drivername_id)
         # Check if the user with the given primary key exists
         if not User.objects.filter(id=drivername_id).exists():
@@ -261,3 +263,22 @@ class DriverappstatusView(APIView):
         
         except Driverappstatus.DoesNotExist:
             return Response({'msg':'No Record found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+        
+
+class DriverWIthUserFilter(APIView):
+    def get(self, request, *args, **kwargs):
+        user_id = request.query_params.get('user_id')
+        print("user id: ", user_id)
+
+        if not user_id:
+            return Response({"error": "user_id parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            drivers = AddDriver.objects.filter(driver_user=user_id)
+            print("drivers: ", drivers)
+            serializer = MyDriverSerializer(drivers, many=True)
+            print("serializer_data: ", serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

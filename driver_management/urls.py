@@ -28,4 +28,6 @@ urlpatterns = [
     path('api/driverrefer/', DriverreferView.as_view(), name='driver_refer'), 
 
     path('api/Driverappstatus/', DriverappstatusView.as_view(), name='driver_status'),
+
+    path('api/UserWithDriver/', DriverWIthUserFilter.as_view(), name='driver_with_user'),
 ]

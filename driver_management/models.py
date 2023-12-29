@@ -308,11 +308,14 @@ class Driverappstatus(models.Model):
     PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("silver", "silver"),("DiwaliScheme", "DiwaliScheme"))
     Status=(('active','active'), ('inactive', 'inactive'))
     driver_name=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
+    # driver_
     driverusername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
     package=models.CharField(choices=PACKAGE,max_length=100, null=True, blank=True)
     paymentamount=models.BigIntegerField(null=True, blank=True)
     is_paid=models.BooleanField(null=True, blank=True, default=False)
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
+    recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)
+    expiry_date=models.DateField(auto_now_add=False,null=True, blank=True)
 
     def __str__(self):
         return str(self.is_paid)
