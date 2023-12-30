@@ -756,12 +756,20 @@ class AllZoneData(APIView):
         zone_a_data = ZoneA.objects.all()
         zone_b_data = ZoneB.objects.all()
         zone_c_data = ZoneC.objects.all()
+        zone_d_data = ZoneD.objects.all()
+        zone_e_data = ZoneE.objects.all()
+        zone_f_data = ZoneF.objects.all()
+        zone_g_data = ZoneG.objects.all()
 
         zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
         zone_b_serializer = ZoneBSerializer(zone_b_data, many=True)
         zone_c_serializer = ZoneCSerializer(zone_c_data, many=True)
+        zone_d_serializer = ZoneDSerializer(zone_d_data, many=True)
+        zone_e_serializer = ZoneESerializer(zone_e_data, many=True)
+        zone_f_serializer = ZoneFSerializer(zone_f_data, many=True)
+        zone_g_serializer = ZoneGSerializer(zone_g_data, many=True)
 
-        combined_data = zone_a_serializer.data + zone_b_serializer.data + zone_c_serializer.data
+        combined_data = zone_a_serializer.data + zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + zone_f_serializer.data + zone_g_serializer.data
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
