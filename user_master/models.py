@@ -332,6 +332,38 @@ class ZoneC(models.Model):
         return self.location
     
 
+class ZoneD(models.Model):
+    location=models.CharField(max_length=200,null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
+    
+
+class ZoneE(models.Model):
+    location=models.CharField(max_length=200,null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
+    
+
+class ZoneF(models.Model):
+    location=models.CharField(max_length=200,null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
+    
+
+class ZoneG(models.Model):
+    location=models.CharField(max_length=200,null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
+    
+
     
 # class driverpackege(models.Model):
 #     PACKEGES=(

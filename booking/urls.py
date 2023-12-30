@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from .extra_charges import ExtraRate
 
 urlpatterns = [
 
@@ -46,5 +47,7 @@ urlpatterns = [
 
     path('guestbooking/<int:id>/', views.SingleGuestbookingapi.as_view(), name="get_guest_booking"),
 
-    path('combine_data/', views.AllZoneData.as_view(), name='combine-data') # this is for combining zone data that can show on pickup and drop location
+    path('combine_data/', views.AllZoneData.as_view(), name='combine-data'), # this is for combining zone data that can show on pickup and drop location
+
+    path('extra-rate/', ExtraRate.as_view(), name="extra_rate"),
 ]
