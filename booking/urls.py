@@ -49,5 +49,7 @@ urlpatterns = [
 
     path('combine_data/', views.AllZoneData.as_view(), name='combine-data'), # this is for combining zone data that can show on pickup and drop location
 
+    path('extra-rate/', ExtraRate.as_view(), name="extra_rate"),
+
     path('start_deuty/<int:id>/', views.startjourny.as_view(), name='deuty_started'), # Using this end deuty will start
 ]

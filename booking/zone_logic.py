@@ -31,23 +31,25 @@ def return_charges(pickup_zone, drop_zone):
     elif (pickup_zone=="ZoneB" and (drop_zone=="ZoneE" or drop_zone=="ZoneG")):
         return 200
     elif (pickup_zone=="ZoneC" and drop_zone=="ZoneB"):
-        return None
+        return 0
     elif (pickup_zone=="ZoneC" and drop_zone=="ZoneA" or drop_zone=="ZoneD" or drop_zone=="ZoneE" or drop_zone=="ZoneF" or drop_zone=="ZoneG"):
         return 200
     elif (pickup_zone=="ZoneD" and (drop_zone=="ZoneA" or drop_zone=="ZoneB" or drop_zone=="ZoneE" or drop_zone=="ZoneF")):
-        return None
+        return 0
     elif (pickup_zone=="ZoneD" and (drop_zone=="ZoneC" or drop_zone=="ZoneG")):
         return 200
     elif (pickup_zone=="ZoneE" and drop_zone=="ZoneD"):
-        return None
+        return 0
     elif (pickup_zone=="ZoneE" and drop_zone=="ZoneA" or drop_zone=="ZoneB" or drop_zone=="ZoneC" or drop_zone=="ZoneF" or drop_zone=="ZoneG"):
         return 200
     elif (pickup_zone=="ZoneF" and (drop_zone=="ZoneA" or drop_zone=="ZoneB" or drop_zone=="ZoneD" or drop_zone=="ZoneG")):
-        return None
+        return 0
     elif (pickup_zone=="ZoneF" and (drop_zone=="ZoneC" or drop_zone=="ZoneE")):
         return 200
     elif (pickup_zone=="ZoneG" and drop_zone=="ZoneF"):
-        return None
+        return 0
     elif (pickup_zone=="ZoneG" and drop_zone=="ZoneA" or drop_zone=="ZoneB" or drop_zone=="ZoneC" or drop_zone=="ZoneD" or drop_zone=="ZoneE"):
         return 200
+    else:
+        return 100
     
