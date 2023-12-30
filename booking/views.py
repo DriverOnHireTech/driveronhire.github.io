@@ -248,6 +248,23 @@ class Acceptedride(APIView):
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
         return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class startjourny(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request, id):
+        data = request.data
+        user = request.user
+        currenttime=datetime.now()
+        start_deuty=currenttime.strftime("%H:%M:%S")
+        booking= PlaceBooking.objects.get(id=id)
+        serializer=PlacebookingSerializer(booking, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.validated_data['deuty_started']=start_deuty
+            serializer.save()
+            return Response({'msg':'Deuty Started', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
     
 """for book leter"""

@@ -46,5 +46,7 @@ urlpatterns = [
 
     path('guestbooking/<int:id>/', views.SingleGuestbookingapi.as_view(), name="get_guest_booking"),
 
-    path('combine_data/', views.AllZoneData.as_view(), name='combine-data') # this is for combining zone data that can show on pickup and drop location
+    path('combine_data/', views.AllZoneData.as_view(), name='combine-data'), # this is for combining zone data that can show on pickup and drop location
+
+    path('start_deuty/<int:id>/', views.startjourny.as_view(), name='deuty_started'), # Using this end deuty will start
 ]
