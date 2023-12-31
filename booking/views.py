@@ -258,6 +258,9 @@ class startjourny(APIView):
         currenttime=datetime.now()
         start_deuty=currenttime.strftime("%H:%M:%S")
         booking= PlaceBooking.objects.get(id=id)
+        if booking.deuty_started:
+            return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer=PlacebookingSerializer(booking, data=data, partial=True)
         if serializer.is_valid():
             serializer.validated_data['deuty_started']=start_deuty
@@ -266,7 +269,26 @@ class startjourny(APIView):
         else:
             return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
-    
+#finish deuty
+# class endjourny(APIView):
+#     authentication_classes=[TokenAuthentication]
+#     permission_classes=[IsAuthenticated]
+#     def patch(self, request, id):
+#         data = request.data
+#         user = request.user
+#         currenttime=datetime.now()
+#         end_deuty=currenttime.strftime("%H:%M:%S")
+#         booking= PlaceBooking.objects.get(id=id)
+#         if booking.deuty_end:
+#             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
+
+#         serializer=PlacebookingSerializer(booking, data=data, partial=True)
+#         if serializer.is_valid():
+#             serializer.validated_data['deuty_started']=end_deuty
+#             serializer.save()
+#             return Response({'msg':'Deuty Started', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+#         else:
+#             return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
 """for book leter"""
 class ScheduleBookingView(APIView):
     authentication_classes=[TokenAuthentication]
