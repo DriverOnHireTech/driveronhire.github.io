@@ -53,5 +53,9 @@ urlpatterns = [
 
     path('start_deuty/<int:id>/', views.startjourny.as_view(), name='deuty_started'), # Using this end deuty will start
 
-    path('end_deuty/<int:id>/', views.endjourny.as_view(), name='deuty_end') #Deuty End api endpoint
+    path('end_deuty/<int:id>/', views.endjourny.as_view(), name='deuty_end'), #Deuty End api endpoint
+
+    path('age_start_deuty/<int:id>/', views.Agentstartjourny.as_view(), name='agent_deuty_started'), # Using this end deuty will start
+
+    path('age_end_deuty/<int:id>/', views.Agentendjourny.as_view(), name='agent_deuty_end'), #Deuty End api endpoint    
 ]

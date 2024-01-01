@@ -289,6 +289,8 @@ class endjourny(APIView):
             return Response({'msg':'Deuty Ended', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'msg':'Deuty Not Ended', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
+
+
 """for book leter"""
 class ScheduleBookingView(APIView):
     authentication_classes=[TokenAuthentication]
@@ -720,6 +722,48 @@ class AgentDetailView(APIView):
             return Response({'msg': 'Data with id', 'data': serializer.data})
         except:
             return Response({'msg':'No Data Found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+
+
+class Agentstartjourny(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request, id):
+        data = request.data
+        user = request.user
+        currenttime=datetime.now()
+        start_deuty=currenttime.strftime("%H:%M:%S")
+        booking= AgentBooking.objects.get(id=id)
+        if booking.deuty_started:
+            return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer=Agentbookingserailizer(booking, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.validated_data['deuty_started']=start_deuty
+            serializer.save()
+            return Response({'msg':'Deuty Started', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Agentendjourny(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request, id):
+        data = request.data
+        user = request.user
+        currenttime=datetime.now()
+        end_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
+        booking= AgentBooking.objects.get(id=id)
+        if booking.deuty_end:
+            return Response({'msg': 'Duty has already Ended', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer=Agentbookingserailizer(booking, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.validated_data['deuty_end']=end_deuty
+            serializer.save()
+            return Response({'msg':'Deuty Ended', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response({'msg':'Deuty Not Ended', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST) 
 
 
 class userprofile(APIView):
