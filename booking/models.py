@@ -61,6 +61,11 @@ class PlaceBooking(models.Model):
         ("Booked by mistake", "Booked by mistake"),
         ("Charges issue", "Charges issue")
     )
+    journys=(
+        ('journy started','journy started'),
+        ('journy end', 'journy end'),
+       
+    )
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
     mobile= models.PositiveBigIntegerField(null=True, blank=True)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
@@ -80,8 +85,9 @@ class PlaceBooking(models.Model):
     cancelbooking_reason=models.CharField(max_length=500, null=True, blank=True)
     cancelbooking_message = models.CharField(max_length=1000, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
-    deuty_started=models.TimeField(auto_now_add=False, null=True, blank=True)
+    deuty_started=models.DateTimeField(auto_now_add=False, null=True, blank=True)
     deuty_end=models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     booking_time=models.DateTimeField(auto_now_add=True)
     pickup_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="pickup_zone", null=True, blank=True)
     drop_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="drop_zone", null=True, blank=True)
