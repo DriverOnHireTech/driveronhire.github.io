@@ -211,15 +211,18 @@ class Acceptedride(APIView):
         mobile=booking.mobile
         driver=booking.accepted_driver
         date=booking.booking_date
+        time=booking.client_booking_time
         if booking.status == "accept":
                 return Response({'msg': 'booking already accepted by other driver'})
         
         elif booking.status == "pending":
             serializer= PlacebookingSerializer(booking, data=data, partial=True)
-            booking.accepted_driver= user
+            #booking.accepted_driver= user
             if serializer.is_valid():
-                
+                serializer.validated_data['accepted_driver']=user
+            
                 accepted_driver = booking.accepted_driver
+
                 # driver_name = AddDriver.objects.get(driver_user=7654002162)
                 whatsapp_number = f"whatsapp:+91{mobile}"
                 msg="""Dear {client_name}
@@ -229,7 +232,7 @@ class Acceptedride(APIView):
                                 Will be arriving at your destination.
 
                                 Date -{date}
-                                Time -
+                                Time -{time}
 
                                 Our rates - https://www.driveronhire.com/rates
 
@@ -239,7 +242,7 @@ class Acceptedride(APIView):
                                 Thanks 
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
-                message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date)
+                message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
                 utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()

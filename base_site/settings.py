@@ -28,7 +28,8 @@ CORS_ORIGIN_ALLOW_ALL=False
 
 CSRF_TRUSTED_ORIGINS=[
     'https://driversonhire.com',
-    'https://d2nevejjxy6v7u.cloudfront.net'
+    'https://d2nevejjxy6v7u.cloudfront.net' #.com
+    'https://d3m71pi62oje9c.cloudfront.net' #driversonhire.in
     'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com'
 ]
 
@@ -83,7 +84,8 @@ CORS_ORIGIN_WHITELIST = (
     'https://driversonhire.com', # Backend
     'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com', # Backend
     'https://d2nevejjxy6v7u.cloudfront.net',  # Website frontend
-    'http://driveronhire.s3-website.ap-south-1.amazonaws.com' # CRM LINK
+    'http://driveronhire.s3-website.ap-south-1.amazonaws.com', # CRM LINK
+    'https://d3m71pi62oje9c.cloudfront.net' #driversonhire.in
     # 'http://driversonhire.com/'
 )
 
