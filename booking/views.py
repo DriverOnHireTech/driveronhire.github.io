@@ -14,7 +14,7 @@ from firebase_admin import messaging
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from django.http import JsonResponse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time, timezone
 from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
 from django.db.models import Q
@@ -256,7 +256,7 @@ class startjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%H:%M:%S")
+        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
         booking= PlaceBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
@@ -391,11 +391,46 @@ class get_bookingbyid(APIView):
 class InvoiceGenerate(APIView):
     def post(self, request):
         data = request.data
+        driver_id= data['driver']
+        placebooking_id = data['placebooking']
+        print("placebooking id", placebooking_id)
+        Placebooking_data = PlaceBooking.objects.values().get(id=placebooking_id)
+        booking_type = Placebooking_data['booking_type']
+        print("booking type: ", booking_type)
+        print("Place booking data: ", Placebooking_data)
         user = request.user
+
+        if booking_type == "local":
+            deuty_started_time = Placebooking_data.get('deuty_started')
+            deuty_end_datetime = Placebooking_data.get('deuty_end')
+
+            # Convert deuty_started to a datetime object with timezone information
+            deuty_started_datetime = datetime.combine(datetime.today(), deuty_started_time, tzinfo=timezone.utc)
+
+            # Make sure deuty_end_datetime has timezone information (if not already)
+            if deuty_end_datetime.tzinfo is None:
+                deuty_end_datetime = deuty_end_datetime.replace(tzinfo=timezone.utc)
+
+            # Calculate the time difference
+            time_difference = deuty_end_datetime - deuty_started_datetime
+
+            # Printing the time difference
+            print("Time Difference:", time_difference)
+            
+
+        if booking_type == "outstation":
+            print("outstation booking")
+            
+
+        if booking_type == "outstation_drop":
+            print("Outstation drop booking")
+            
+
         inv_seri =  InvoiceSerializer(data = data)
         if inv_seri.is_valid():
-            inv_seri.validated_data['user_id'] = user.id
-            inv_seri.save()
+            # inv_seri.validated_data['user_id'] = user.id
+            # print("data: ", data)
+            # inv_seri.save()
             return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
         else:
              return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -731,7 +766,7 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%H:%M:%S")
+        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
@@ -839,4 +874,3 @@ class AllZoneData(APIView):
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
-
