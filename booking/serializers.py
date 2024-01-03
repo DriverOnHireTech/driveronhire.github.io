@@ -4,7 +4,7 @@ from driver_management.models import AddDriver
 from driver_management.models import Driverlocation
 from driver_management.serializers import MyDriverSerializer
 from user_master.models import Zone
-from .models import bookinguser, Invoice, BookLater
+from .models import bookinguser, BookLater
 from authentication.serializers import NewUserSerializer
 
 from authentication.models import  User
@@ -30,7 +30,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         
         fields= ('id','trip_type', 'booking_date','no_of_days', 
                    'car_type', 'gear_type', 
-                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'pickup_zone', 'drop_zone')
+                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'pickup_zone', 'drop_zone', 'journy_started')
    
    
 class NotifyDriverSerializer(serializers.ModelSerializer):
@@ -51,25 +51,25 @@ class DriverSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
+# class InvoiceSerializer(serializers.ModelSerializer):
     
-    driver =  serializers.SerializerMethodField()
-    placebooking = serializers.SerializerMethodField()
-    class Meta:
-        model = Invoice
-        fields = ('driver','placebooking', 'add_favourite')
+#     driver =  serializers.SerializerMethodField()
+#     placebooking = serializers.SerializerMethodField()
+#     class Meta:
+#         model = Invoice
+#         fields = ('driver','placebooking', 'add_favourite')
 
   
     
-    def get_driver(self, obj):
-        driver =  obj.driver
-        driver_seri = MyDriverSerializer(driver)
-        return driver_seri.data
+#     def get_driver(self, obj):
+#         driver =  obj.driver
+#         driver_seri = MyDriverSerializer(driver)
+#         return driver_seri.data
     
-    def get_placebooking(self, obj):
-        placebooking =  obj.placebooking
-        driver_seri = PlacebookingSerializer(placebooking)
-        return driver_seri.data
+#     def get_placebooking(self, obj):
+#         placebooking =  obj.placebooking
+#         driver_seri = PlacebookingSerializer(placebooking)
+#         return driver_seri.data
 
 
 class Feedbackserializer(serializers.ModelSerializer):

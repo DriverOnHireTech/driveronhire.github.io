@@ -85,8 +85,10 @@ CORS_ORIGIN_WHITELIST = (
     'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com', # Backend
     'https://d2nevejjxy6v7u.cloudfront.net',  # Website frontend
     'http://driveronhire.s3-website.ap-south-1.amazonaws.com', # CRM LINK
-    'https://d3m71pi62oje9c.cloudfront.net' #driversonhire.in
-    # 'http://driversonhire.com/'
+    'https://d3m71pi62oje9c.cloudfront.net', #driversonhire.in
+    'http://driversonhire.in',
+    'http://driveronhire.com.s3-website.us-east-2.amazonaws.com' #driveronhire.com 
+
 )
 
 ROOT_URLCONF = "base_site.urls"

@@ -84,8 +84,8 @@ class PlaceBooking(models.Model):
     cancelbooking_reason=models.CharField(max_length=500, null=True, blank=True)
     cancelbooking_message = models.CharField(max_length=1000, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
-    deuty_started=models.DateTimeField(auto_now_add=False, null=True, blank=True)
-    deuty_end=models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    deuty_started=models.DateTimeField(  null=True, blank=True)
+    deuty_end=models.DateTimeField( null=True, blank=True)
     journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     booking_time=models.DateTimeField(auto_now_add=True)
     pickup_zone = models.ForeignKey(Zone, on_delete=models.CASCADE, related_name="pickup_zone", null=True, blank=True)
@@ -201,15 +201,15 @@ class userProfile(models.Model):
     
 
 
-class Invoice(models.Model):
-    # user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
-    placebooking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE,null=True, blank=True)
-    add_favourite = models.BooleanField(default=False, null=True, blank=True)
-    invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
+# class Invoice(models.Model):
+#     # user =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+#     driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
+#     placebooking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE,null=True, blank=True)
+#     add_favourite = models.BooleanField(default=False, null=True, blank=True)
+#     invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
 
-    def __str__(self):
-        return self.driver.first_name
+#     def __str__(self):
+#         return self.driver.first_name
   
 
 class Feedback(models.Model):

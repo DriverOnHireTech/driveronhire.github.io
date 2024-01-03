@@ -259,7 +259,7 @@ class startjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%H:%M:%S")
+        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
         booking= PlaceBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
@@ -391,27 +391,27 @@ class get_bookingbyid(APIView):
             return Response({'msg':"All Booking", 'data':serializer.data}, status=status.HTTP_200_OK)
         
 
-class InvoiceGenerate(APIView):
-    def post(self, request):
-        data = request.data
-        user = request.user
-        inv_seri =  InvoiceSerializer(data = data)
-        if inv_seri.is_valid():
-            inv_seri.validated_data['user_id'] = user.id
-            inv_seri.save()
-            return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
-        else:
-             return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+# class InvoiceGenerate(APIView):
+#     def post(self, request):
+#         data = request.data
+#         user = request.user
+#         inv_seri =  InvoiceSerializer(data = data)
+#         if inv_seri.is_valid():
+#             inv_seri.validated_data['user_id'] = user.id
+#             inv_seri.save()
+#             return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
+#         else:
+#              return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-    def get(self, request):
-        try:
-            get_all_inv = Invoice.objects.all().order_by('invoice_generate')
-            get_seri= InvoiceSerializer(get_all_inv, many=True)
-            return Response({'msg': 'All invoice list', 'data':get_seri.data}, status=status.HTTP_200_OK)
+#     def get(self, request):
+#         try:
+#             get_all_inv = Invoice.objects.all().order_by('invoice_generate')
+#             get_seri= InvoiceSerializer(get_all_inv, many=True)
+#             return Response({'msg': 'All invoice list', 'data':get_seri.data}, status=status.HTTP_200_OK)
         
-        except Invoice.DoesNotExist:
-            raise serializers.ValidationError("No Data Found")
+#         except Invoice.DoesNotExist:
+#             raise serializers.ValidationError("No Data Found")
 
 
 class FeedbackApi(APIView):
