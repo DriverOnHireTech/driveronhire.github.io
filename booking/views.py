@@ -193,6 +193,7 @@ class getbooking(APIView):
     def get(self, request):
         try:
             booking_data= PlaceBooking.objects.all().order_by('-id')
+            print("users",booking_data)
             serializer=PlacebookingSerializer(booking_data, many=True)
             return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:

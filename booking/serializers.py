@@ -23,14 +23,18 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
 
         
 class PlacebookingSerializer(serializers.ModelSerializer):
-    #user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, read_only=False)
     # add_driver = serializers.PrimaryKeyRelatedField(queryset=AddDriver.objects.all(), many=False, read_only=False)
+    user = serializers.SerializerMethodField()
+    def get_user(self, obj):
+        return obj.user.phone if obj.user else None
     class Meta:
         model = PlaceBooking
         
-        fields= ('id','trip_type', 'booking_date','no_of_days', 
-                   'car_type', 'gear_type', 'mobile', 
+        fields= ('id','user','trip_type', 'booking_date','no_of_days', 
+                   'car_type', 'gear_type', 'mobile',
                   'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message')
+        
    
    
 class NotifyDriverSerializer(serializers.ModelSerializer):
