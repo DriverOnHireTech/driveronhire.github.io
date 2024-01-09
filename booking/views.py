@@ -38,6 +38,7 @@ class MyBookingList(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request, format=None): 
         user=request.user
+        print("user:", user)
         data=request.data
         trip_type=request.data['trip_type']
         car_type= request.data['car_type']
@@ -76,6 +77,8 @@ class MyBookingList(APIView):
 
                 address = get_address(latitude, longitude)
                 serializer.validated_data['user_address'] = address # saving address in user address
+                serializer.validated_data['user'] = user
+                
 
                 if currant_location:
                     if currant_location is None:
@@ -112,7 +115,7 @@ class MyBookingList(APIView):
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
-                        serializer.validated_data['user'] = user
+                        
                         serializer.save()
                         booking_id = serializer.data['id']
                         print("Serializer id: ",serializer.data['id'])
@@ -194,6 +197,7 @@ class getbooking(APIView):
         try:
             booking_data= PlaceBooking.objects.all().order_by('-id')
             serializer=PlacebookingSerializer(booking_data, many=True)
+            # print("booking data", serializer.data.user)
             return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
@@ -227,7 +231,7 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+91{mobile}"
                 msg="""Dear {client_name}
 
-                                Mr. {driver}
+                                Mr. {accepted_driver}
                                 Mobile - {driver}
                                 Will be arriving at your destination.
 
