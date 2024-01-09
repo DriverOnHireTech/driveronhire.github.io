@@ -28,9 +28,9 @@ class PlacebookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceBooking
         
-        fields= ('id','trip_type', 'booking_date','no_of_days', 
+        fields= ('id','trip_type', 'booking_date','no_of_days', 'booking_type', 
                    'car_type', 'gear_type', 
-                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'pickup_zone', 'drop_zone', 'journy_started')
+                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','journy_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message')
    
    
 class NotifyDriverSerializer(serializers.ModelSerializer):
@@ -53,23 +53,23 @@ class DriverSerializer(serializers.ModelSerializer):
 
 # class InvoiceSerializer(serializers.ModelSerializer):
     
-#     driver =  serializers.SerializerMethodField()
-#     placebooking = serializers.SerializerMethodField()
-#     class Meta:
-#         model = Invoice
-#         fields = ('driver','placebooking', 'add_favourite')
+    # driver =  serializers.SerializerMethodField()
+    # placebooking = serializers.SerializerMethodField()
+    class Meta:
+        model = Invoice
+        fields = ('driver','placebooking', 'add_favourite')
 
   
     
-#     def get_driver(self, obj):
-#         driver =  obj.driver
-#         driver_seri = MyDriverSerializer(driver)
-#         return driver_seri.data
+    # def get_driver(self, obj):
+    #     driver =  obj.driver
+    #     driver_seri = MyDriverSerializer(driver)
+    #     return driver_seri.data
     
-#     def get_placebooking(self, obj):
-#         placebooking =  obj.placebooking
-#         driver_seri = PlacebookingSerializer(placebooking)
-#         return driver_seri.data
+    # def get_placebooking(self, obj):
+    #     placebooking =  obj.placebooking
+    #     driver_seri = PlacebookingSerializer(placebooking)
+    #     return driver_seri.data
 
 
 class Feedbackserializer(serializers.ModelSerializer):

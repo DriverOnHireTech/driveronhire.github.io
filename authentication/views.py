@@ -106,7 +106,6 @@ class LoginView(APIView):
         else:
             return Response({"msg":"unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
 
-            
 
 class Logoutapi(APIView):
     authentication_classes=[TokenAuthentication]
