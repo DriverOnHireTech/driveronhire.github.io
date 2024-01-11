@@ -44,7 +44,8 @@ class MyBookingList(APIView):
         gear_type=request.data['gear_type']
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
-
+        mobile = int(user.phone)
+        print("mobile: ", type(mobile))
         pickup_zone = zone_get(pickup_location)
         drop_zone = zone_get(drop_location)
         print("pick up zone: ",pickup_zone)
@@ -58,7 +59,8 @@ class MyBookingList(APIView):
         if serializer.is_valid():
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
-                serializer.validated_data['mobile'] = user.phone
+                serializer.validated_data['mobile'] = int(user.phone)
+                serializer.validated_data['user'] = user
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -76,6 +78,8 @@ class MyBookingList(APIView):
 
                 address = get_address(latitude, longitude)
                 serializer.validated_data['user_address'] = address # saving address in user address
+                
+                
 
                 if currant_location:
                     if currant_location is None:
@@ -112,7 +116,7 @@ class MyBookingList(APIView):
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
-                        serializer.validated_data['user'] = user
+                        
                         serializer.save()
                         booking_id = serializer.data['id']
                         print("Serializer id: ",serializer.data['id'])
@@ -195,6 +199,7 @@ class getbooking(APIView):
             booking_data= PlaceBooking.objects.all().order_by('-id')
             print("users",booking_data)
             serializer=PlacebookingSerializer(booking_data, many=True)
+            # print("booking data", serializer.data.user)
             return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
@@ -206,7 +211,9 @@ class Acceptedride(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
+        print("data: ", data)
         user = request.user
+        print("User data: ", user)
         booking= PlaceBooking.objects.get(id=id)
         client_name=booking.user
         mobile=booking.mobile
@@ -228,7 +235,7 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+91{mobile}"
                 msg="""Dear {client_name}
 
-                                Mr. {driver}
+                                Mr. {accepted_driver}
                                 Mobile - {driver}
                                 Will be arriving at your destination.
 
@@ -243,9 +250,9 @@ class Acceptedride(APIView):
                                 Thanks 
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
-                message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date, time=time)
+                # message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -916,7 +923,7 @@ class AgentBookingApp(APIView):
                 for booking_idd in notify_driver_data:
                     booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id))
                     serializer = Agentbookingserailizer(booking, many=True)
-                    data_list.extend(serializer.data)                    
+                    data_list.extend(serializer.data)                 
                 revers_recors= data_list[::-1]
 
                 return Response({'data':revers_recors}, status=status.HTTP_200_OK)
