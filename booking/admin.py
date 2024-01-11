@@ -13,7 +13,7 @@ admin.site.register(GuestBooking)
 admin.site.register(Zone)
 
 class Placebookingadmin(admin.ModelAdmin):
-    list_display=['user', 'booking_type', 'packege', 'user_address','car_type','pickup_location', 'drop_location', 'status']
+    list_display=['id','user', 'booking_type', 'packege', 'user_address','car_type','pickup_location', 'drop_location', 'status']
 
 admin.site.register(PlaceBooking, Placebookingadmin)
 

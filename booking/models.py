@@ -67,7 +67,7 @@ class PlaceBooking(models.Model):
        
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
-    mobile= models.PositiveBigIntegerField(null=True, blank=True)
+    mobile= models.CharField(max_length=20, null=True, blank=True)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     booking_type=models.CharField(max_length=50, null=True ,blank=True)
     packege= models.CharField(max_length=100, null=True, blank=True)
@@ -128,6 +128,11 @@ class AgentBooking(models.Model):
         ("Charges issue", "Charges issue")
     )
     Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
+    journys=(
+        ('journy started','journy started'),
+        ('journy end', 'journy end'),
+       
+    )
     # id = models.AutoField(primary_key=True)
     client_name= models.CharField(max_length=200, null=True, blank=True)
     mobile_number= models.BigIntegerField(null=True, blank=True)
@@ -154,6 +159,7 @@ class AgentBooking(models.Model):
     booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     booking_created_by_name = models.CharField(max_length=255, null=True, blank=True)
     deuty_started=models.TimeField(auto_now_add=False, null=True, blank=True)
+    journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     deuty_end=models.DateTimeField(auto_now_add=False, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
 

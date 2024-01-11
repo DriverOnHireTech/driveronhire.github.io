@@ -38,6 +38,7 @@ class MyBookingList(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request, format=None): 
         user=request.user
+        print("user type", type(user))
         data=request.data
         trip_type=request.data['trip_type']
         car_type= request.data['car_type']
@@ -59,6 +60,7 @@ class MyBookingList(APIView):
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
                 serializer.validated_data['mobile'] = user.phone
+                serializer.validated_data['user']=user
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -76,6 +78,7 @@ class MyBookingList(APIView):
 
                 address = get_address(latitude, longitude)
                 serializer.validated_data['user_address'] = address # saving address in user address
+                
 
                 if currant_location:
                     if currant_location is None:
@@ -98,7 +101,7 @@ class MyBookingList(APIView):
                                 "latitude": driver_location.y,
                             }
                             driver_data.append(location_dict)                
-
+                    serializer.save()
                     driver_id = []
                     if driver.exists():
                         for drive in driver_data:
@@ -112,8 +115,8 @@ class MyBookingList(APIView):
 
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
-                        serializer.validated_data['user'] = user
-                        serializer.save()
+                        
+                        # serializer.save()
                         booking_id = serializer.data['id']
                         print("Serializer id: ",serializer.data['id'])
                         
@@ -149,7 +152,7 @@ class MyBookingList(APIView):
                             except Exception as e:
                                 print(f"Error sending notification to token {token}:{e}")
                     
-
+                # serializer.save()
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
