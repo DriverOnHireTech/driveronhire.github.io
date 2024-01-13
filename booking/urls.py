@@ -29,7 +29,7 @@ urlpatterns = [
 
     path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
 
-    path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'),
+    path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'), #for CRM 
 
     path('agent_booking_app/', views.AgentBookingApp.as_view(), name='agent-booking-app'), # this is for get request for mobile app
 
