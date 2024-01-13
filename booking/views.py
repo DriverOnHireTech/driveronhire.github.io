@@ -38,14 +38,14 @@ class MyBookingList(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request, format=None): 
         user=request.user
+        print("user type", type(user))
         data=request.data
         trip_type=request.data['trip_type']
         car_type= request.data['car_type']
         gear_type=request.data['gear_type']
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
-        mobile = int(user.phone)
-        print("mobile: ", type(mobile))
+
         pickup_zone = zone_get(pickup_location)
         drop_zone = zone_get(drop_location)
         print("pick up zone: ",pickup_zone)
@@ -59,8 +59,8 @@ class MyBookingList(APIView):
         if serializer.is_valid():
                 car_type= serializer.validated_data.get('car_type')
                 transmission_type=serializer.validated_data.get('gear_type')
-                serializer.validated_data['mobile'] = int(user.phone)
-                serializer.validated_data['user'] = user
+                serializer.validated_data['mobile'] = user.phone
+                serializer.validated_data['user']=user
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -76,9 +76,8 @@ class MyBookingList(APIView):
                     location = geolocator.reverse((latitude, longitude), language="en")
                     return location.address if location else "Location not found"
 
-                address = get_address(latitude, longitude)
-                serializer.validated_data['user_address'] = address # saving address in user address
-                
+                # address = get_address(latitude, longitude)
+                # serializer.validated_data['user_address'] = address # saving address in user address
                 
 
                 if currant_location:
@@ -102,7 +101,7 @@ class MyBookingList(APIView):
                                 "latitude": driver_location.y,
                             }
                             driver_data.append(location_dict)                
-
+                    serializer.save()
                     driver_id = []
                     if driver.exists():
                         for drive in driver_data:
@@ -117,7 +116,7 @@ class MyBookingList(APIView):
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
                         
-                        serializer.save()
+                        # serializer.save()
                         booking_id = serializer.data['id']
                         print("Serializer id: ",serializer.data['id'])
                         
@@ -153,7 +152,7 @@ class MyBookingList(APIView):
                             except Exception as e:
                                 print(f"Error sending notification to token {token}:{e}")
                     
-
+                # serializer.save()
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
@@ -197,9 +196,7 @@ class getbooking(APIView):
     def get(self, request):
         try:
             booking_data= PlaceBooking.objects.all().order_by('-id')
-            print("users",booking_data)
             serializer=PlacebookingSerializer(booking_data, many=True)
-            # print("booking data", serializer.data.user)
             return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
@@ -211,12 +208,11 @@ class Acceptedride(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
-        print("data: ", data)
         user = request.user
-        print("User data: ", user)
         booking= PlaceBooking.objects.get(id=id)
         client_name=booking.user
-        mobile=booking.mobile
+        client_mobile=booking.mobile
+        driver_mobile=user.phone
         driver=booking.accepted_driver
         date=booking.booking_date
         time=booking.client_booking_time
@@ -228,15 +224,13 @@ class Acceptedride(APIView):
             #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
-            
-                accepted_driver = booking.accepted_driver
+                driver_name = AddDriver.objects.get(driver_user=user)
+                print("driver name: ", driver_name)
+                whatsapp_number = f"whatsapp:+91{client_mobile}"
+                msg="""Dear {client_name},
 
-                # driver_name = AddDriver.objects.get(driver_user=7654002162)
-                whatsapp_number = f"whatsapp:+91{mobile}"
-                msg="""Dear {client_name}
-
-                                Mr. {accepted_driver}
-                                Mobile - {driver}
+                                Driver {driver_name}
+                                Mobile - {driver_mobile}
                                 Will be arriving at your destination.
 
                                 Date -{date}
@@ -250,9 +244,9 @@ class Acceptedride(APIView):
                                 Thanks 
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
-                # message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date, time=time)
+                message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
-                # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -669,14 +663,14 @@ class InvoiceGenerate(APIView):
              return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-    def get(self, request):
-        try:
-            get_all_inv = Invoice.objects.all().order_by('invoice_generate')
-            get_seri= InvoiceSerializer(get_all_inv, many=True)
-            return Response({'msg': 'All invoice list', 'data':get_seri.data}, status=status.HTTP_200_OK)
+#     def get(self, request):
+#         try:
+#             get_all_inv = Invoice.objects.all().order_by('invoice_generate')
+#             get_seri= InvoiceSerializer(get_all_inv, many=True)
+#             return Response({'msg': 'All invoice list', 'data':get_seri.data}, status=status.HTTP_200_OK)
         
-        except Invoice.DoesNotExist:
-            raise serializers.ValidationError("No Data Found")
+#         except Invoice.DoesNotExist:
+#             raise serializers.ValidationError("No Data Found")
 
 
 class FeedbackApi(APIView):
@@ -923,7 +917,7 @@ class AgentBookingApp(APIView):
                 for booking_idd in notify_driver_data:
                     booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id))
                     serializer = Agentbookingserailizer(booking, many=True)
-                    data_list.extend(serializer.data)                 
+                    data_list.extend(serializer.data)                    
                 revers_recors= data_list[::-1]
 
                 return Response({'data':revers_recors}, status=status.HTTP_200_OK)
@@ -964,6 +958,60 @@ class Agentbooking_bystatus(APIView):
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)
     
+
+
+class Agentbooking_accept(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request, id):
+        data = request.data
+        print("data: ", data)
+        user = request.user
+        print("user: ", user)
+        booking= AgentBooking.objects.get(id=id)
+        client_name=booking.client_name
+        client_mobile=booking.mobile_number
+        # driver_mobile=user.phone
+        # driver=booking.accepted_driver
+        # date=booking.booking_date
+        # time=booking.client_booking_time
+        if booking.status == "active":
+                return Response({'msg': 'booking already accepted by other driver'})
+        
+        elif booking.status == "pending":
+            serializer= Agentbookingserailizer(booking, data=data, partial=True)
+        #     #booking.accepted_driver= user
+            if serializer.is_valid():
+                serializer.validated_data['accepted_driver']=user
+                driver_name = AddDriver.objects.get(driver_user=user)
+        #         whatsapp_number = f"whatsapp:+91{client_mobile}"
+        #         msg="""Dear {client_name}
+
+        #                         Mr. {driver_name}
+        #                         Mobile - {driver_mobile}
+        #                         Will be arriving at your destination.
+
+        #                         Date -{date}
+        #                         Time -{time}
+
+        #                         Our rates - https://www.driveronhire.com/rates
+
+        #                         *T&C Apply
+        #                         https://www.driveronhire.com/privacy-policy
+
+        #                         Thanks 
+        #                         Driveronhire.com
+        #                         Any issue or feedback call us 02243439090"""
+        #         message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+                data.setdefault("accepted_driver",user.id)
+        #         # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                serializer.save()
+                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+      
+        else:
+            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+        # return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  

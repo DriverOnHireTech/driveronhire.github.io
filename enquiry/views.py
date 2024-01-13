@@ -74,3 +74,4 @@ class Getsingle_enq(APIView):
         except:
           serializer = DriverEnquiryserializer()
           return Response({'msg':'No enquiry found',}, status=status.HTTP_204_NO_CONTENT) 
+        

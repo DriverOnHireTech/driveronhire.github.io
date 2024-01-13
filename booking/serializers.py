@@ -4,7 +4,7 @@ from driver_management.models import AddDriver
 from driver_management.models import Driverlocation
 from driver_management.serializers import MyDriverSerializer
 from user_master.models import Zone
-from .models import bookinguser, Invoice, BookLater
+from .models import bookinguser, BookLater
 from authentication.serializers import NewUserSerializer
 
 from authentication.models import  User
@@ -23,15 +23,15 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
 
         
 class PlacebookingSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField()
     class Meta:
-        model = PlaceBooking   
-        fields= ('id','trip_type','user','booking_date','no_of_days', 
-                   'car_type', 'gear_type',
-                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message')
+        model = PlaceBooking
         
-    
+        fields= ('id','trip_type','booking_date','no_of_days', 'booking_type', 
+                   'car_type', 'gear_type', 
+                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','journy_started',
+                  'journy_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'mobile')
         
+            
    
    
 class NotifyDriverSerializer(serializers.ModelSerializer):

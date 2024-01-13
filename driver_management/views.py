@@ -87,10 +87,12 @@ class updatedriver(APIView):
     permission_classes = [IsAuthenticated]
     def patch(self, request):
         data= request.data
+        print("Data: ",data)
         user= request.user
-        print("User: ",user)
-        driver = AddDriver.objects.get(driver_user=user)
-        serializer =MyDriverSerializer(driver, data=data, partial=True)
+        print("User: ",user.id)
+        driver = AddDriver.objects.get(driver_user=user.id)
+        print("Again Driver: ", driver.id)
+        serializer =MyDriverSerializer(driver, data=request.data, partial=True)
         if serializer.is_valid(): 
             serializer.save()
             print("Serializer Data: ", serializer.data)
