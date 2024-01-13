@@ -52,7 +52,7 @@ class DriverSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class InvoiceSerializer(serializers.ModelSerializer):
+class InvoiceSerializer(serializers.ModelSerializer):
     
     # driver =  serializers.SerializerMethodField()
     # placebooking = serializers.SerializerMethodField()

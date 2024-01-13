@@ -11,6 +11,8 @@ admin.site.register(Notifydrivers)
 admin.site.register(NotifydriversAgent)
 admin.site.register(GuestBooking)
 admin.site.register(Zone)
+admin.site.register(Invoice)
+
 
 class Placebookingadmin(admin.ModelAdmin):
     list_display=['id','user', 'booking_type', 'packege', 'user_address','car_type','pickup_location', 'drop_location', 'status']

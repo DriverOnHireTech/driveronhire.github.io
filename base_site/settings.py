@@ -244,11 +244,9 @@ TWILIO_PHONE_NUMBER = '+12107141446'
 #Email Send setup
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'farooqaziz1993@gmail.com'
-EMAIL_HOST_PASSWORD = 'zdxlkvtlwnihemsf'
+EMAIL_HOST_USER = 'enquiry.driveronhire@gmail.com'
+EMAIL_HOST_PASSWORD = 'vnunfrjriwdctbhj'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
-INFOBIP_BASE_URL = "https://vv1yd1.api.infobip.com"
-INFOBIP_API_KEY = "1f9d940b581346389b8b853128de460c-b4c1a547-e85a-42d2-b32f-5ef8696765d0"

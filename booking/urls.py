@@ -37,6 +37,8 @@ urlpatterns = [
 
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
 
+    path('agent_booking_accept/<int:id>/', views.Agentbooking_accept.as_view(), name='agent_booking_accept'),  # agent booking accept by driver
+
     path('deleteclinetbooking/<int:id>/', views.Agentbookingview.as_view(), name='delete'),
 
     path('agen_booking_status/', views.Agentbooking_bystatus.as_view(), name='agent_booking_status'),  # Get agent booking by status

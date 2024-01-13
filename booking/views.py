@@ -76,8 +76,8 @@ class MyBookingList(APIView):
                     location = geolocator.reverse((latitude, longitude), language="en")
                     return location.address if location else "Location not found"
 
-                address = get_address(latitude, longitude)
-                serializer.validated_data['user_address'] = address # saving address in user address
+                # address = get_address(latitude, longitude)
+                # serializer.validated_data['user_address'] = address # saving address in user address
                 
 
                 if currant_location:
@@ -211,7 +211,8 @@ class Acceptedride(APIView):
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
         client_name=booking.user
-        mobile=booking.mobile
+        client_mobile=booking.mobile
+        driver_mobile=user.phone
         driver=booking.accepted_driver
         date=booking.booking_date
         time=booking.client_booking_time
@@ -223,15 +224,13 @@ class Acceptedride(APIView):
             #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
-            
-                accepted_driver = booking.accepted_driver
+                driver_name = AddDriver.objects.get(driver_user=user)
+                print("driver name: ", driver_name)
+                whatsapp_number = f"whatsapp:+91{client_mobile}"
+                msg="""Dear {client_name},
 
-                # driver_name = AddDriver.objects.get(driver_user=7654002162)
-                whatsapp_number = f"whatsapp:+91{mobile}"
-                msg="""Dear {client_name}
-
-                                Mr. {accepted_driver}
-                                Mobile - {driver}
+                                Driver {driver_name}
+                                Mobile - {driver_mobile}
                                 Will be arriving at your destination.
 
                                 Date -{date}
@@ -245,7 +244,7 @@ class Acceptedride(APIView):
                                 Thanks 
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
-                message=msg.format(client_name=client_name, driver=driver, dname=driver,date=date, time=time)
+                message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
                 utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
@@ -959,6 +958,60 @@ class Agentbooking_bystatus(APIView):
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)
     
+
+
+class Agentbooking_accept(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request, id):
+        data = request.data
+        print("data: ", data)
+        user = request.user
+        print("user: ", user)
+        booking= AgentBooking.objects.get(id=id)
+        client_name=booking.client_name
+        client_mobile=booking.mobile_number
+        # driver_mobile=user.phone
+        # driver=booking.accepted_driver
+        # date=booking.booking_date
+        # time=booking.client_booking_time
+        if booking.status == "active":
+                return Response({'msg': 'booking already accepted by other driver'})
+        
+        elif booking.status == "pending":
+            serializer= Agentbookingserailizer(booking, data=data, partial=True)
+        #     #booking.accepted_driver= user
+            if serializer.is_valid():
+                serializer.validated_data['accepted_driver']=user
+                driver_name = AddDriver.objects.get(driver_user=user)
+        #         whatsapp_number = f"whatsapp:+91{client_mobile}"
+        #         msg="""Dear {client_name}
+
+        #                         Mr. {driver_name}
+        #                         Mobile - {driver_mobile}
+        #                         Will be arriving at your destination.
+
+        #                         Date -{date}
+        #                         Time -{time}
+
+        #                         Our rates - https://www.driveronhire.com/rates
+
+        #                         *T&C Apply
+        #                         https://www.driveronhire.com/privacy-policy
+
+        #                         Thanks 
+        #                         Driveronhire.com
+        #                         Any issue or feedback call us 02243439090"""
+        #         message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+                data.setdefault("accepted_driver",user.id)
+        #         # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                serializer.save()
+                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+      
+        else:
+            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
+        # return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # Filter driver based on package
 class driverlineupplacebooking(APIView):  
