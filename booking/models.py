@@ -67,7 +67,7 @@ class PlaceBooking(models.Model):
        
     )
     user = models.ForeignKey(User,on_delete=models.CASCADE) 
-    mobile= models.PositiveBigIntegerField(null=True, blank=True)
+    mobile= models.CharField(max_length=20, null=True, blank=True)
     trip_type=models.CharField(max_length=50, null=True ,blank=True)
     booking_type=models.CharField(max_length=50, null=True ,blank=True)
     packege= models.CharField(max_length=100, null=True, blank=True)
@@ -79,14 +79,14 @@ class PlaceBooking(models.Model):
     car_type=models.CharField(max_length=100, null=True)
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=500, null=True, blank=True)
-    drop_location=models.CharField(max_length=100, null=True, blank=True)
+    drop_location=models.CharField(max_length=500, null=True, blank=True)
     notification_sent = models.BooleanField(default=False, null=True, blank=True)
     status =  models.CharField(max_length=100, choices=STATUS, default='pending')
     cancelbooking_reason=models.CharField(max_length=500, null=True, blank=True)
     cancelbooking_message = models.CharField(max_length=1000, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
-    deuty_started=models.DateTimeField(auto_now_add=False, null=True, blank=True)
-    deuty_end=models.DateTimeField(auto_now_add=False, null=True, blank=True)
+    deuty_started=models.DateTimeField(  null=True, blank=True)
+    deuty_end=models.DateTimeField( null=True, blank=True)
     journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     booking_time=models.DateTimeField(auto_now_add=True)
     outskirt_charge = models.BigIntegerField(default=0, null=True, blank=True)
@@ -128,6 +128,11 @@ class AgentBooking(models.Model):
         ("Charges issue", "Charges issue")
     )
     Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
+    journys=(
+        ('journy started','journy started'),
+        ('journy end', 'journy end'),
+       
+    )
     # id = models.AutoField(primary_key=True)
     client_name= models.CharField(max_length=200, null=True, blank=True)
     mobile_number= models.BigIntegerField(null=True, blank=True)
@@ -150,10 +155,12 @@ class AgentBooking(models.Model):
     visiting_location= models.CharField(max_length=200, null=True, blank=True)
     status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
-    driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
-    booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, related_name="agentbookings_driver_name", null=True, blank=True)
+    accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver_id', null=True, blank=True)
+    booking_created_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="agentbookings_created_by", null=True, blank=True)
     booking_created_by_name = models.CharField(max_length=255, null=True, blank=True)
     deuty_started=models.TimeField(auto_now_add=False, null=True, blank=True)
+    journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     deuty_end=models.DateTimeField(auto_now_add=False, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
 
@@ -209,7 +216,7 @@ class Invoice(models.Model):
     invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
 
     def __str__(self):
-        return f'{self.driver}'
+        return self.driver.first_name
   
 
 class Feedback(models.Model):

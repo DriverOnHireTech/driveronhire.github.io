@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'),
 
-    path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
+    #path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
 
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
@@ -36,6 +36,8 @@ urlpatterns = [
     path('agent_booking/<int:id>/', views.AgentDetailView.as_view(), name='agent-booking-id'),
 
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
+
+    path('agent_booking_accept/<int:id>/', views.Agentbooking_accept.as_view(), name='agent_booking_accept'),  # agent booking accept by driver
 
     path('deleteclinetbooking/<int:id>/', views.Agentbookingview.as_view(), name='delete'),
 
