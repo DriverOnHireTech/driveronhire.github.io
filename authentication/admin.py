@@ -4,5 +4,6 @@ from .models import User
 
 class LogEntryAdmin(admin.ModelAdmin):
     list_display = ['usertype', 'phone']
+    list_filter=['phone']
 
 admin.site.register(User, LogEntryAdmin)
