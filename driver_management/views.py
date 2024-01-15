@@ -264,6 +264,23 @@ class DriverappstatusView(APIView):
         except Driverappstatus.DoesNotExist:
             return Response({'msg':'No Record found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
         
+# Get Driver package
+class driverpackageapi(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            user=request.user
+            get_package=Driverappstatus.objects.filter(driverusername=user)
+            serializer=Driverappstatusserializer(get_package, many=True)
+            return Response({'msg':'Your Package details', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except:
+            serializer=Driverappstatusserializer()
+            return Response({'msg':'No Scheme found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+    
+
+        
+        
 
 class DriverWIthUserFilter(APIView):
     def get(self, request, *args, **kwargs):
