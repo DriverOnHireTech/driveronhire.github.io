@@ -22,16 +22,6 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
         fields = ['full_name', 'mobile_number', 'city', 'address']
 
         
-<<<<<<< HEAD
-class PlacebookingSerializer(serializers.ModelSerializer):     
-    class Meta:
-        model = PlaceBooking
-        
-        fields= ('id','trip_type', 'booking_date','no_of_days', 
-                   'car_type', 'gear_type', 'mobile', 
-                  'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','currant_location', 
-                  'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message')
-=======
 class PlacebookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceBooking
@@ -42,7 +32,6 @@ class PlacebookingSerializer(serializers.ModelSerializer):
                   'journy_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'mobile')
         
             
->>>>>>> 5169176006d032789a05b932d0aba68557c29b94
    
    
 class NotifyDriverSerializer(serializers.ModelSerializer):

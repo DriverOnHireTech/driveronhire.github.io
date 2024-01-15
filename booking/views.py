@@ -116,11 +116,7 @@ class MyBookingList(APIView):
                         devices = FCMDevice.objects.filter(user__in=driver_id)
 
                         
-<<<<<<< HEAD
-                        #serializer.save()
-=======
                         # serializer.save()
->>>>>>> 5169176006d032789a05b932d0aba68557c29b94
                         booking_id = serializer.data['id']
                         print("Serializer id: ",serializer.data['id'])
                         
@@ -156,12 +152,7 @@ class MyBookingList(APIView):
                             except Exception as e:
                                 print(f"Error sending notification to token {token}:{e}")
                     
-<<<<<<< HEAD
-                serializer.save()
-
-=======
                 # serializer.save()
->>>>>>> 5169176006d032789a05b932d0aba68557c29b94
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
@@ -238,17 +229,8 @@ class Acceptedride(APIView):
                 whatsapp_number = f"whatsapp:+91{client_mobile}"
                 msg="""Dear {client_name},
 
-<<<<<<< HEAD
-                # driver_name = AddDriver.objects.get(driver_user=7654002162)
-                whatsapp_number = f"whatsapp:+91{mobile}"
-                msg="""Dear {client_name}
-
-                                Mr. {driver}
-                                Mobile - {driver}
-=======
                                 Driver {driver_name}
                                 Mobile - {driver_mobile}
->>>>>>> 5169176006d032789a05b932d0aba68557c29b94
                                 Will be arriving at your destination.
 
                                 Date -{date}
