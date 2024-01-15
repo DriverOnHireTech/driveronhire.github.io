@@ -182,7 +182,7 @@ class AddDriver(models.Model):
         blank=True, null=True
     )
     date_of_birth = models.DateField(null=True, blank=True)
-    mobile = models.CharField(max_length=15, blank=True, null=True, unique=True)
+    mobile = models.CharField(max_length=15, blank=True, null=True)
     alt_mobile = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(default="info@driveronhire.com", blank=True, null=True)
     
