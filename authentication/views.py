@@ -39,7 +39,7 @@ class Adduser(APIView):
         return Response({'msg':'Error in sav data', 'data': serailizer.errors})
        
     def get(self, request):
-        all_user= User.objects.all()
+        all_user= User.objects.all().order_by('-id')
         serializer= NewUserSerializer(all_user, many=True)
         return Response({'msg':'Here is your data', 'data':serializer.data}, status=status.HTTP_200_OK)
     
