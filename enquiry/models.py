@@ -28,6 +28,12 @@ class driverenquiry(models.Model):
     name= models.CharField(max_length=100, null=True, blank=True)
     email= models.EmailField()
     message=models.CharField(max_length=200, null=True, blank=True)
+    remarks=models.CharField(max_length=200, null=True, blank=True)
+    enq_updated_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    enq_updated_dt=models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    enq_created_time=models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+
 
 
     def __str__(self):

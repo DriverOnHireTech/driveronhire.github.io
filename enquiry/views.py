@@ -1,6 +1,8 @@
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 from .models import Enquiry, driverenquiry
 from .serializers import MyEnquirySerializer, DriverEnquiryserializer
@@ -75,3 +77,15 @@ class Getsingle_enq(APIView):
           serializer = DriverEnquiryserializer()
           return Response({'msg':'No enquiry found',}, status=status.HTTP_204_NO_CONTENT) 
         
+        #Updateing single enquiry end point
+      authentication_classes=[TokenAuthentication]
+      permission_classes=[IsAuthenticated]
+      def patch(self, request,id):
+            data=request.data
+            enq_data=driverenquiry.objects.get(id=id)
+            serializer = DriverEnquiryserializer(enq_data, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'msg':'Enquirey updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response({'msg':'Enquirey updated', 'data':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
