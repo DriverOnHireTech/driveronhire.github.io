@@ -29,5 +29,7 @@ urlpatterns = [
 
     path('api/Driverappstatus/', DriverappstatusView.as_view(), name='driver_status'),
 
+    path('api/scheme/', driverpackageapi.as_view(), name='driver_scheme'), # Get logged driver Scheme details
+
     path('api/UserWithDriver/', DriverWIthUserFilter.as_view(), name='driver_with_user'),
 ]
