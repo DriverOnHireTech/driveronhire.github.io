@@ -86,7 +86,7 @@ class Getsingle_enq(APIView):
             enq_data=driverenquiry.objects.get(id=id)
             serializer = DriverEnquiryserializer(enq_data, data=data, partial=True)
             if serializer.is_valid():
-                serializer.validated_data['enq_updated_by']=user.phone
+                serializer.validated_data['enq_updated_by']=user
                 serializer.save()
                 return Response({'msg':'Enquirey updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
             else:
