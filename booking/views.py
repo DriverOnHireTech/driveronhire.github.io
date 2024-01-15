@@ -943,7 +943,7 @@ class Agentbooking_bystatus(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=AgentBooking.objects.filter(status=booking_status)
+                pending_booking=AgentBooking.objects.filter(status=booking_status, accepted_driver=user)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
