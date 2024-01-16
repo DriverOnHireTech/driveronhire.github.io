@@ -915,7 +915,7 @@ class AgentBookingApp(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id))
+                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending"))
                     serializer = Agentbookingserailizer(booking, many=True)
                     data_list.extend(serializer.data)                    
                 revers_recors= data_list[::-1]
