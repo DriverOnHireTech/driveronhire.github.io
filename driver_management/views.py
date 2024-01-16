@@ -7,7 +7,7 @@ from .serializers import *
 from rest_framework import status
 from rest_framework import filters
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
@@ -267,18 +267,17 @@ class DriverappstatusView(APIView):
     # After expire driver package inactive the app
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    def path(self, request):
+    def patch(self, request):
         data=request.data
         user=request.user
-        currente_date=datetime.now()
-        print("system current date:", currente_date)
-        recharge_date=request.data.get('recharge_date')
-        print("recharge date", recharge_date)
+        current_date = datetime.combine(date.today(), datetime.min.time())  # Convert date to datetime
+        print("system current date:", current_date)
         exp_date=request.data.get('expiry_date')
+        convert_date=datetime.strptime(exp_date,'%Y-%m-%d')
         print("exp date", exp_date)
 
         #checking current date and exp date
-        if currente_date > exp_date:
+        if current_date > convert_date:
             return Response({'msg':'plan is exp'})
         driver_app_status=Driverappstatus.objects.filter(driverusername=user)
         serializer=Driverappstatusserializer(driver_app_status, data=data, partial=True)
