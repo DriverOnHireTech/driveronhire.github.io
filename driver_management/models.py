@@ -305,7 +305,7 @@ class AddDriver(models.Model):
 
 """Driver App Status"""
 class Driverappstatus(models.Model):
-    PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("silver", "silver"),("DiwaliScheme", "DiwaliScheme"))
+    PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("Bronze", "Bronze"), ("silver", "silver"),("DiwaliScheme", "DiwaliScheme"))
     Status=(('active','active'), ('inactive', 'inactive'))
     driver_name=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
     # driver_

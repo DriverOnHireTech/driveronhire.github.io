@@ -11,7 +11,7 @@ admin.site.register(Driverlocation)
 
 
 class Adddriveradmin(admin.ModelAdmin):
-    list_display=['first_name','mobile', 'driver_type', 'scheme_type']
+    list_display=['id','first_name','mobile', 'driver_type', 'scheme_type']
     list_filter=['mobile', 'driver_type', 'scheme_type', 'first_name']
 
 admin.site.register(AddDriver, Adddriveradmin)

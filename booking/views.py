@@ -217,6 +217,8 @@ class Acceptedride(APIView):
             #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
+                serializer._validated_data['accepted_driver_name'] = user.first_name
+                serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
                 print("driver name: ", driver_name)
                 whatsapp_number = f"whatsapp:+91{client_mobile}"
@@ -908,7 +910,7 @@ class AgentBookingApp(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id))
+                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending"))
                     serializer = Agentbookingserailizer(booking, many=True)
                     data_list.extend(serializer.data)                    
                 revers_recors= data_list[::-1]
@@ -1040,6 +1042,7 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
+        print("current Time", currenttime)
         start_deuty=currenttime.strftime("%H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
