@@ -264,6 +264,31 @@ class DriverappstatusView(APIView):
         except Driverappstatus.DoesNotExist:
             return Response({'msg':'No Record found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
         
+    # After expire driver package inactive the app
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def path(self, request):
+        data=request.data
+        user=request.user
+        currente_date=datetime.now()
+        print("system current date:", currente_date)
+        recharge_date=request.data.get('recharge_date')
+        print("recharge date", recharge_date)
+        exp_date=request.data.get('expiry_date')
+        print("exp date", exp_date)
+
+        #checking current date and exp date
+        if currente_date > exp_date:
+            return Response({'msg':'plan is exp'})
+        driver_app_status=Driverappstatus.objects.filter(driverusername=user)
+        serializer=Driverappstatusserializer(driver_app_status, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'app is inactive', 'data':serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'msg':'Error in Response'}, status=status.HTTP_400_BAD_REQUEST)
+
+        
 # Get Driver package
 class driverpackageapi(APIView):
     authentication_classes = [TokenAuthentication]

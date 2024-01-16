@@ -38,7 +38,6 @@ class MyBookingList(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request, format=None): 
         user=request.user
-        print("user type", type(user))
         data=request.data
         trip_type=request.data['trip_type']
         car_type= request.data['car_type']
@@ -49,11 +48,7 @@ class MyBookingList(APIView):
         pickup_zone = zone_get(pickup_location)
         drop_zone = zone_get(drop_location)
         print("pick up zone: ",pickup_zone)
-        print("drop zone: ",drop_zone)
-
         extra_charges = return_charges(pickup_zone, drop_zone)
-        print("Extra charge: ", extra_charges)
-
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -64,8 +59,6 @@ class MyBookingList(APIView):
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
-                print("current location: ", currant_location)
-                print("Type of current location: ", type(currant_location))
                 currant_location_str = str(currant_location)
                 coordinates_str = currant_location_str.split("(")[1].split(")")[0]
                 latitude, longitude = map(float, coordinates_str.split())
@@ -1047,7 +1040,7 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
+        start_deuty=currenttime.strftime("%H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
