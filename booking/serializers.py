@@ -29,7 +29,7 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         fields= ('id','trip_type','booking_date','no_of_days', 'booking_type', 
                    'car_type', 'gear_type', 
                   'pickup_location', 'client_booking_time', 'drop_location', 'booking_time', 'deuty_started','journy_started',
-                  'journy_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'mobile', 'accepted_driver_name')
+                  'journy_started','currant_location', 'status','packege',  'user_address','cancelbooking_reason', 'cancelbooking_message', 'mobile', 'accepted_driver_name', 'accepted_driver_number')
         
    
 class NotifyDriverSerializer(serializers.ModelSerializer):

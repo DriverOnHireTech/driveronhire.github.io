@@ -86,6 +86,7 @@ class PlaceBooking(models.Model):
     cancelbooking_message = models.CharField(max_length=1000, null=True, blank=True)
     accepted_driver =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='accepted_driver', null=True, blank=True)
     accepted_driver_name = models.CharField(max_length=255, blank=True, null=True)
+    accepted_driver_number = models.CharField(max_length=255, blank=True, null=True)
     deuty_started=models.DateTimeField(  null=True, blank=True)
     deuty_end=models.DateTimeField( null=True, blank=True)
     journy_started=models.CharField(max_length=100, choices=journys, default='pending')
