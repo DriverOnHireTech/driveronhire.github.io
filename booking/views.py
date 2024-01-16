@@ -943,7 +943,7 @@ class Agentbooking_bystatus(APIView):
 
             #Fetching pending records
             if booking_status is not None:
-                pending_booking=AgentBooking.objects.filter(status=booking_status)
+                pending_booking=AgentBooking.objects.filter(status=booking_status, accepted_driver=user)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
@@ -1047,7 +1047,8 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
+        print("current Time", currenttime)
+        start_deuty=currenttime.strftime("%H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
