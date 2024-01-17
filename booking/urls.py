@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'),
 
-    path('decline_booking/<int:id>/', views.declineplacebooking.as_view(), name='decline_booking'),
+    path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
     #path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
 
