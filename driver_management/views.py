@@ -268,24 +268,37 @@ class DriverappstatusView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     def patch(self, request):
-        data=request.data
-        user=request.user
-        current_date = datetime.combine(date.today(), datetime.min.time())  # Convert date to datetime
-        print("system current date:", current_date)
-        exp_date=request.data.get('expiry_date')
-        convert_date=datetime.strptime(exp_date,'%Y-%m-%d')
-        print("exp date", exp_date)
+        data = request.data
+        user = request.user
 
-        #checking current date and exp date
-        if current_date > convert_date:
-            return Response({'msg':'plan is exp'})
-        driver_app_status=Driverappstatus.objects.filter(driverusername=user)
-        serializer=Driverappstatusserializer(driver_app_status, data=data, partial=True)
+        # Get the current date as a datetime object
+        current_date = datetime.combine(date.today(), datetime.min.time())
+
+        print("system current date:", current_date)
+
+
+        # Checking current date and exp date
+        # if current_date > convert_date:
+        #     return Response({'msg': 'plan is exp'})
+
+        # Fetching existing driver app status
+        driver_app_status = Driverappstatus.objects.filter(driverusername=user).first()
+
+        if not driver_app_status:
+            return Response({'msg': 'Driver app status not found for the user'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = Driverappstatusserializer(driver_app_status, data=data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
-            return Response({'msg':'app is inactive', 'data':serializer.data}, status=status.HTTP_200_OK)
+            recharge_data = serializer.data
+            exp_date = recharge_data['expiry_date']
+            convert_date = datetime.strptime(exp_date, '%Y-%m-%d')
+            if current_date > convert_date:
+                return Response({'msg': 'plan is exp'})
+            return Response({'msg': 'app is active', 'data': serializer.data}, status=status.HTTP_200_OK)
         else:
-            return Response({'msg':'Error in Response'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'Error in Response', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         
 # Get Driver package
