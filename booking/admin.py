@@ -12,6 +12,7 @@ admin.site.register(NotifydriversAgent)
 admin.site.register(GuestBooking)
 admin.site.register(Zone)
 admin.site.register(Invoice)
+admin.site.register(Declinebooking)
 
 
 class Placebookingadmin(admin.ModelAdmin):

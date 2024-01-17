@@ -208,3 +208,8 @@ class ZoneGSerializer(serializers.ModelSerializer):
     class Meta:
         model = ZoneG
         fields = "__all__"
+
+class DeclinebookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Declinebooking
+        fields= '__all__'
