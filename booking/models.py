@@ -273,8 +273,8 @@ class BookLater(models.Model):
     
 """Geust Booking"""
 class GuestBooking(models.Model):
-    TRIP_FOR=(('Local','Local'),('out station', 'out station'))
-    TRIP_TYPE=(('One Way', "One Way"), ("Round Trip", "Round Trip"))
+    TRIP_FOR=(('Local','Local'),('outstation', 'outstation'))
+    TRIP_TYPE=(('OneWay', "OneWay"), ("Round Trip", "Round Trip"))
     user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     trip_for=models.CharField(choices=TRIP_FOR,max_length=50, null=True ,blank=True)
     trip_type=models.CharField(choices=TRIP_TYPE,max_length=50, null=True ,blank=True)
