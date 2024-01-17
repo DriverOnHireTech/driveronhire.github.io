@@ -295,12 +295,12 @@ class driverpackageapi(APIView):
     def get(self, request):
         try:
             user=request.user
-            get_package=Driverappstatus.objects.filter(driverusername=user).order_by('-id').first()
+            get_package=Driverappstatus.objects.filter(driverusername=user).order_by('-id')
             serializer=Driverappstatusserializer(get_package, many=True)
             return Response({'msg':'Your Package details', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
             serializer=Driverappstatusserializer()
-            return Response({'msg':'No Scheme found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'msg':'No Scheme found'}, status=status.HTTP_204_NO_CONTENT)
     
 
         
