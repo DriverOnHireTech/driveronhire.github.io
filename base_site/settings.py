@@ -31,6 +31,7 @@ CSRF_TRUSTED_ORIGINS=[
     'https://d2nevejjxy6v7u.cloudfront.net' #.com
     'https://driveronhire.com'
     'https://www.driveronhire.com'
+
     'https://d3m71pi62oje9c.cloudfront.net' #driversonhire.in
     'http://ec2-18-224-98-224.us-east-2.compute.amazonaws.com'
 
@@ -91,7 +92,7 @@ CORS_ORIGIN_WHITELIST = (
     'https://d3m71pi62oje9c.cloudfront.net', #driversonhire.in
     'https://driversonhire.in',
     'https://driveronhire.com',
-    'https://www.driveronhire.com',
+    #'https://www.driveronhire.com',
     'http://driveronhire.com.s3-website.us-east-2.amazonaws.com' #driveronhire.com 
 
 )
