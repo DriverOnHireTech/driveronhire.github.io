@@ -1127,20 +1127,27 @@ class userprofile(APIView):
         
 """Guest Booking API endpoint"""
 class Guestbookingapi(APIView):
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         try:
-            data=request.data
-            user=request.user
-            serializer=GuestBookingserialzer(data=data)
+            data = request.data
+            print("data:", data)
+            user = request.user
+            serializer = GuestBookingserialzer(data=data)
+
             if serializer.is_valid():
-                serializer.validated_data['user']=user
+                serializer.validated_data['user'] = user
                 serializer.save()
-                return Response({'msg':'Guest Booking done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'msg': 'Guest booking not done', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
         except:
-            # serializer=GuestBookingserialzer()
-            return Response({'msg':'Unable to save'}, status=status.HTTP_400_BAD_REQUEST)
+            # Handle the specific exception and return an error response
+            return Response({'msg': 'Error message'}, status=status.HTTP_400_BAD_REQUEST)
+
         
     def get(self, request):
         try:
