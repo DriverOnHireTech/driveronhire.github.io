@@ -290,6 +290,7 @@ class GuestBooking(models.Model):
 
 """ Decline place booking"""
 class Declinebooking(models.Model):
+    status=models.CharField(max_length=100, null=True, blank=True)
     placebooking=models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
     refuse_driver_user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     refuse_time=models.DateField(auto_now_add=True)
