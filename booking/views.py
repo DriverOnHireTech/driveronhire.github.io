@@ -255,9 +255,9 @@ class declineplacebooking(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data=request.data
-        user=request.use
+        user=request.user
         placebooking=PlaceBooking.objects.get(id=id)
-        serializer=PlacebookingSerializer(placebooking, data=data, partila=True)
+        serializer=PlacebookingSerializer(placebooking, data=data, partial=True)
         if serializer.is_valid():
             serializer.validated_data['accepted_driver']=user
             serializer.save()
