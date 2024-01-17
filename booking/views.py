@@ -253,11 +253,11 @@ class Acceptedride(APIView):
 class declineplacebooking(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
-    def patch(self, request, id):
+    def post(self, request, id):
         data=request.data
         user=request.user
         placebooking=PlaceBooking.objects.get(id=id)
-        serializer=PlacebookingSerializer(placebooking, data=data, partial=True)
+        serializer=DeclinebookingSerializer(placebooking, data=data, partial=True)
         if serializer.is_valid():
             serializer.validated_data['accepted_driver']=user
             serializer.save()
@@ -265,7 +265,6 @@ class declineplacebooking(APIView):
         else:
             serializer=PlacebookingSerializer()
             return Response({'msg':'Unable to decline', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)    
-
 """End decline"""
 
 class startjourny(APIView):
