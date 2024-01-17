@@ -7,7 +7,7 @@ from .serializers import *
 from rest_framework import status
 from rest_framework import filters
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
@@ -264,6 +264,30 @@ class DriverappstatusView(APIView):
         except Driverappstatus.DoesNotExist:
             return Response({'msg':'No Record found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
         
+    # After expire driver package inactive the app
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def patch(self, request):
+        data=request.data
+        user=request.user
+        current_date = datetime.combine(date.today(), datetime.min.time())  # Convert date to datetime
+        print("system current date:", current_date)
+        exp_date=request.data.get('expiry_date')
+        convert_date=datetime.strptime(exp_date,'%Y-%m-%d')
+        print("exp date", exp_date)
+
+        #checking current date and exp date
+        if current_date > convert_date:
+            return Response({'msg':'plan is exp'})
+        driver_app_status=Driverappstatus.objects.filter(driverusername=user)
+        serializer=Driverappstatusserializer(driver_app_status, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg':'app is inactive', 'data':serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'msg':'Error in Response'}, status=status.HTTP_400_BAD_REQUEST)
+
+        
 # Get Driver package
 class driverpackageapi(APIView):
     authentication_classes = [TokenAuthentication]
@@ -271,7 +295,7 @@ class driverpackageapi(APIView):
     def get(self, request):
         try:
             user=request.user
-            get_package=Driverappstatus.objects.filter(driverusername=user)
+            get_package=Driverappstatus.objects.filter(driverusername=user).order_by('-id').first()
             serializer=Driverappstatusserializer(get_package, many=True)
             return Response({'msg':'Your Package details', 'data':serializer.data}, status=status.HTTP_200_OK)
         except:
