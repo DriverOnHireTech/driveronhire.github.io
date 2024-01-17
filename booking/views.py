@@ -253,18 +253,33 @@ class Acceptedride(APIView):
 class declineplacebooking(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
-    def post(self, request, id):
+    def post(self, request):
         data=request.data
+        print("data:",data)
         user=request.user
-        placebooking=PlaceBooking.objects.get(id=id)
-        serializer=DeclinebookingSerializer(placebooking, data=data, partial=True)
+        placebooking_id=request.data['placebooking']
+        print("place booking id:",placebooking_id)
+        try:
+            placebooking = PlaceBooking.objects.get(id=placebooking_id)
+            print("place booking:", placebooking)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg': 'PlaceBooking not found'}, status=status.HTTP_404_NOT_FOUND)
+        #placebooking=PlaceBooking.objects.get(id=id)
+        serializer=DeclinebookingSerializer(data=data)
         if serializer.is_valid():
-            serializer.validated_data['accepted_driver']=user
+            # serializer.validated_data['placebooking']=booking_place_id
+            serializer.validated_data['refuse_driver_user']=user
             serializer.save()
+            print("serilaizer data:", serializer.data['id'])
             return Response({'msg':'Duty decline', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
-            serializer=PlacebookingSerializer()
-            return Response({'msg':'Unable to decline', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)    
+            #serializer=PlacebookingSerializer()
+            return Response({'msg':'Unable to decline'}, status=status.HTTP_400_BAD_REQUEST) 
+
+    def get(self, request):
+          declinebooking=Declinebooking.objects.all()
+          serializer=DeclinebookingSerializer(declinebooking, many=True)
+          return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
 
 class startjourny(APIView):
@@ -1112,24 +1127,31 @@ class userprofile(APIView):
         
 """Guest Booking API endpoint"""
 class Guestbookingapi(APIView):
-    authentication_classes=[TokenAuthentication]
-    permission_classes=[IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         try:
-            data=request.data
-            user=request.user
-            serializer=GuestBookingserialzer(data=data)
+            data = request.data
+            print("data:", data)
+            user = request.user
+            serializer = GuestBookingserialzer(data=data)
+
             if serializer.is_valid():
-                serializer.validated_data['user']=user
+                serializer.validated_data['user'] = user
                 serializer.save()
-                return Response({'msg':'Guest Booking done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'msg': 'Guest booking not done', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
         except:
-            # serializer=GuestBookingserialzer()
-            return Response({'msg':'Unable to save'}, status=status.HTTP_400_BAD_REQUEST)
+            # Handle the specific exception and return an error response
+            return Response({'msg': 'Error message'}, status=status.HTTP_400_BAD_REQUEST)
+
         
     def get(self, request):
         try:
-            guestbooking=GuestBooking.objects.all()
+            guestbooking=GuestBooking.objects.all().order_by('-id')
             serializer=GuestBookingserialzer(guestbooking, many=True)
             return Response({'msg':'All guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
 

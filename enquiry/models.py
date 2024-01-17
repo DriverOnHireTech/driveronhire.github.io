@@ -29,6 +29,7 @@ class driverenquiry(models.Model):
     email= models.EmailField()
     message=models.CharField(max_length=200, null=True, blank=True)
     required_service=models.CharField(max_length=200, null=True,blank=True)
+    service=models.CharField(max_length=200, null=True, blank=True)
     remarks=models.CharField(max_length=200, null=True, blank=True)
     enq_updated_by=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     enq_updated_dt=models.DateTimeField(auto_now_add=True, null=True, blank=True)
