@@ -257,7 +257,7 @@ class DriverappstatusView(APIView):
     def get(self, request):
         try:
 
-            all_appstatus= Driverappstatus.objects.all()
+            all_appstatus= Driverappstatus.objects.all().order_by('-id')
             serializer= Driverappstatusserializer(all_appstatus, many=True)
             return Response({'msg':'All Data', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         
