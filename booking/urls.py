@@ -62,4 +62,6 @@ urlpatterns = [
     path('age_start_deuty/<int:id>/', views.Agentstartjourny.as_view(), name='agent_deuty_started'), # Using this end deuty will start
 
     path('age_end_deuty/<int:id>/', views.Agentendjourny.as_view(), name='agent_deuty_end'), #Deuty End api endpoint    
+
+    path('test_decline_booking/', views.TestDeclineBooking.as_view(), name="Test-decline-booking"), # testing for decline booking
 ]
