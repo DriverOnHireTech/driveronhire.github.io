@@ -312,6 +312,7 @@ class Driverappstatus(models.Model):
     driverusername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
     package=models.CharField(choices=PACKAGE,max_length=100, null=True, blank=True)
     paymentamount=models.BigIntegerField(null=True, blank=True)
+    tax_amount=models.BigIntegerField(null=True, blank=True)
     is_paid=models.BooleanField(null=True, blank=True, default=False)
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
     recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)
