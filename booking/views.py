@@ -1075,7 +1075,6 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        print("current Time", currenttime)
         start_deuty=currenttime.strftime("%H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
