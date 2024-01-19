@@ -252,6 +252,7 @@ class DriverappstatusView(APIView):
         data=request.data
         print("All data: ", data)
         drivername_id = request.data.get('driverusername')
+        print("id: ",drivername_id )
         # driverusername = request.data.get()
         paymentamount=request.data['paymentamount']
         tax_amount=request.data['tax_amount']
@@ -262,6 +263,9 @@ class DriverappstatusView(APIView):
             return Response({'msg': f'User with id={drivername_id} does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         serializer=Driverappstatusserializer(data=data)
         if serializer.is_valid():
+            data1 = User.objects.get(id=drivername_id)
+            serializer.validated_data["driver_mobile"] = data1.phone
+            serializer.validated_data["driver_name1"] = data1.first_name
             serializer.validated_data['total_amount_paid']=total_pay_amount
             serializer.save()
             return Response({'msg':'Driver App status is created', 'data':serializer.data}, status=status.HTTP_201_CREATED)
@@ -274,6 +278,7 @@ class DriverappstatusView(APIView):
 
             all_appstatus= Driverappstatus.objects.all().order_by('-id')
             serializer= Driverappstatusserializer(all_appstatus, many=True)
+            print("data: ", serializer.data)
             return Response({'msg':'All Data', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         
         except Driverappstatus.DoesNotExist:
