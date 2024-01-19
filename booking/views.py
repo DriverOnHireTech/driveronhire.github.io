@@ -992,12 +992,11 @@ class Agentbooking_bystatus(APIView):
 class Agentbookingfilterquary(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            data=request.data
-            user=request.user
+
             mobile_number= request.GET.get('mobile_number')
 
             if mobile_number is not None:
-                pending_booking=AgentBooking.objects.filter(status=mobile_number)
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)

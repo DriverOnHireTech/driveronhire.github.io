@@ -45,7 +45,7 @@ urlpatterns = [
 
     path('agen_booking_status/', views.Agentbooking_bystatus.as_view(), name='agent_booking_status'),  # Get agent booking by status
 
-    path('agent_booking_filter/', views.Agentbookingfilterquary.as_view(), name='agent_booking_filter'),
+    path('agent_booking_filter/', views.Agentbookingfilterquary.as_view(), name='agent_booking_filter'), # endpoint for filter CRM booking
 
     path('driverlineup/', views.driverlineupplacebooking.as_view(), name='driver_lineup'),
 
