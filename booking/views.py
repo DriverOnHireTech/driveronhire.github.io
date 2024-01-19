@@ -994,20 +994,44 @@ class Agentbookingfilterquary(APIView):
         try:
 
             mobile_number= request.GET.get('mobile_number')
+            status= request.GET.get('status')
+            bookingfor=request.GET.get('bookingfor')
 
-            if mobile_number is not None:
+            # This block for check mobile number and get data based on
+            if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
+                if pending_booking.exists():
+                    serializer = Agentbookingserailizer(pending_booking, many=True)
+                    return Response({'msg': 'Your bookings','number_of_booking':number_of_booking, 'data': serializer.data})
+                else:
+                    return Response({'msg': 'No Data found', 'data': []})
+            # This block for check status active or pending and get data based on
+            elif status:
+                pending_booking=AgentBooking.objects.filter(status=status)
+                number_of_booking= pending_booking.count()
+                if pending_booking.exists():
+                    serializer = Agentbookingserailizer(pending_booking, many=True)
+                    return Response({'msg': 'Your bookings','number_of_booking':number_of_booking, 'data': serializer.data})
+                else:
+                    return Response({'msg': 'No Data found', 'data': []})
+            
+             # This block for check booking type and get data based on
+            elif bookingfor:
+                pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
+                number_of_booking= pending_booking.count()
+                if pending_booking.exists():
+                    serializer = Agentbookingserailizer(pending_booking, many=True)
+                    return Response({'msg': 'Your bookings','number_of_booking':number_of_booking, 'data': serializer.data})
+                else:
+                    return Response({'msg': 'No Data found', 'data': []})
                 
-                serializer =Agentbookingserailizer(pending_booking, many=True)
-                
-                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
             
             else:
                 bookings = AgentBooking.objects.all()
 
                 serializer = Agentbookingserailizer(bookings, many=True)
-                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'No Data found', 'data':serializer.data})
         
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
