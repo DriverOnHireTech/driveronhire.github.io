@@ -7,6 +7,8 @@ urlpatterns = [
 
     path('api/driver/', MyDriverList.as_view(), name='driver-list'),
 
+    path('api/get_single_driver/<int:id>/', getsingledriver.as_view(), name='get_sigle_driver'),
+
     path('all_drivers/', Getalldrivers.as_view(), name='all_drivers_list'),
 
     path('api/updatedriver/', updatedriver.as_view(), name='update_driver'),
