@@ -239,7 +239,7 @@ class Acceptedride(APIView):
                                 Thanks 
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
-                message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+                message=msg.format(client_name=client_name, driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
                 utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
@@ -264,10 +264,9 @@ class declineplacebooking(APIView):
             print("place booking:", placebooking)
         except PlaceBooking.DoesNotExist:
             return Response({'msg': 'PlaceBooking not found'}, status=status.HTTP_404_NOT_FOUND)
-        #placebooking=PlaceBooking.objects.get(id=id)
         serializer=DeclinebookingSerializer(data=data)
         if serializer.is_valid():
-            # serializer.validated_data['placebooking']=booking_place_id
+            serializer.validated_data['placebooking']=placebooking
             serializer.validated_data['refuse_driver_user']=user
             serializer.save()
             print("serilaizer data:", serializer.data['id'])
@@ -277,8 +276,11 @@ class declineplacebooking(APIView):
             return Response({'msg':'Unable to decline'}, status=status.HTTP_400_BAD_REQUEST) 
 
     def get(self, request):
-          declinebooking=Declinebooking.objects.all()
+          user=request.user
+          declinebooking=Declinebooking.objects.filter(refuse_driver_user=user).order_by('-id')
+          print("decline:", declinebooking)
           serializer=DeclinebookingSerializer(declinebooking, many=True)
+          print("serializer:", serializer.data)
           return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
 
@@ -918,7 +920,7 @@ class Agentbookingview(APIView):
         serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
         if serializer.is_valid():
                 serializer.save()
-                return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+                return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
     
@@ -992,12 +994,11 @@ class Agentbooking_bystatus(APIView):
 class Agentbookingfilterquary(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            data=request.data
-            user=request.user
+
             mobile_number= request.GET.get('mobile_number')
 
             if mobile_number is not None:
-                pending_booking=AgentBooking.objects.filter(status=mobile_number)
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
@@ -1105,7 +1106,7 @@ class Agentstartjourny(APIView):
         start_deuty=currenttime.strftime("%H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
-            return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_200_OK)
 
         serializer=Agentbookingserailizer(booking, data=data, partial=True)
         if serializer.is_valid():
@@ -1113,7 +1114,7 @@ class Agentstartjourny(APIView):
             serializer.save()
             return Response({'msg':'Deuty Started', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
-            return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_200_OK)
 
 
 class Agentendjourny(APIView):
@@ -1217,3 +1218,45 @@ class AllZoneData(APIView):
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
+    
+
+# Test decline booking api
+class TestDeclineBooking(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        xyz = AddDriver.objects.filter(driver_user=user)
+        driver_ids = [driver.id for driver in xyz]
+
+        # Check if the user is a notified driver
+        try:
+            is_notified_driver = Notifydrivers.objects.filter(driver=driver_ids[0]).exists()
+            notify_driver_data = Notifydrivers.objects.filter(driver=driver_ids[0])
+            
+           
+            if is_notified_driver:
+                data_list = []
+                for booking_idd in notify_driver_data:
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
+                    print("all booking:", booking)
+                    decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id, refuse_driver_user=user).exists()
+                    print("decline data: ",decline_data)
+                    if not decline_data:
+                        serializer = PlacebookingSerializer(booking, many=True)
+                        data_list.extend(serializer.data)
+                    # serializer = PlacebookingSerializer(booking, many=True)
+                    
+                    # data_list.extend(serializer.data)
+                    
+                    
+                revers_recors= data_list[::-1]
+
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
+            
+            
+            else:
+                return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+            
+        except:
+            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)

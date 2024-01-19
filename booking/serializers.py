@@ -206,6 +206,12 @@ class ZoneGSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class DeclinebookingSerializer(serializers.ModelSerializer):
+    placebooking=serializers.SerializerMethodField()
     class Meta:
         model=Declinebooking
         fields= '__all__'
+    
+    def get_placebooking(self,obj):
+        placebooking =  obj.placebooking
+        driver_seri = PlacebookingSerializer(placebooking)
+        return driver_seri.data

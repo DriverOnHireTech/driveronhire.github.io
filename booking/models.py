@@ -129,7 +129,7 @@ class AgentBooking(models.Model):
         ("Booked by mistake", "Booked by mistake"),
         ("Charges issue", "Charges issue")
     )
-    Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'))
+    Status=(('pending','pending'),('active', 'active'), ('completed', 'completed'), ('cancelled', 'cancelled'))
     journys=(
         ('journy started','journy started'),
         ('journy end', 'journy end'),
