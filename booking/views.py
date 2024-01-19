@@ -277,7 +277,8 @@ class declineplacebooking(APIView):
             return Response({'msg':'Unable to decline'}, status=status.HTTP_400_BAD_REQUEST) 
 
     def get(self, request):
-          declinebooking=Declinebooking.objects.all()
+          user=request.user
+          declinebooking=Declinebooking.objects.filter(refuse_driver_user=user)
           serializer=DeclinebookingSerializer(declinebooking, many=True)
           return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
