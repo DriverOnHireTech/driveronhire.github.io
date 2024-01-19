@@ -165,6 +165,7 @@ class AgentBooking(models.Model):
     journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     deuty_end=models.DateTimeField(auto_now_add=False, null=True, blank=True)
     bookingdt= models.DateField(auto_now_add=True, null=True, blank=True)
+    booking_time=models.TimeField(auto_now_add=True, null=True, blank=True)
 
 
     def __str__(self):

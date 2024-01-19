@@ -977,6 +977,8 @@ class Agentbooking_bystatus(APIView):
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
                 return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+            
+            
             else:
                 bookings = AgentBooking.objects.all()
 
@@ -985,6 +987,31 @@ class Agentbooking_bystatus(APIView):
         
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)
+        
+# For CRM quary filter
+class Agentbookingfilterquary(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            data=request.data
+            user=request.user
+            mobile_number= request.GET.get('mobile_number')
+
+            if mobile_number is not None:
+                pending_booking=AgentBooking.objects.filter(status=mobile_number)
+                number_of_booking= pending_booking.count()
+                
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                
+                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+            
+            else:
+                bookings = AgentBooking.objects.all()
+
+                serializer = Agentbookingserailizer(bookings, many=True)
+                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
+        
+        except AgentBooking.DoesNotExist:
+            return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
 
@@ -1075,7 +1102,6 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        print("current Time", currenttime)
         start_deuty=currenttime.strftime("%H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:

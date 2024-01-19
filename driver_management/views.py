@@ -132,7 +132,18 @@ class Driversearch(ListAPIView):
         except AddDriver.DoesNotExist:
             Response({'msg':'No Record Founf'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+#Get Single Driver details
+class getsingledriver(APIView):
+    try:
 
+        def get(self, request, id):
+            driver = AddDriver.objects.get(id=id)
+            serializer = MyDriverSerializer(driver)
+            return Response({'msg': 'Here is your', 'data':serializer.data}, status=status.HTTP_200_OK)
+    except AddDriver.DoesNotExist:
+        Response({'msg':'No driver found'}, status=status.HTTP_400_BAD_REQUEST)
+
+        
 # Driver profile
 class Driverprofile(APIView):
     authentication_classes = [TokenAuthentication]
@@ -242,12 +253,16 @@ class DriverappstatusView(APIView):
         print("All data: ", data)
         drivername_id = request.data.get('driverusername')
         # driverusername = request.data.get()
-        print("driver name:", drivername_id)
+        paymentamount=request.data['paymentamount']
+        tax_amount=request.data['tax_amount']
+        total_pay_amount=paymentamount + tax_amount
+        print("Toatl Pay:", total_pay_amount)
         # Check if the user with the given primary key exists
         if not User.objects.filter(id=drivername_id).exists():
             return Response({'msg': f'User with id={drivername_id} does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         serializer=Driverappstatusserializer(data=data)
         if serializer.is_valid():
+            serializer.validated_data['total_amount_paid']=total_pay_amount
             serializer.save()
             return Response({'msg':'Driver App status is created', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:

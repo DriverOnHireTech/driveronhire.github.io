@@ -287,7 +287,7 @@ class AddDriver(models.Model):
     week_off = models.CharField(choices=(("Monday", "Monday"), ("Tuesday", "Tuesday"), ("Wednesday", "Wednesday"),
                                          ("Thursday", "Thursday"), ("Friday", "Friday"), ("Saturday", "Saturday"), ("Sunday", "Sunday")),
                                 max_length=10, blank=True, null=True)
-    scheme_type = models.CharField(choices=(("Platinum", "Platinum"), ("Gold", "Gold"), ("Silver", "Silver"), ("Diwali", "Diwali"), ("Gold2", "Gold2"), ("Platinum2", "Platinum2")), max_length=10, blank=True, null=True)
+    scheme_type = models.CharField(choices=(("Platinum", "Platinum"), ("Gold", "Gold"), ("Silver", "Silver"), ("Diwali", "Diwali"), ("Gold2", "Gold2"), ("Platinum2", "Platinum2"), ("Bronze", "Bronze")), max_length=10, blank=True, null=True)
     driver_status = models.CharField(choices=(("Pending", "Pending"), ("Approved", "Approved"), ("Rejected", "Rejected"), ("Suspended", "Suspended")),max_length=10, blank=True, null=True)
     driver_rating= models.PositiveBigIntegerField(blank=True, null=True)
 
@@ -312,6 +312,8 @@ class Driverappstatus(models.Model):
     driverusername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
     package=models.CharField(choices=PACKAGE,max_length=100, null=True, blank=True)
     paymentamount=models.BigIntegerField(null=True, blank=True)
+    tax_amount=models.BigIntegerField(null=True, blank=True)
+    total_amount_paid=models.BigIntegerField(null=True, blank=True)
     is_paid=models.BooleanField(null=True, blank=True, default=False)
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
     recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)

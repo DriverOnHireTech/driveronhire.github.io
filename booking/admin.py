@@ -16,7 +16,8 @@ admin.site.register(Declinebooking)
 
 
 class Placebookingadmin(admin.ModelAdmin):
-    list_display=['id','user', 'booking_type', 'packege', 'user_address','car_type','pickup_location', 'drop_location', 'status']
+    list_display=['id','user', 'booking_date','booking_type', 'packege', 'trip_type','user_address','car_type','pickup_location', 'drop_location', 'status']
+    list_filter=['id','user', 'status', 'trip_type']
 
 admin.site.register(PlaceBooking, Placebookingadmin)
 
