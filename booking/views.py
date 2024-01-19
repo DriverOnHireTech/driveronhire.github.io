@@ -264,10 +264,9 @@ class declineplacebooking(APIView):
             print("place booking:", placebooking)
         except PlaceBooking.DoesNotExist:
             return Response({'msg': 'PlaceBooking not found'}, status=status.HTTP_404_NOT_FOUND)
-        #placebooking=PlaceBooking.objects.get(id=id)
         serializer=DeclinebookingSerializer(data=data)
         if serializer.is_valid():
-            # serializer.validated_data['placebooking']=booking_place_id
+            serializer.validated_data['placebooking']=placebooking
             serializer.validated_data['refuse_driver_user']=user
             serializer.save()
             print("serilaizer data:", serializer.data['id'])
@@ -278,8 +277,10 @@ class declineplacebooking(APIView):
 
     def get(self, request):
           user=request.user
-          declinebooking=Declinebooking.objects.filter(refuse_driver_user=user)
+          declinebooking=Declinebooking.objects.filter(refuse_driver_user=user).order_by('-id')
+          print("decline:", declinebooking)
           serializer=DeclinebookingSerializer(declinebooking, many=True)
+          print("serializer:", serializer.data)
           return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
 
