@@ -132,7 +132,18 @@ class Driversearch(ListAPIView):
         except AddDriver.DoesNotExist:
             Response({'msg':'No Record Founf'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+#Get Single Driver details
+class getsingledriver(APIView):
+    try:
 
+        def get(self, request, id):
+            driver = AddDriver.objects.get(id=id)
+            serializer = MyDriverSerializer(driver)
+            return Response({'msg': 'Here is your', 'data':serializer.data}, status=status.HTTP_200_OK)
+    except AddDriver.DoesNotExist:
+        Response({'msg':'No driver found'}, status=status.HTTP_400_BAD_REQUEST)
+
+        
 # Driver profile
 class Driverprofile(APIView):
     authentication_classes = [TokenAuthentication]
