@@ -17,7 +17,13 @@ def zone_get(zone_data):
         return "ZoneF"
     elif(ZoneG.objects.filter(location=zone_data).first()):
         return "ZoneG"
-        
+    
+    #Pune location zone get
+    elif pune_A_location.objects.filter(location=zone_data).first():
+        return "pune_A_location"
+    elif pune_B_location.objects.filter(location=zone_data).first():
+        return "pune_B_location"
+    
 
 def return_charges(pickup_zone, drop_zone):
     if (pickup_zone == drop_zone):
@@ -50,4 +56,8 @@ def return_charges(pickup_zone, drop_zone):
         return None
     elif (pickup_zone=="ZoneG" and drop_zone=="ZoneA" or drop_zone=="ZoneB" or drop_zone=="ZoneC" or drop_zone=="ZoneD" or drop_zone=="ZoneE"):
         return 200
-    
+    #Pune location rate check
+    elif (pickup_zone=="pune_A_location" and drop_zone=="pune_B_location") or (pickup_zone== "pune_B_location" and drop_zone=="pune_A_location"):
+        return 200
+    elif (pickup_zone=="pune_A_location" and drop_zone=="pune_A_location") or (pickup_zone== "pune_B_location" and drop_zone=="pune_B_location"):
+        return None

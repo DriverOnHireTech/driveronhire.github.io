@@ -49,6 +49,7 @@ class MyBookingList(APIView):
         drop_zone = zone_get(drop_location)
         print("pick up zone: ",pickup_zone)
         extra_charges = return_charges(pickup_zone, drop_zone)
+        print("outskrit charges", extra_charges)
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -56,6 +57,7 @@ class MyBookingList(APIView):
                 transmission_type=serializer.validated_data.get('gear_type')
                 serializer.validated_data['mobile'] = user.phone
                 serializer.validated_data['user']=user
+                serializer.validated_data['outskirt_charge']=extra_charges
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -222,9 +224,9 @@ class Acceptedride(APIView):
                 driver_name = AddDriver.objects.get(driver_user=user)
                 print("driver name: ", driver_name)
                 whatsapp_number = f"whatsapp:+91{client_mobile}"
-                msg="""Dear {client_name},
+                msg="""Dear {client_name}
 
-                                Driver {driver_name}
+                                Mr. {driver_name}
                                 Mobile - {driver_mobile}
                                 Will be arriving at your destination.
 
@@ -239,7 +241,7 @@ class Acceptedride(APIView):
                                 Thanks 
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
-                message=msg.format(client_name=client_name, driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+                message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
                 utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
@@ -916,6 +918,8 @@ class Agentbookingview(APIView):
                 return pagination.get_paginated_response(serialized_data.data)
             else:
                 alldata=AgentBooking.objects.all().order_by('-id')
+                number_of_booking=alldata.count()
+                print("number of booking", number_of_booking)
                 serializer = Agentbookingserailizer(alldata, many=True)
                 pagination = cutomepegination()
                 paginated_queryset = pagination.paginate_queryset(alldata, request)
@@ -1016,23 +1020,45 @@ class Agentbookingfilterquary(APIView):
         try:
 
             mobile_number= request.GET.get('mobile_number')
+            status=request.GET.get('status')
+            bookingfor=request.GET.get('bookingfor')
 
-            if mobile_number is not None:
+            if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
+                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
-                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
+            elif bookingfor:
+                pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
+                number_of_booking= pending_booking.count()
+                print("number of booking", number_of_booking)
+                
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                
+                return Response({'msg':'Your serach type bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
+            elif status:
+                pending_booking=AgentBooking.objects.filter(status=status)
+                number_of_booking= pending_booking.count()
+                print("number of booking", number_of_booking)
+                
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                
+                return Response({'msg':'Your status search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
             
             else:
                 bookings = AgentBooking.objects.all()
-
+                number_of_booking= bookings.count()
                 serializer = Agentbookingserailizer(bookings, many=True)
-                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'No Data found', 'data':serializer.data})
         
         except AgentBooking.DoesNotExist:
-            return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
+            return Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
 
@@ -1225,6 +1251,8 @@ class AllZoneData(APIView):
         zone_e_data = ZoneE.objects.all()
         zone_f_data = ZoneF.objects.all()
         zone_g_data = ZoneG.objects.all()
+        pune_a=pune_A_location.objects.all() # Pune location A model
+        pune_b=pune_B_location.objects.all() # Pune Location B model
 
         zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
         zone_b_serializer = ZoneBSerializer(zone_b_data, many=True)
@@ -1234,7 +1262,14 @@ class AllZoneData(APIView):
         zone_f_serializer = ZoneFSerializer(zone_f_data, many=True)
         zone_g_serializer = ZoneGSerializer(zone_g_data, many=True)
 
-        combined_data = zone_a_serializer.data + zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + zone_f_serializer.data + zone_g_serializer.data
+        """Pune location serializer"""
+        pune_a_serializer=punelocationASerializer(pune_a, many=True)
+        pune_b_serializer=punelocationBSerializer(pune_b, many=True)
+        """End pune location serializer"""
+
+        combined_data = zone_a_serializer.data + \
+                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + \
+                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data+ pune_b_serializer.data
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
