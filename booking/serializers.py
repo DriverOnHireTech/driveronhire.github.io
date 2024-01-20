@@ -13,7 +13,9 @@ from django.contrib.gis.geos import Point
 from collections import OrderedDict
 from django.contrib.gis.measure import D
 from collections import OrderedDict
-from user_master.models import ZoneA, ZoneB, ZoneC, ZoneD, ZoneE, ZoneF, ZoneG
+# from user_master.models import ZoneA, ZoneB, ZoneC, ZoneD, ZoneE, ZoneF, ZoneG
+
+from user_master.models import *
 
 class ClientregistrationSerializer(serializers.ModelSerializer):
     
@@ -215,3 +217,14 @@ class DeclinebookingSerializer(serializers.ModelSerializer):
         placebooking =  obj.placebooking
         driver_seri = PlacebookingSerializer(placebooking)
         return driver_seri.data
+
+#Pune location models and serializer
+class punelocationASerializer(serializers.ModelSerializer):
+    class Meta:
+        model=pune_A_location
+        fields= '__all__'
+
+class punelocationBSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=pune_B_location
+        fields= '__all__'
