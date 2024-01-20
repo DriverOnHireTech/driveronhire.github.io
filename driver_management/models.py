@@ -310,6 +310,8 @@ class Driverappstatus(models.Model):
     driver_name=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
     # driver_
     driverusername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
+    driver_name1=models.CharField(max_length=100, null=True, blank=True)
+    driver_mobile = models.CharField(max_length=100, null=True, blank=True)
     package=models.CharField(choices=PACKAGE,max_length=100, null=True, blank=True)
     paymentamount=models.BigIntegerField(null=True, blank=True)
     tax_amount=models.BigIntegerField(null=True, blank=True)

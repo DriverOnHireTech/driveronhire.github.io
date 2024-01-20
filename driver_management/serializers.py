@@ -24,13 +24,13 @@ class Driverlocationserializer(serializers.ModelSerializer):
 
 
 class MyDriverSerializer(serializers.ModelSerializer):
-    # transmission_type = serializers.MultipleChoiceField(choices=transmission_option)
-    # car_type = serializers.MultipleChoiceField(choices=car_option)
+    transmission_type = serializers.MultipleChoiceField(choices=transmission_option)
+    car_type = serializers.MultipleChoiceField(choices=car_option)
     
     first_name=serializers.CharField()
     class Meta:
         model = AddDriver
-        fields = ["id","first_name", "sex", "mobile", "driver_type", "driverlocation", 
+        fields = ["id","first_name", "sex", 'transmission_type','car_type',"mobile", "driver_type", "driverlocation", 
                   "driver_update_date", "licence_no","pan_card_no","licence_type", "date_of_birth", "driver_status", "total_exp"]
 
 
