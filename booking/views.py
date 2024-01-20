@@ -1252,9 +1252,8 @@ class AllZoneData(APIView):
         pune_b_serializer=punelocationBSerializer(pune_b, many=True)
         """End pune location serializer"""
 
-        combined_data = zone_a_serializer.data + \
-                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + \
-                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data, + pune_b_serializer.data
+        combined_data = zone_a_serializer.data +  zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + \
+                        zone_e_serializer.data + zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data + pune_b_serializer.data
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
