@@ -896,6 +896,8 @@ class Agentbookingview(APIView):
                 return pagination.get_paginated_response(serialized_data.data)
             else:
                 alldata=AgentBooking.objects.all().order_by('-id')
+                number_of_booking=alldata.count()
+                print("number of booking", number_of_booking)
                 serializer = Agentbookingserailizer(alldata, many=True)
                 pagination = cutomepegination()
                 paginated_queryset = pagination.paginate_queryset(alldata, request)
@@ -997,32 +999,44 @@ class Agentbookingfilterquary(APIView):
 
             mobile_number= request.GET.get('mobile_number')
             status=request.GET.get('status')
+            bookingfor=request.GET.get('bookingfor')
 
             if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
+                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
-                return Response({'msg':'Your bookings', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
+            elif bookingfor:
+                pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
+                number_of_booking= pending_booking.count()
+                print("number of booking", number_of_booking)
+                
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                
+                return Response({'msg':'Your serach type bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             elif status:
                 pending_booking=AgentBooking.objects.filter(status=status)
                 number_of_booking= pending_booking.count()
+                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
-                return Response({'msg':'Your bookings', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'Your status search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             
             else:
                 bookings = AgentBooking.objects.all()
                 number_of_booking= bookings.count()
                 serializer = Agentbookingserailizer(bookings, many=True)
-                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking}, status=status.HTTP_200_OK)
+                return Response({'msg':'No Data found', 'data':serializer.data})
         
         except AgentBooking.DoesNotExist:
-            return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
+            return Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
 
