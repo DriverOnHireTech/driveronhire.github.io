@@ -1017,9 +1017,9 @@ class Agentbookingfilterquary(APIView):
             
             else:
                 bookings = AgentBooking.objects.all()
-
+                number_of_booking= bookings.count()
                 serializer = Agentbookingserailizer(bookings, many=True)
-                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'No Data found', 'data':serializer.data, 'number_of_booking':number_of_booking}, status=status.HTTP_200_OK)
         
         except AgentBooking.DoesNotExist:
             return Response({'msg':'No Data found', 'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
