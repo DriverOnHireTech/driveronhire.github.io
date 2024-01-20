@@ -918,10 +918,15 @@ class Agentbookingview(APIView):
         
     
     def patch(self, request, id):
+        data=request.data
+        print("data:", data)
         agent_booking= AgentBooking.objects.get(id=id)
-        serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+        print("agent booking:", agent_booking)
+        serializer= Agentbookingserailizer(agent_booking, data=data, partial=True)
+        print("test line")
         if serializer.is_valid():
                 serializer.save()
+                print("serializer:", serializer.data)
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
