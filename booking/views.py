@@ -996,14 +996,24 @@ class Agentbookingfilterquary(APIView):
         try:
 
             mobile_number= request.GET.get('mobile_number')
+            status=request.GET.get('status')
 
-            if mobile_number is not None:
+            if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
-                return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
+                return Response({'msg':'Your bookings', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_200_OK)
+            
+            elif status:
+                pending_booking=AgentBooking.objects.filter(status=status)
+                number_of_booking= pending_booking.count()
+                
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                
+                return Response({'msg':'Your bookings', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_200_OK)
+            
             
             else:
                 bookings = AgentBooking.objects.all()
