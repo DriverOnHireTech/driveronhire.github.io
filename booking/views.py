@@ -49,6 +49,7 @@ class MyBookingList(APIView):
         drop_zone = zone_get(drop_location)
         print("pick up zone: ",pickup_zone)
         extra_charges = return_charges(pickup_zone, drop_zone)
+        print("outskrit charges", extra_charges)
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -56,6 +57,7 @@ class MyBookingList(APIView):
                 transmission_type=serializer.validated_data.get('gear_type')
                 serializer.validated_data['mobile'] = user.phone
                 serializer.validated_data['user']=user
+                serializer.validated_data['outskirt_charge']=extra_charges
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -1234,6 +1236,8 @@ class AllZoneData(APIView):
         zone_e_data = ZoneE.objects.all()
         zone_f_data = ZoneF.objects.all()
         zone_g_data = ZoneG.objects.all()
+        pune_a=pune_A_location.objects.all() # Pune location A model
+        pune_b=pune_B_location.objects.all() # Pune Location B model
 
         zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
         zone_b_serializer = ZoneBSerializer(zone_b_data, many=True)
@@ -1243,7 +1247,14 @@ class AllZoneData(APIView):
         zone_f_serializer = ZoneFSerializer(zone_f_data, many=True)
         zone_g_serializer = ZoneGSerializer(zone_g_data, many=True)
 
-        combined_data = zone_a_serializer.data + zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + zone_f_serializer.data + zone_g_serializer.data
+        """Pune location serializer"""
+        pune_a_serializer=punelocationASerializer(pune_a, many=True)
+        pune_b_serializer=punelocationBSerializer(pune_b, many=True)
+        """End pune location serializer"""
+
+        combined_data = zone_a_serializer.data + \
+                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + \
+                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data, + pune_b_serializer.data
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
