@@ -255,7 +255,7 @@ class DriverappstatusView(APIView):
         # driverusername = request.data.get()
         paymentamount=request.data['paymentamount']
         tax_amount=request.data['tax_amount']
-        total_pay_amount=paymentamount + tax_amount
+        total_pay_amount= int(paymentamount) + int(tax_amount)
         print("Toatl Pay:", total_pay_amount)
         # Check if the user with the given primary key exists
         if not User.objects.filter(id=drivername_id).exists():
