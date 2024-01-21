@@ -255,6 +255,7 @@ class DriverappstatusView(APIView):
         print("id: ",drivername_id )
         # driverusername = request.data.get()
         paymentamount=request.data['paymentamount']
+        print(type(paymentamount))
         tax_amount=request.data['tax_amount']
         total_pay_amount= int(paymentamount) + int(tax_amount)
         total_pay_amount=round(total_pay_amount)

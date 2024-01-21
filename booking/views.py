@@ -259,16 +259,36 @@ class declineplacebooking(APIView):
         data=request.data
         print("data:",data)
         user=request.user
-        placebooking_id=request.data['placebooking']
-        print("place booking id:",placebooking_id)
-        try:
-            placebooking = PlaceBooking.objects.get(id=placebooking_id)
-            print("place booking:", placebooking)
-        except PlaceBooking.DoesNotExist:
-            return Response({'msg': 'PlaceBooking not found'}, status=status.HTTP_404_NOT_FOUND)
+        agentbooking_id = None
+        placebooking_id = None
+        placebooking = None
+        agentbooking = None
+        if 'placebooking' not in data and 'agentbooking' in data:
+            agentbooking_id = data['agentbooking']
+        elif 'placebooking' in data:
+            placebooking_id = data['placebooking']
+
+        # if placebooking2:
+        #     placebooking_id=request.data['placebooking']
+        # if agentbooking_id:
+        #     placebooking_id=request.data['placebooking']
+        # print("place booking id:",placebooking_id)
+        if placebooking_id:
+            try:
+                placebooking = PlaceBooking.objects.get(id=placebooking_id)
+                print("place booking:", placebooking)
+            except PlaceBooking.DoesNotExist:
+                return Response({'msg': 'PlaceBooking not found'}, status=status.HTTP_404_NOT_FOUND)
+        if agentbooking_id:
+            try:
+                agentbooking = AgentBooking.objects.get(id=agentbooking_id)
+                print("place booking:", agentbooking)
+            except AgentBooking.DoesNotExist:
+                return Response({'msg': 'Agentbooking not found'}, status=status.HTTP_404_NOT_FOUND)
         serializer=DeclinebookingSerializer(data=data)
         if serializer.is_valid():
             serializer.validated_data['placebooking']=placebooking
+            serializer.validated_data['agentbooking']=agentbooking
             serializer.validated_data['refuse_driver_user']=user
             serializer.save()
             print("serilaizer data:", serializer.data['id'])
@@ -1279,6 +1299,48 @@ class TestDeclineBooking(APIView):
                     print("decline data: ",decline_data)
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
+                        data_list.extend(serializer.data)
+                    # serializer = PlacebookingSerializer(booking, many=True)
+                    
+                    # data_list.extend(serializer.data)
+                    
+                    
+                revers_recors= data_list[::-1]
+
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
+            
+            
+            else:
+                return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+            
+        except:
+            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
+
+
+# Test Agent decline booking api
+class TestAgentDeclineBooking(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        xyz = AddDriver.objects.filter(driver_user=user)
+        driver_ids = [driver.id for driver in xyz]
+
+        # Check if the user is a notified driver
+        try:
+            is_notified_driver = Notifydrivers.objects.filter(driver=driver_ids[0]).exists()
+            notify_driver_data = Notifydrivers.objects.filter(driver=driver_ids[0])
+            
+           
+            if is_notified_driver:
+                data_list = []
+                for booking_idd in notify_driver_data:
+                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending"))
+                    print("all booking:", booking)
+                    decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
+                    print("decline data: ",decline_data)
+                    if not decline_data:
+                        serializer = Agentbookingserailizer(booking, many=True)
                         data_list.extend(serializer.data)
                     # serializer = PlacebookingSerializer(booking, many=True)
                     
