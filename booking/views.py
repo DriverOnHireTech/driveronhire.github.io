@@ -780,7 +780,7 @@ class Agentbookingview(APIView):
     def post(self, request):
         data=request.data
         user=request.user
-        client_name = request.data['client_name']
+        client_name =data['client_name']
 
        # Extracting latitude and longitude from Point field data
         coordinates = data['client_location']['coordinates']
@@ -803,7 +803,7 @@ class Agentbookingview(APIView):
 
             user_location_point = Point(latitude, longitude, srid=4326)
 
-            message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+           # message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
             #message='This is test message.'
             # print(message)
             # utils.twilio_message(to_number=message_number, message=message)
@@ -1191,12 +1191,11 @@ class Guestbookingapi(APIView):
     def post(self, request):
         try:
             data = request.data
-            print("data:", data)
             user = request.user
-            serializer = GuestBookingserialzer(data=data)
+            serializer = Agentbookingserailizer(data=data)
 
             if serializer.is_valid():
-                serializer.validated_data['user'] = user
+                serializer.validated_data['booking_created_by'] = user
                 serializer.save()
                 return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
             else:
@@ -1279,9 +1278,7 @@ class TestDeclineBooking(APIView):
                 data_list = []
                 for booking_idd in notify_driver_data:
                     booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
-                    print("all booking:", booking)
-                    decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id, refuse_driver_user=user).exists()
-                    print("decline data: ",decline_data)
+                    decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id, refuse_driver_user=user).exists() 
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
