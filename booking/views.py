@@ -1184,22 +1184,22 @@ class Guestbookingapi(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        try:
+        # try:
             data = request.data
             print("data:", data)
             user = request.user
-            serializer = GuestBookingserialzer(data=data)
+            serializer = Agentbookingserailizer(data=data)
 
             if serializer.is_valid():
-                serializer.validated_data['user'] = user
+                serializer.validated_data['booking_created_by'] = user
                 serializer.save()
                 return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
             else:
                 return Response({'msg': 'Guest booking not done', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        except:
-            # Handle the specific exception and return an error response
-            return Response({'msg': 'Error message'}, status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     # Handle the specific exception and return an error response
+        #     return Response({'msg': 'Error message'}, status=status.HTTP_400_BAD_REQUEST)
 
         
     def get(self, request):
