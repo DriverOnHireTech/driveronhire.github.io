@@ -26,8 +26,6 @@ from geopy import Nominatim
 from .send_otp import send_sms
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
 
  
 # from geopy.geocoders import Nominatim
