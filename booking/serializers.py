@@ -58,7 +58,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
     placebooking = serializers.SerializerMethodField()
     class Meta:
         model = Invoice
-        fields = ('driver','placebooking', 'add_favourite')
+        fields = ('id', 'driver','placebooking', 'add_favourite')
 
   
     
