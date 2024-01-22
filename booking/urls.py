@@ -23,6 +23,8 @@ urlpatterns = [
 
     path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
 
+    path('invoce/<int:id>/', views.InvoiceGenerate.as_view(), name='get_invoice'),
+
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
     path('userprofile/', views.userprofile.as_view(), name='userprofile'),

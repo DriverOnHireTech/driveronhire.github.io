@@ -26,6 +26,8 @@ from geopy import Nominatim
 from .send_otp import send_sms
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
 
  
 # from geopy.geocoders import Nominatim
@@ -446,6 +448,7 @@ class get_bookingbyid(APIView):
         
 
 class InvoiceGenerate(APIView):
+    
     def post(self, request):
         data = request.data
         driver_id= data['driver']
@@ -717,15 +720,17 @@ class InvoiceGenerate(APIView):
             # inv_seri.validated_data['user_id'] = user.id
             # print("data: ", data)
             inv_seri.save()
+            print("serializer data: ", inv_seri.validated_data )
+
             return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
         else:
              return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
-    def get(self, request):
+    def get(self, request, id):
         try:
-            get_all_inv = Invoice.objects.all().order_by('invoice_generate')
-            get_seri= InvoiceSerializer(get_all_inv, many=True)
+            get_all_inv = Invoice.objects.get(id=id)
+            get_seri= InvoiceSerializer(get_all_inv)
             return Response({'msg': 'All invoice list', 'data':get_seri.data}, status=status.HTTP_200_OK)
         
         except Invoice.DoesNotExist:
