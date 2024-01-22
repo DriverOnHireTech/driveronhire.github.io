@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
-    #path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
+    path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
 
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
@@ -66,4 +66,6 @@ urlpatterns = [
     path('age_end_deuty/<int:id>/', views.Agentendjourny.as_view(), name='agent_deuty_end'), #Deuty End api endpoint    
 
     path('test_decline_booking/', views.TestDeclineBooking.as_view(), name="Test-decline-booking"), # testing for decline booking
+
+    path('test_agent_decline_booking/', views.TestAgentDeclineBooking.as_view(), name="Test-agent-decline-booking"), # testing for agent decline booking
 ]
