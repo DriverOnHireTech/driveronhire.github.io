@@ -938,6 +938,7 @@ class Guestbookingapi(APIView):
                 serializer.validated_data['booking_created_by'] = user
                 serializer.validated_data['driver_name'] = driver_instance
                 serializer.validated_data['accepted_driver'] = driver_mobile
+                serializer.validated_data['guest_booking'] = True
                 serializer.save()
                 return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
             else:
@@ -950,8 +951,8 @@ class Guestbookingapi(APIView):
         
     def get(self, request):
         try:
-            guestbooking=GuestBooking.objects.all().order_by('-id')
-            serializer=GuestBookingserialzer(guestbooking, many=True)
+            guestbooking=AgentBooking.objects.filter(guest_booking=True).order_by('-id')
+            serializer=Agentbookingserailizer(guestbooking, many=True)
             return Response({'msg':'All guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
 
         except:
