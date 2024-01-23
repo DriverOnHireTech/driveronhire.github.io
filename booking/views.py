@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from .models import *
 from .serializers import *
@@ -18,19 +18,16 @@ from datetime import datetime, timedelta, time, timezone
 from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
 from django.db.models import Q
-from django.core.mail import send_mail
 from rest_framework.pagination import PageNumberPagination
 from driver_management.paginations import cutomepegination
 from authentication import utils
 from geopy import Nominatim
-from .send_otp import send_sms
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
 
  
 # from geopy.geocoders import Nominatim
 # import geocoder
-from datetime import datetime, date
 
 
 class MyBookingList(APIView):
@@ -924,9 +921,8 @@ class Guestbookingapi(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        try:
+        # try:
             data = request.data
-            print("data:", data)
             user = request.user
             serializer = Agentbookingserailizer(data=data)
 
@@ -937,9 +933,9 @@ class Guestbookingapi(APIView):
             else:
                 return Response({'msg': 'Guest booking not done', 'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-        except:
-            # Handle the specific exception and return an error response
-            return Response({'msg': 'Error message'}, status=status.HTTP_400_BAD_REQUEST)
+        # except:
+        #     # Handle the specific exception and return an error response
+        #     return Response({'msg': 'Error message'}, status=status.HTTP_400_BAD_REQUEST)
 
         
     def get(self, request):
@@ -964,6 +960,8 @@ class SingleGuestbookingapi(APIView):
 
 class AllZoneData(APIView):
     def get(self, request):
+        location_city=request.GET.get('location_city')
+        print("Pune city",location_city)
         zone_a_data = ZoneA.objects.all()
         zone_b_data = ZoneB.objects.all()
         zone_c_data = ZoneC.objects.all()
@@ -971,7 +969,7 @@ class AllZoneData(APIView):
         zone_e_data = ZoneE.objects.all()
         zone_f_data = ZoneF.objects.all()
         zone_g_data = ZoneG.objects.all()
-        pune_a=pune_A_location.objects.all() # Pune location A model
+        # Pune location A model
         pune_b=pune_B_location.objects.all() # Pune Location B model
 
         zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
@@ -983,13 +981,21 @@ class AllZoneData(APIView):
         zone_g_serializer = ZoneGSerializer(zone_g_data, many=True)
 
         """Pune location serializer"""
-        pune_a_serializer=punelocationASerializer(pune_a, many=True)
+        pune_a_queryset = pune_A_location.objects.filter(location_city=location_city)
+        print("pune:", pune_a_queryset)
+        pune_a_exists = pune_a_queryset.exists()
+        print("filter location:", pune_a_exists)
+        if pune_a_exists:
+            pune_a_serializer = punelocationASerializer(pune_a_queryset, many=True)
+        else:
+            pune_a_serializer = punelocationASerializer([], many=True)
+
         pune_b_serializer=punelocationBSerializer(pune_b, many=True)
         """End pune location serializer"""
 
-        combined_data = zone_a_serializer.data + \
-                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + \
-                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data+ pune_b_serializer.data
+        combined_data = (zone_a_serializer.data + 
+                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + 
+                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data+ pune_b_serializer.data)
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
