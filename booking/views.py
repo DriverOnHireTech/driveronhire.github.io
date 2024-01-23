@@ -997,8 +997,9 @@ class AllZoneData(APIView):
         combined_data = (zone_a_serializer.data + 
                         zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + 
                         zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data+ pune_b_serializer.data)
+        
         # Filter only data for the specified city
-        filtered_data = [item for item in combined_data if 'location_city' not in item or item['location_city'] == location_city]
+        filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
         print("Filter data:", filtered_data)
         sorted_data = sorted(filtered_data, key=lambda x: x['location'])
 
