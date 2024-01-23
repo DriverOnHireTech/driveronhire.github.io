@@ -833,11 +833,11 @@ class Agentbookingview(APIView):
 
             user_location_point = Point(latitude, longitude, srid=4326)
 
-            message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+            #message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
             #message='This is test message.'
             # print(message)
             # utils.twilio_message(to_number=message_number, message=message)
-            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
             # serializer.save()
             driver =AddDriver.objects.all()
             if driver:

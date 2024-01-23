@@ -21,9 +21,9 @@ urlpatterns = [
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
-    path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
+    path('invoice/', views.InvoiceGenerate.as_view(), name='invoice'),
 
-    path('invoce/<int:id>/', views.InvoiceGenerate.as_view(), name='get_invoice'),
+    path('invoice/<int:id>/', views.InvoiceGenerate.as_view(), name='get_invoice'),
 
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
