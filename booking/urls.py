@@ -2,6 +2,7 @@ from django.urls import path
 
 from . import views
 from .extra_charges import ExtraRate
+from .rate_logic import *
 
 urlpatterns = [
 
@@ -21,7 +22,9 @@ urlpatterns = [
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
-    #path('invoce/', views.InvoiceGenerate.as_view(), name='invoice'),
+    path('invoce/', InvoiceGenerate.as_view(), name='invoice'),
+
+    path('invoce/<int:id>/', InvoiceGenerate.as_view(), name='get_invoice'),
 
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 

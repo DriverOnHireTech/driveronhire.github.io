@@ -55,10 +55,10 @@ class DriverSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     
     # driver =  serializers.SerializerMethodField()
-    # placebooking = serializers.SerializerMethodField()
+    placebooking = serializers.SerializerMethodField()
     class Meta:
         model = Invoice
-        fields = ('driver','placebooking', 'add_favourite')
+        fields = ('id', 'driver','placebooking', 'add_favourite')
 
   
     
@@ -67,10 +67,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
     #     driver_seri = MyDriverSerializer(driver)
     #     return driver_seri.data
     
-    # def get_placebooking(self, obj):
-    #     placebooking =  obj.placebooking
-    #     driver_seri = PlacebookingSerializer(placebooking)
-    #     return driver_seri.data
+    def get_placebooking(self, obj):
+        placebooking =  obj.placebooking
+        driver_seri = PlacebookingSerializer(placebooking)
+        return driver_seri.data
 
 
 class Feedbackserializer(serializers.ModelSerializer):
