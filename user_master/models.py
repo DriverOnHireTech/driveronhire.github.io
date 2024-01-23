@@ -367,7 +367,7 @@ class ZoneG(models.Model):
 # Pune city location for local
     
 class pune_A_location(models.Model):
-    # city=models.OneToOneField(City)
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -375,7 +375,7 @@ class pune_A_location(models.Model):
         return self.location
     
 class pune_B_location(models.Model):
-    # city=models.OneToOneField(City)
+    city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -398,3 +398,11 @@ class pune_B_location(models.Model):
 #     def __str__(self):
 #         return self.packege_name
 
+
+class citylocation(models.Model):
+    city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    location=models.CharField(max_length=200,null=True, blank=True)
+    pincode=models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.location
