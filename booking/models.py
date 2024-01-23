@@ -80,6 +80,8 @@ class PlaceBooking(models.Model):
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=500, null=True, blank=True)
     drop_location=models.CharField(max_length=500, null=True, blank=True)
+    Charges=models.BigIntegerField(null=True, blank=True)
+    outskirt_charge = models.BigIntegerField(default=0, null=True, blank=True)
     notification_sent = models.BooleanField(default=False, null=True, blank=True)
     status =  models.CharField(max_length=100, choices=STATUS, default='pending')
     cancelbooking_reason=models.CharField(max_length=500, null=True, blank=True)
@@ -91,7 +93,7 @@ class PlaceBooking(models.Model):
     deuty_end=models.DateTimeField( null=True, blank=True)
     journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     booking_time=models.DateTimeField(auto_now_add=True)
-    outskirt_charge = models.BigIntegerField(default=0, null=True, blank=True)
+    
    
     def __str__(self):
         return f"{self.id}"
