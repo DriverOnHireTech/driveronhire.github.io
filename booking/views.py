@@ -933,6 +933,7 @@ class Guestbookingapi(APIView):
                 serializer.validated_data['booking_created_by'] = user
                 serializer.validated_data['driver_name'] = driver_instance
                 serializer.validated_data['accepted_driver'] = driver_mobile
+                serializer.validated_data['guest_booking'] = True
                 serializer.save()
                 return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
             else:
