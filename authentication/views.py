@@ -76,6 +76,13 @@ class Adduser(APIView):
         except ObjectDoesNotExist:
             return Response({'msg': 'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+class getsingleuser(APIView):
+    def get(self, request, id):
+        user_data = User.objects.get(id=id)
+        serializer=NewUserSerializer(user_data)
+        return Response({'msg':'record', 'data':serializer.data}, status=status.HTTP_200_OK)
+
+
 class LoginView(APIView):
     def post(self, request):
         data =  request.data

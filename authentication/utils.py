@@ -72,3 +72,12 @@ def send_otp_via_infobip(phone_number, otp):
     response = requests.post(base_url, json=payload, headers=headers)
 
     return response.json()
+
+# Gupshup sms service
+def gupshupsms():
+    url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
+    payload ="method=sendMessage&send_to=919657847644&msg=This%20is%20sample%20test%20message%20from%20\
+                GupShup&msg_type=TEXT&userid=2000142458&auth_scheme=PLAIN&password=9892098920&format=JSON"
+    response = requests.request("POST", url, data=payload)
+    
+    print(response.text)
