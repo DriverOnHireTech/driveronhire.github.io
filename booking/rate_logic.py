@@ -183,6 +183,23 @@ class InvoiceGenerate(APIView):
                     print("outskirt charge: ", total_charge)
                     return total_charge
                         
+                additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
+                invoice_instance = Invoice(
+                user=user,
+                placebooking=Placebooking_data_id,
+                base_charge=base_charge,
+                night_charge=night_charge,  # You need to define night_charge
+                outskirt_charge=outskirt_charge,
+                extra_hour_charge=extra_hour_charge,  # You need to define extra_hour_charge
+                additional_hours=additional_hours,  # Store additional hours in the database
+                total_charge=total_charge
+                )
+            
+                # Save the invoice instance to the database
+                invoice_instance.save()
+
+                return total_charge
+
             
             price = total_price()
             print(price)
@@ -282,7 +299,7 @@ class InvoiceGenerate(APIView):
 
             return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
         else:
-             return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+             return Response({'msg': 'Unable to generate', 'data':inv_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
     def get(self, request, id):

@@ -336,10 +336,7 @@ class driverpackageapi(APIView):
         except:
             serializer=Driverappstatusserializer()
             return Response({'msg':'No Scheme found'}, status=status.HTTP_204_NO_CONTENT)
-    
-
-        
-        
+       
 
 class DriverWIthUserFilter(APIView):
     def get(self, request, *args, **kwargs):

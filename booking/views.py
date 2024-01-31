@@ -544,7 +544,7 @@ class Agentbookingview(APIView):
             #message='This is test message.'
             # print(message)
             # utils.twilio_message(to_number=message_number, message=message)
-            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
             # serializer.save()
             driver =AddDriver.objects.all()
             if driver:
@@ -591,14 +591,14 @@ class Agentbookingview(APIView):
                     if token is None or not token.strip():
                         print("Invalid token")
                         continue
-                    message = messaging.Message(
-                        notification=messaging.Notification(
-                            title="New Booking",
-                            body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
+                    # message = messaging.Message(
+                    #     notification=messaging.Notification(
+                    #         title="New Booking",
+                    #         body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
                             
-                        ),
-                        token= token 
-                    )
+                    #     ),
+                    #     token= token 
+                    # )
                         # Send the message
                     try:
 
