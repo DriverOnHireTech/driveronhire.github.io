@@ -1025,9 +1025,7 @@ class TestDeclineBooking(APIView):
                 data_list = []
                 for booking_idd in notify_driver_data:
                     booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
-                    print("all booking:", booking)
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id, refuse_driver_user=user).exists()
-                    print("decline data: ",decline_data)
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
