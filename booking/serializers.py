@@ -80,39 +80,6 @@ class Feedbackserializer(serializers.ModelSerializer):
         fields = "__all__"
     
 
-# class Agentbookingserailizer(serializers.ModelSerializer):
-#     #driver_name=serializers.SerializerMethodField()
-#     # booking_created_by=NewUserSerializer()
-#     class Meta:
-#         #driver_name=serializers.SerializerMethodField()
-#         #driver_name1 = MyDriverSerializer()
-#         model= AgentBooking
-#         fields= "__all__"
-
-#     # def get_driver_name(self, obj):
-#     #     #driver_name=obj.driver_name
-#     #     driver_name = obj.get('driver_name')
-#     #     add_driver_seri=MyDriverSerializer(driver_name)
-#     #     return add_driver_seri.data
-
-
-#     def to_representation(self, instance):
-#         data = super(Agentbookingserailizer, self).to_representation(instance)
-#         print("Data value: ", data)
-#         driver_name_data = data.get('driver_name')
-#         print("driver name: ", driver_name_data)
-
-#         if isinstance(driver_name_data, dict):
-#             # If it's already a serialized dictionary, use it directly
-#             data['driver_name'] = driver_name_data
-#         elif driver_name_data is not None:
-#             # If it's a model instance, serialize it
-#             driver_data = MyDriverSerializer(driver_name_data).data
-#             print("driver data: ", driver_data)
-#             data['driver_name'] = driver_data
-
-#         return data
-
 
 class Agentbookingserailizer(serializers.ModelSerializer):
 

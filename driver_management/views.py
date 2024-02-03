@@ -250,16 +250,16 @@ class DriverreferView(APIView):
 class DriverappstatusView(APIView):
     def post(self, request):
         data=request.data
-        print("All data: ", data)
+       
         drivername_id = request.data.get('driverusername')
-        print("id: ",drivername_id )
+        
         # driverusername = request.data.get()
         paymentamount=request.data['paymentamount']
         print(type(paymentamount))
         tax_amount=request.data['tax_amount']
         total_pay_amount= int(paymentamount) + int(tax_amount)
         total_pay_amount=round(total_pay_amount)
-        print("Toatl Pay:", total_pay_amount)
+        
         # Check if the user with the given primary key exists
         if not User.objects.filter(id=drivername_id).exists():
             return Response({'msg': f'User with id={drivername_id} does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -280,7 +280,6 @@ class DriverappstatusView(APIView):
 
             all_appstatus= Driverappstatus.objects.all().order_by('-id')
             serializer= Driverappstatusserializer(all_appstatus, many=True)
-            print("data: ", serializer.data)
             return Response({'msg':'All Data', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         
         except Driverappstatus.DoesNotExist:
@@ -295,8 +294,6 @@ class DriverappstatusView(APIView):
 
         # Get the current date as a datetime object
         current_date = datetime.combine(date.today(), datetime.min.time())
-
-        print("system current date:", current_date)
 
 
         # Checking current date and exp date
@@ -344,16 +341,15 @@ class driverpackageapi(APIView):
 class DriverWIthUserFilter(APIView):
     def get(self, request, *args, **kwargs):
         user_id = request.query_params.get('user_id')
-        print("user id: ", user_id)
-
+        
         if not user_id:
             return Response({"error": "user_id parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             drivers = AddDriver.objects.filter(driver_user=user_id)
-            print("drivers: ", drivers)
+            
             serializer = MyDriverSerializer(drivers, many=True)
-            print("serializer_data: ", serializer.data)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

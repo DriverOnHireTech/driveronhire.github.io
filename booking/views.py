@@ -506,7 +506,7 @@ class Agentbookingview(APIView):
     def post(self, request):
         data=request.data
         user=request.user
-        client_name = request.data['client_name']
+        client_name =data['client_name']
 
        # Extracting latitude and longitude from Point field data
         coordinates = data['client_location']['coordinates']
@@ -529,11 +529,11 @@ class Agentbookingview(APIView):
 
             user_location_point = Point(latitude, longitude, srid=4326)
 
-            message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
+            #message = f"Hello, {client_name},. You have booked a driver for your {car_type} car, and the reservation is for an {booking_for} trip with a {trip_type}"
             #message='This is test message.'
             # print(message)
             # utils.twilio_message(to_number=message_number, message=message)
-            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
             # serializer.save()
             driver =AddDriver.objects.all()
             if driver:
@@ -646,10 +646,15 @@ class Agentbookingview(APIView):
         
     
     def patch(self, request, id):
+        data=request.data
+        print("data:", data)
         agent_booking= AgentBooking.objects.get(id=id)
-        serializer= Agentbookingserailizer(agent_booking, data=request.data, partial=True)
+        print("agent booking:", agent_booking)
+        serializer= Agentbookingserailizer(agent_booking, data=data, partial=True)
+        print("test line")
         if serializer.is_valid():
                 serializer.save()
+                print("serializer:", serializer.data)
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
@@ -977,9 +982,9 @@ class AllZoneData(APIView):
 
         """Pune location serializer"""
         pune_a_queryset = pune_A_location.objects.filter(location_city=location_city)
-        print("pune:", pune_a_queryset)
+        
         pune_a_exists = pune_a_queryset.exists()
-        print("filter location:", pune_a_exists)
+       
         if pune_a_exists:
             pune_a_serializer = punelocationASerializer(pune_a_queryset, many=True)
         else:
@@ -995,7 +1000,7 @@ class AllZoneData(APIView):
         
         # Filter only data for the specified city
         filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
-        print("Filter data:", filtered_data)
+        
         sorted_data = sorted(filtered_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
@@ -1030,8 +1035,8 @@ class TestDeclineBooking(APIView):
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
                     
-                #revers_recors= data_list[::-1]
-                return Response({'data':data_list}, status=status.HTTP_200_OK)
+                revers_recors= data_list[::-1]
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
             
             else:
                 return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
