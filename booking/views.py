@@ -44,9 +44,7 @@ class MyBookingList(APIView):
 
         pickup_zone = zone_get(pickup_location)
         drop_zone = zone_get(drop_location)
-        print("pick up zone: ",pickup_zone)
         extra_charges = return_charges(pickup_zone, drop_zone)
-        print("outskrit charges", extra_charges)
         serializer=PlacebookingSerializer(data=data)
         
         if serializer.is_valid():
@@ -110,7 +108,6 @@ class MyBookingList(APIView):
                         
                         # serializer.save()
                         booking_id = serializer.data['id']
-                        print("Serializer id: ",serializer.data['id'])
                         
                         notify=Notifydrivers.objects.create()
                         notify.place_booking = PlaceBooking.objects.get(id=booking_id)
@@ -219,7 +216,6 @@ class Acceptedride(APIView):
                 serializer._validated_data['accepted_driver_name'] = user.first_name
                 serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
-                print("driver name: ", driver_name)
                 whatsapp_number = f"whatsapp:+91{client_mobile}"
                 msg="""Dear {client_name}
 
@@ -1012,8 +1008,12 @@ class TestDeclineBooking(APIView):
     def get(self, request):
         user = request.user
         xyz = AddDriver.objects.filter(driver_user=user)
-        print("driver:", xyz)
         driver_ids = [driver.id for driver in xyz]
+
+        #Get client booking time 
+        client_booking_time = request.data.get('client_booking_time')
+        print("Client booking time:", client_booking_time)
+        print("Request data:", request.data)
 
         # Check if the user is a notified driver
         try:
@@ -1030,10 +1030,8 @@ class TestDeclineBooking(APIView):
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
                     
-                revers_recors= data_list[::-1]
-
-                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
-            
+                #revers_recors= data_list[::-1]
+                return Response({'data':data_list}, status=status.HTTP_200_OK)
             
             else:
                 return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
