@@ -986,9 +986,9 @@ class AllZoneData(APIView):
 
         """Pune location serializer"""
         pune_a_queryset = pune_A_location.objects.filter(location_city=location_city)
-        print("pune:", pune_a_queryset)
+        
         pune_a_exists = pune_a_queryset.exists()
-        print("filter location:", pune_a_exists)
+       
         if pune_a_exists:
             pune_a_serializer = punelocationASerializer(pune_a_queryset, many=True)
         else:
@@ -1004,7 +1004,7 @@ class AllZoneData(APIView):
         
         # Filter only data for the specified city
         filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
-        print("Filter data:", filtered_data)
+        
         sorted_data = sorted(filtered_data, key=lambda x: x['location'])
 
         return Response(sorted_data)
