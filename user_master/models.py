@@ -309,6 +309,8 @@ class out_stn_charges_stay(models.Model):
 
 # Zone model for Churchgate to Kandiwali  
 class ZoneA(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200, null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -317,6 +319,8 @@ class ZoneA(models.Model):
 
 #Borivali to 
 class ZoneB(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -325,6 +329,8 @@ class ZoneB(models.Model):
 
     
 class ZoneC(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -333,6 +339,8 @@ class ZoneC(models.Model):
     
 
 class ZoneD(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -341,6 +349,8 @@ class ZoneD(models.Model):
     
 
 class ZoneE(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -349,6 +359,8 @@ class ZoneE(models.Model):
     
 
 class ZoneF(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
@@ -357,6 +369,8 @@ class ZoneF(models.Model):
     
 
 class ZoneG(models.Model):
+    location_city=models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+    zone_name=models.CharField(max_length=100, null=True, blank=True)
     location=models.CharField(max_length=200,null=True, blank=True)
     pincode=models.IntegerField(null=True, blank=True)
 
