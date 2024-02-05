@@ -250,7 +250,6 @@ class declineplacebooking(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         data=request.data
-        print("data:",data)
         user=request.user
         agentbooking_id = None
         placebooking_id = None
@@ -277,7 +276,6 @@ class declineplacebooking(APIView):
             serializer.validated_data['agentbooking']=agentbooking
             serializer.validated_data['refuse_driver_user']=user
             serializer.save()
-            print("serilaizer data:", serializer.data['id'])
             return Response({'msg':'Duty decline', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             #serializer=PlacebookingSerializer()
@@ -286,9 +284,7 @@ class declineplacebooking(APIView):
     def get(self, request):
           user=request.user
           declinebooking=Declinebooking.objects.filter(refuse_driver_user=user).order_by('-id')
-          print("decline:", declinebooking)
           serializer=DeclinebookingSerializer(declinebooking, many=True)
-          print("serializer:", serializer.data)
           return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
 
@@ -647,14 +643,10 @@ class Agentbookingview(APIView):
     
     def patch(self, request, id):
         data=request.data
-        print("data:", data)
         agent_booking= AgentBooking.objects.get(id=id)
-        print("agent booking:", agent_booking)
         serializer= Agentbookingserailizer(agent_booking, data=data, partial=True)
-        print("test line")
         if serializer.is_valid():
                 serializer.save()
-                print("serializer:", serializer.data)
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
@@ -737,7 +729,6 @@ class Agentbookingfilterquary(APIView):
             if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
-                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
@@ -746,7 +737,6 @@ class Agentbookingfilterquary(APIView):
             elif bookingfor:
                 pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
                 number_of_booking= pending_booking.count()
-                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
@@ -755,7 +745,6 @@ class Agentbookingfilterquary(APIView):
             elif status:
                 pending_booking=AgentBooking.objects.filter(status=status)
                 number_of_booking= pending_booking.count()
-                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
