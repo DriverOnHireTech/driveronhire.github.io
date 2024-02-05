@@ -85,11 +85,12 @@ class getsingleuser(APIView):
 
 class LoginView(APIView):
     def post(self, request):
+        logged_user=request.user
         data =  request.data
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(request, phone=phone,password=password)
-        print("user: ", user)
+        first_name=user.first_name
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
@@ -104,27 +105,10 @@ class LoginView(APIView):
                 # FCM device token already exists for another user
                 return Response({'msg': 'FCM device token already generated', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
             else:
-                return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
+                return Response({"msg": 'Welcome Customer', 'data': data, 'first_name':first_name,'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({"msg": "Unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
-        #     print("FCM Token: ",fcm_token)
-        #     if fcm_token is not None:
-                
-        #         device, created = FCMDevice.objects.get_or_create(user=user, registration_id=fcm_token)
-        #         if created:
-        #             device.type = "android"
-        #             device.name = user.get_username()
-        #             device.save()
-        #             return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
-        #         return Response({'msg': 'FCM device token already generated', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
-        #     else:
-        #         # Create and save the FCM device for the user
-
-        #         #device.save()
-        #         return Response({"msg":'Welcome Customer', 'data':data ,'token':token.key}, status=status.HTTP_200_OK) 
-                  
-        # else:
-        #     return Response({"msg":"unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
+    
 
 
 class Logoutapi(APIView):
