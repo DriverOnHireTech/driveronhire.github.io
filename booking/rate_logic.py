@@ -165,33 +165,27 @@ class InvoiceGenerate(APIView):
             def total_price():
                 base_charge = base_price()
                 print("Base charge: ",base_charge)
+                night_charge = 0
+                
                 if deuty_started_datetime.date() != deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
-                        charge_with_night_allowance = base_charge + 200
-                        print("Night charge: ",charge_with_night_allowance)
-                        total_charge = charge_with_night_allowance + outskirt_charge
-                        print("outskirt charge: ", total_charge)
-                        return total_charge
-                    else:
-                        total_charge = base_charge + outskirt_charge
-                        print("outskirt charge without nigt: ", total_charge)
-                        return total_charge
-                else:
-                    charge_with_night_allowance = base_charge + 200
-                    print("Night charge: ",charge_with_night_allowance)
-                    total_charge = charge_with_night_allowance + outskirt_charge
-                    print("outskirt charge: ", total_charge)
-                    return total_charge
+                        night_charge = 200
+                        print("Night charge: ",night_charge)
                         
-                additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
+                    else:
+                        night_charge = 0
+                        
+                else:
+                    night_charge = 200
+                    print("Night charge: ",night_charge)
+
+                total_charge = base_charge + night_charge + outskirt_charge     
+                print("total charge: ", total_charge)   
+                
                 invoice_instance = Invoice(
-                user=user,
-                placebooking=Placebooking_data_id,
                 base_charge=base_charge,
                 night_charge=night_charge,  # You need to define night_charge
-                outskirt_charge=outskirt_charge,
-                extra_hour_charge=extra_hour_charge,  # You need to define extra_hour_charge
-                additional_hours=additional_hours,  # Store additional hours in the database
+                outskirt_charge=outskirt_charge,  # You need to define extra_hour_charge
                 total_charge=total_charge
                 )
             
@@ -288,7 +282,7 @@ class InvoiceGenerate(APIView):
                 else:
                     print("Normal charge.")
             
-
+        print("data : ", data)
         inv_seri =  InvoiceSerializer(data = data)
         if inv_seri.is_valid():
             inv_seri.validated_data['placebooking'] = Placebooking_data_id

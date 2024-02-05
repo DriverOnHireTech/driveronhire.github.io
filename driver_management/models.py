@@ -14,13 +14,15 @@ from multiselectfield import MultiSelectField
 # from user_master.models import region
 # from booking.models import PlaceBooking
 
+TRANSMISSION_OPTIONS=(('Manual', 'Manual'), ('Automatic', 'Automatic'), ('Luxury', 'Luxury'))
+CAR_OPTIONS=(('SUV', 'SUV'), ('Sedan', 'Sedan'), ('Luxury', 'Luxury'), ('Hatchback', 'Hatchback'),('MPV', 'MPV'), ('MUV', 'MUV'), ('Sedan Luxury', 'Sedan Luxury'), ('SUV Luxury','SUV Luxury'))
 
-class BasicDetail(models.Model):
-    """ Basic details model """
-    image_upload = models.ImageField(upload_to='media', default=None)
-    first_name = models.CharField(max_length=20, default=None, null=True, blank=True)
-    middle_name = models.CharField(max_length=20, blank=True, null=True)
-    last_name = models.CharField(max_length=20, blank=True, null=True)
+
+class AddDriverNew(models.Model):
+    """ Driver adding new model """
+    first_name = models.CharField(max_length=30, default=None, null=True, blank=True)
+    middle_name = models.CharField(max_length=30, blank=True, null=True)
+    last_name = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=20, null=True, blank=True, default="Male")
     date_of_birth = models.DateField(null=True, blank=True)
     mobile = models.CharField(max_length=15, unique=True, null=True, blank=True)
@@ -38,6 +40,8 @@ class BasicDetail(models.Model):
     location = models.CharField(max_length=100, null=True, blank=True)
     pincode = models.CharField(max_length=10, null=True,blank=True)
     aggrement_expiry_date = models.DateField(null=True, blank=True)
+    transmission_type = MultiSelectField(choices=TRANSMISSION_OPTIONS, max_length=500, null=True, blank=True)
+    car_type = MultiSelectField(choices=CAR_OPTIONS, max_length=500, null=True, blank=True)
 
     # Licence Information
     licence_no = models.CharField(max_length=20, null=True, blank=True)
@@ -52,7 +56,7 @@ class BasicDetail(models.Model):
 
 class BgVerification(models.Model):
     """Model for background verification """
-    driver_number = models.OneToOneField(BasicDetail, on_delete=models.CASCADE)
+    driver_number = models.OneToOneField(AddDriverNew, on_delete=models.CASCADE)
     pan_card_no = models.CharField(max_length=15, blank=True, null=True)
     aadhar_card_no = models.CharField(max_length=20)
     blood_group = models.CharField(max_length=10)
@@ -132,7 +136,7 @@ class BgVerification(models.Model):
 
 class RmVerification(models.Model):
     """RM verification model"""
-    driver_number = models.OneToOneField(BasicDetail, on_delete=models.CASCADE)
+    driver_number = models.OneToOneField(AddDriverNew, on_delete=models.CASCADE)
     pcc_certificate = models.FileField(
         upload_to='documents/%Y/%m/',
         default=None,
@@ -160,11 +164,6 @@ class RmVerification(models.Model):
     driver_status = models.CharField(max_length=10)
     driver_rating= models.PositiveBigIntegerField()
 
-
-
-
-transmission_option=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
-car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"), ("Sedan Luxury", "Sedan Luxury"), ("SUV Luxury","SUV Luxury"))
 
 
 class AddDriver(models.Model):
@@ -241,8 +240,8 @@ class AddDriver(models.Model):
     car_company_name = models.CharField(max_length=100, null=True,blank=True)
     # transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All')), max_length=10, blank=True, null=True)
     # car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV")),max_length=10, blank=True, null=True)
-    transmission_type = MultiSelectField(choices=transmission_option, max_length=500, null=True, blank=True)
-    car_type = MultiSelectField(choices=car_option, max_length=500, null=True, blank=True)
+    transmission_type = MultiSelectField(choices=TRANSMISSION_OPTIONS, max_length=500, null=True, blank=True)
+    car_type = MultiSelectField(choices=CAR_OPTIONS, max_length=500, null=True, blank=True)
     driven_km = models.FloatField(blank=True, null=True)
 
     # Attach Document

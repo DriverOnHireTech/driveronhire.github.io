@@ -1011,9 +1011,9 @@ class TestDeclineBooking(APIView):
         driver_ids = [driver.id for driver in xyz]
 
         #Get client booking time 
-        client_booking_time = request.data.get('client_booking_time')
-        print("Client booking time:", client_booking_time)
-        print("Request data:", request.data)
+        # client_booking_time = request.data.get('client_booking_time')
+        # print("Client booking time:", client_booking_time)
+        # print("Request data:", request.data)
 
         # Check if the user is a notified driver
         try:
@@ -1030,8 +1030,8 @@ class TestDeclineBooking(APIView):
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
                     
-                #revers_recors= data_list[::-1]
-                return Response({'data':data_list}, status=status.HTTP_200_OK)
+                revers_recors= data_list[::-1]
+                return Response({'data':revers_record}, status=status.HTTP_200_OK)
             
             else:
                 return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)

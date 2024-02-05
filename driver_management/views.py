@@ -57,7 +57,7 @@ class driverlocation(APIView):
 
 
 class BasicDetailView(generics.ListCreateAPIView):
-    queryset = BasicDetail.objects.all().order_by('id').reverse()
+    queryset = AddDriverNew.objects.all().order_by('id').reverse()
     serializer_class = BasicDetailSerializer
 
 """Get 10 records and create driver"""
@@ -80,6 +80,18 @@ class Getalldrivers(APIView):
         except AddDriver.DoesNotExist:
             return Response({'error':'No driver found'}, status=status.HTTP_204_NO_CONTENT)
 """End driver list"""
+
+class DriverSearch(APIView):
+    def get(self, request):
+        try:
+            mobile_number = request.GET.get('mobile_number')
+            if(mobile_number):
+                driver_data = AddDriver.objects.filter(mobile=mobile_number)
+                serializer = MyDriverSerializer(driver_data)
+                return Response({'msg':"Driver Data", 'data':serializer.data}, status=status.HTTP_200_OK)
+
+        except AddDriver.DoesNotExist:
+            return Response({'error':'No driver found'}, status=status.HTTP_204_NO_CONTENT)
 
 """Update Driver"""
 class updatedriver(APIView):

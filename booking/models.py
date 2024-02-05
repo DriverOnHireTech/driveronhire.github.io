@@ -227,8 +227,8 @@ class Invoice(models.Model):
     additional_hours = models.IntegerField(null=True, blank=True, default=0)  # New field for additional hours
     total_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
 
-    def __str__(self):
-        return self.driver.first_name
+    # def __str__(self):
+    #     return self.driver.first_name
   
 
 class Feedback(models.Model):
@@ -310,4 +310,3 @@ class Declinebooking(models.Model):
     def __str__(self):
         return str(self.placebooking)
     
-
