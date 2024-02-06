@@ -32,7 +32,7 @@ class DeclineplaceagnebookingAdmin(admin.ModelAdmin):
 admin.site.register(Declinebooking,DeclineplaceagnebookingAdmin)
 
 class Placebookingnotisent(admin.ModelAdmin):
-    list_display=['id','user', 'place_booking', 'driver']
+    list_display=['id','user', 'place_booking']
 
 admin.site.register(Notifydrivers, Placebookingnotisent)
 
