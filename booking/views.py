@@ -25,7 +25,7 @@ from geopy import Nominatim
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
 
- 
+
 # from geopy.geocoders import Nominatim
 # import geocoder
 
@@ -146,8 +146,6 @@ class MyBookingList(APIView):
                         
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        
 
     def get(self, request):
         user = request.user
@@ -189,8 +187,8 @@ class getbooking(APIView):
             return Response({'msg':'All booking', 'data':serializer.data}, status=status.HTTP_200_OK)
         except PlaceBooking.DoesNotExist:
             return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
-
 """End endpoint"""
+
 
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
@@ -244,6 +242,7 @@ class Acceptedride(APIView):
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
         return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 """Decline Booking by driver"""
 class declineplacebooking(APIView):
     authentication_classes=[TokenAuthentication]
@@ -292,6 +291,7 @@ class declineplacebooking(APIView):
           return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
 
+
 class startjourny(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -311,7 +311,8 @@ class startjourny(APIView):
             return Response({'msg':'Deuty Started', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             return Response({'msg':'Deuty Not Started', 'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 #finish deuty
 class endjourny(APIView):
     authentication_classes=[TokenAuthentication]
@@ -443,7 +444,7 @@ class FeedbackApi(APIView):
         else:
              return Response({'msg': 'Unable to generate', 'data':FeedBack_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-            
+
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
     def get(self, request):
@@ -716,7 +717,6 @@ class Agentbooking_bystatus(APIView):
                 
                 return Response({'msg':'Your bookings', 'data':serializer.data}, status=status.HTTP_200_OK)
             
-            
             else:
                 bookings = AgentBooking.objects.all()
 
@@ -909,7 +909,9 @@ class userprofile(APIView):
             return Response({'msg':'Profile is created','data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Unable to create profile', 'error':serializer.errors}, status=status.HTTP_401_UNAUTHORIZED)
-        
+
+
+
 """Guest Booking API endpoint"""
 class Guestbookingapi(APIView):
     authentication_classes = [TokenAuthentication]
@@ -947,7 +949,7 @@ class Guestbookingapi(APIView):
 
         except:
             return Response({'msg': 'Error getting data'})
-            
+
 
 class SingleGuestbookingapi(APIView):
     def get(self, request,id):
@@ -1031,7 +1033,7 @@ class TestDeclineBooking(APIView):
                 data_list = []
                 for booking_idd in notify_driver_data:
                     booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
-                    decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id, refuse_driver_user=user).exists()
+                    decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
