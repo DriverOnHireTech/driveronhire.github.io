@@ -237,8 +237,9 @@ class Acceptedride(APIView):
                 message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-                gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
-                    &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
+                utils.gupshupWhatsapp(self, whatsapp_number, message)
+                # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
+                #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
