@@ -248,3 +248,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
+# calling gupshup user&pass
+user_id=env('user_id')
+password=env('password')
