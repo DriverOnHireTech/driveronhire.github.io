@@ -74,26 +74,13 @@ def send_otp_via_infobip(phone_number, otp):
     return response.json()
 
 # # Gupshup service
-# def gupshupsms(self, phone, msg):
-#     msg="""Dear Customer, Mr.Sunil
-#           Mobile - 9657847644
-#             Will be arriving at your destination.
-#             Date -11-12-2023
-#             Time -11:15 am
-#             Local 4 hrs duty
-#             Cost  800 rupees
-#             Extra hrs 100 rupees
-#             11 pm to 6 am 200 traveling allowance 
-#             Our rates - https://www.driveronhire.com/rates
-#              *T&C Apply
-#             https://www.driveronhire.com/privacy-policy"""
+def gupshupWhatsapp(phone, msg):
+    url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
+    payload =f"method=sendMessage&send_to=91{phone}&msg={msg}\
+            GupShup&msg_type=TEXT&userid=2000142458&auth_scheme=PLAIN&password=vrgnLDKp&format=JSON"
+    response = requests.request("POST", url, data=payload)
+    return response
+    print(response.text)
     
-#     url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
-#     payload ="method=sendMessage&send_to=919657847644&msg={msg}\
-#                 GupShup&msg_type=TEXT&userid=2000142458&auth_scheme=PLAIN&password=9892098920&format=JSON"
-#     response = requests.request("POST", url, data=payload)
-#     print(response.text)
-#     return response
-
 # # holding value
-# message=gupshupsms(9657847644,"Hi user how are you")
+message=gupshupWhatsapp(9657847644,"hello")
