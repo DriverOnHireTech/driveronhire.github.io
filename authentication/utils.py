@@ -73,13 +73,22 @@ def send_otp_via_infobip(phone_number, otp):
 
     return response.json()
 
-# # Gupshup service
-def gupshupWhatsapp(phone, msg):
-    url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
-    payload =f"method=sendMessage&send_to=91{phone}&msg={msg}\
-            GupShup&msg_type=TEXT&userid=2000142458&auth_scheme=PLAIN&password=vrgnLDKp&format=JSON"
-    response = requests.request("POST", url, data=payload)
-    print(response.text)
-    return response
 
-    
+# # Gupshup service
+def gupshupsms(self, phone, otp):
+    url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
+    payload = {
+        "method": "sendMessage",
+        "send_to": phone,
+        "msg": """Your One-Time Password(OTP) for Driver Mobile Application is 
+{}
+Driveronhire""".format(otp),
+        "msg_type": "TEXT",
+        "userid": "2000142458",
+        "auth_scheme": "PLAIN",
+        "password": "9892098920",
+        "format": "JSON"
+    }
+
+    response = requests.post(url, data=payload)
+

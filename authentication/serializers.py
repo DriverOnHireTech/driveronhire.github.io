@@ -7,7 +7,7 @@ class NewUserSerializer(serializers.ModelSerializer):
     # phone= serializers.IntegerField(max_value=100000000000, min_value=10)
     class Meta:
         model = User
-        fields= ['phone', 'usertype', 'password', 'id', 'first_name']
+        fields= ['id', 'phone', 'usertype', 'password', 'first_name']
 
     def create(self, validated_data):
         user = super().create(validated_data)

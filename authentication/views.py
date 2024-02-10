@@ -13,7 +13,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
-from .utils import username_gene, generate_otp
+from .utils import username_gene, generate_otp, gupshupsms
 # from base_site.backend import authenticate
 from fcm_django.models import FCMDevice
 from django.core.exceptions import ObjectDoesNotExist
@@ -90,7 +90,7 @@ class LoginView(APIView):
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(request, phone=phone,password=password)
-        first_name=user.first_name
+        
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
@@ -105,7 +105,7 @@ class LoginView(APIView):
                 # FCM device token already exists for another user
                 return Response({'msg': 'FCM device token already generated', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
             else:
-                return Response({"msg": 'Welcome Customer', 'data': data, 'first_name':first_name,'token': token.key}, status=status.HTTP_200_OK)
+                return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({"msg": "Unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -130,7 +130,7 @@ class SendOTPAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         phone = request.data.get('phone')
-        send_phone = f"+91{phone}"
+        send_phone = f"91{phone}"
         
         try:
             driver = User.objects.get(phone=phone)
@@ -145,13 +145,16 @@ class SendOTPAPIView(APIView):
         driver.otp = otp
         driver.save()
 
+        # Send otp via Gupshup
+        gupshupsms(self, send_phone, otp)
+
         # Send OTP via Twilio
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            body=f'Your OTP is: {otp}',
-            from_=settings.TWILIO_PHONE_NUMBER,
-            to=send_phone
-        )
+        # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        # message = client.messages.create(
+        #     body=f'Your OTP is: {otp}',
+        #     from_=settings.TWILIO_PHONE_NUMBER,
+        #     to=send_phone
+        # )
 
         return Response({'message': 'OTP sent successfully'}, status=status.HTTP_200_OK)
 
