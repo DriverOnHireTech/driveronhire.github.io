@@ -77,8 +77,9 @@ def send_otp_via_infobip(phone_number, otp):
 def gupshupWhatsapp(phone, msg):
     url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
     payload =f"method=sendMessage&send_to=91{phone}&msg={msg}\
-            GupShup&msg_type=TEXT&userid=setting.user_id&auth_scheme=PLAIN&settings.password=vrgnLDKp&format=JSON"
+            GupShup&msg_type=TEXT&userid=2000142458&auth_scheme=PLAIN&password=vrgnLDKp&format=JSON"
     response = requests.request("POST", url, data=payload)
     print(response.text)
     return response
+
     
