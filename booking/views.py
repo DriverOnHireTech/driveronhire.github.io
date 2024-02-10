@@ -234,7 +234,10 @@ class Acceptedride(APIView):
                                 Any issue or feedback call us 02243439090"""
                 message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id)
-                utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                #utils.gupshupWhatsapp(self, whatsapp_number, message)
+                # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
+                #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -249,7 +252,6 @@ class declineplacebooking(APIView):
     permission_classes=[IsAuthenticated]
     def post(self, request):
         data=request.data
-        print("data:",data)
         user=request.user
         agentbooking_id = None
         placebooking_id = None
@@ -276,7 +278,6 @@ class declineplacebooking(APIView):
             serializer.validated_data['agentbooking']=agentbooking
             serializer.validated_data['refuse_driver_user']=user
             serializer.save()
-            print("serilaizer data:", serializer.data['id'])
             return Response({'msg':'Duty decline', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
             #serializer=PlacebookingSerializer()
@@ -285,9 +286,7 @@ class declineplacebooking(APIView):
     def get(self, request):
           user=request.user
           declinebooking=Declinebooking.objects.filter(refuse_driver_user=user).order_by('-id')
-          print("decline:", declinebooking)
           serializer=DeclinebookingSerializer(declinebooking, many=True)
-          print("serializer:", serializer.data)
           return Response({'msg':'decline booking data', 'data':serializer.data})
 """End decline"""
 
@@ -649,14 +648,10 @@ class Agentbookingview(APIView):
     
     def patch(self, request, id):
         data=request.data
-        print("data:", data)
         agent_booking= AgentBooking.objects.get(id=id)
-        print("agent booking:", agent_booking)
         serializer= Agentbookingserailizer(agent_booking, data=data, partial=True)
-        print("test line")
         if serializer.is_valid():
                 serializer.save()
-                print("serializer:", serializer.data)
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'msg':'Data not found', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
@@ -738,7 +733,6 @@ class Agentbookingfilterquary(APIView):
             if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
                 number_of_booking= pending_booking.count()
-                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
@@ -747,7 +741,6 @@ class Agentbookingfilterquary(APIView):
             elif bookingfor:
                 pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
                 number_of_booking= pending_booking.count()
-                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
@@ -756,7 +749,6 @@ class Agentbookingfilterquary(APIView):
             elif status:
                 pending_booking=AgentBooking.objects.filter(status=status)
                 number_of_booking= pending_booking.count()
-                print("number of booking", number_of_booking)
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
@@ -964,7 +956,6 @@ class SingleGuestbookingapi(APIView):
 class AllZoneData(APIView):
     def get(self, request):
         location_city=request.GET.get('location_city')
-        print("Pune city",location_city)
         zone_a_data = ZoneA.objects.all()
         zone_b_data = ZoneB.objects.all()
         zone_c_data = ZoneC.objects.all()

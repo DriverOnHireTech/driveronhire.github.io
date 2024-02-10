@@ -73,6 +73,7 @@ def send_otp_via_infobip(phone_number, otp):
 
     return response.json()
 
+
 # # Gupshup service
 def gupshupsms(self, phone, otp):
     url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
@@ -91,5 +92,3 @@ Driveronhire""".format(otp),
 
     response = requests.post(url, data=payload)
 
-# # holding value
-# message=gupshupsms(9657847644,"Hi user how are you")

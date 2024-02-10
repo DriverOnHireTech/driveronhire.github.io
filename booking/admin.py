@@ -7,7 +7,7 @@ from .models import *
 admin.site.register(Feedback)
 admin.site.register(userProfile)
 admin.site.register(BookLater)
-admin.site.register(Notifydrivers)
+
 admin.site.register(NotifydriversAgent)
 admin.site.register(GuestBooking)
 admin.site.register(Zone)
@@ -30,5 +30,10 @@ class DeclineplaceagnebookingAdmin(admin.ModelAdmin):
     list_display=['id', 'placebooking', 'agentbooking', 'refuse_driver_user', 'refuse_time']
 
 admin.site.register(Declinebooking,DeclineplaceagnebookingAdmin)
+
+class Placebookingnotisent(admin.ModelAdmin):
+    list_display=['id','user', 'place_booking']
+
+admin.site.register(Notifydrivers, Placebookingnotisent)
 
 admin.site.register(AgentBooking)

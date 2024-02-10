@@ -176,6 +176,7 @@ class ZoneGSerializer(serializers.ModelSerializer):
 
 class DeclinebookingSerializer(serializers.ModelSerializer):
     placebooking=serializers.SerializerMethodField()
+    agentbooking=serializers.SerializerMethodField()
     class Meta:
         model=Declinebooking
         fields= '__all__'
@@ -184,6 +185,11 @@ class DeclinebookingSerializer(serializers.ModelSerializer):
         placebooking =  obj.placebooking
         driver_seri = PlacebookingSerializer(placebooking)
         return driver_seri.data
+    
+    def get_agentbooking(self, obj):
+        agentbooking=obj.agentbooking
+        agnetseri=Agentbookingserailizer(agentbooking)
+        return agnetseri.data
 
 #Pune location models and serializer
 class punelocationASerializer(serializers.ModelSerializer):

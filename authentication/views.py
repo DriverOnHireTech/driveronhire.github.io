@@ -90,7 +90,7 @@ class LoginView(APIView):
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(request, phone=phone,password=password)
-        first_name=user.first_name
+        
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
@@ -105,7 +105,7 @@ class LoginView(APIView):
                 # FCM device token already exists for another user
                 return Response({'msg': 'FCM device token already generated', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
             else:
-                return Response({"msg": 'Welcome Customer', 'data': data, 'first_name':first_name,'token': token.key}, status=status.HTTP_200_OK)
+                return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({"msg": "Unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
     
@@ -144,8 +144,6 @@ class SendOTPAPIView(APIView):
         # Save the OTP in the  user model
         driver.otp = otp
         driver.save()
-
-        gupshupsms(self, send_phone, otp)
 
         # Send OTP via Twilio
         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
