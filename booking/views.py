@@ -1080,5 +1080,3 @@ class TestAgentDeclineBooking(APIView):
         else:
             return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
             
-        # except:
-        #     return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
