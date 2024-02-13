@@ -728,6 +728,7 @@ class Agentbookingfilterquary(APIView):
             mobile_number= request.GET.get('mobile_number')
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
+            to_date=request.GET.get('to_date')         
 
             if mobile_number:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
@@ -750,8 +751,13 @@ class Agentbookingfilterquary(APIView):
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
+
+            elif to_date:
+                pending_booking=AgentBooking.objects.filter(to_date__lte=to_date)
+                number_of_booking= pending_booking.count()
                 
-                return Response({'msg':'Your status search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+                serializer =Agentbookingserailizer(pending_booking, many=True)
+                return Response({'msg':'Your serach date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             
             else:
@@ -770,9 +776,7 @@ class Agentbooking_accept(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
-        print("data: ", data)
         user = request.user
-        print("user: ", user)
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
