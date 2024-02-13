@@ -6,10 +6,12 @@ from django.db import models
 # from django.utils.html import mark_safe
 from django.contrib.gis.db import models as gis_point
 from user_master.models import region
-
+from django.utils import timezone
 from django.conf import settings
 from user_master.models import State, City, Branch, Zone, Location
 from multiselectfield import MultiSelectField
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 # from user_master.models import region
 # from booking.models import PlaceBooking
@@ -164,7 +166,9 @@ class RmVerification(models.Model):
 
 
 transmission_option=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
-car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"), ("Sedan Luxury", "Sedan Luxury"), ("SUV Luxury","SUV Luxury"))
+car_option=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), 
+            ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV"),
+              ("Sedan Luxury", "Sedan Luxury"), ("SUV Luxury","SUV Luxury"))
 
 
 class AddDriver(models.Model):
@@ -239,8 +243,6 @@ class AddDriver(models.Model):
 
     # Car Details
     car_company_name = models.CharField(max_length=100, null=True,blank=True)
-    # transmission_type = models.CharField(choices=(("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"), ('All', 'All')), max_length=10, blank=True, null=True)
-    # car_type = models.CharField(choices=(("SUV", "SUV"), ("Sedan", "Sedan"), ("Luxury", "Luxury"), ("Hatchback", "Hatchback"),("MPV", "MPV"), ("MUV", "MUV")),max_length=10, blank=True, null=True)
     transmission_type = MultiSelectField(choices=transmission_option, max_length=500, null=True, blank=True)
     car_type = MultiSelectField(choices=car_option, max_length=500, null=True, blank=True)
     driven_km = models.FloatField(blank=True, null=True)
@@ -321,8 +323,18 @@ class Driverappstatus(models.Model):
     recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)
     expiry_date=models.DateField(auto_now_add=False,null=True, blank=True)
 
+
     def __str__(self):
         return str(self.is_paid)
+    
+# Define the signal receiver function to update status
+@receiver(pre_save, sender=Driverappstatus)
+def update_package_status(sender, instance, **kwargs):
+    # Check if the expiry date has passed and the status is active
+    if instance.expiry_date and instance.expiry_date < timezone.now().date() and instance.status == 'active':
+        # If conditions met, update status to inactive
+        instance.status = 'inactive'
+
 """End App Status"""
 
 class ReferDriver(models.Model):
