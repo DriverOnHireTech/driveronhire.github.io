@@ -197,49 +197,60 @@ class Acceptedride(APIView):
         data = request.data
         user = request.user
         booking= PlaceBooking.objects.get(id=id)
-        client_name=booking.user
-        client_mobile=booking.mobile
-        driver_mobile=user.phone
-        driver=booking.accepted_driver
-        date=booking.booking_date
-        time=booking.client_booking_time
+        
         if booking.status == "accept":
                 return Response({'msg': 'booking already accepted by other driver'})
         
         elif booking.status == "pending":
+            # Update booking status and accepted driver
+            booking.status = "accept"
+            booking.accepted_driver = user
+            booking.save()
+
+            # Get client information
+            client_name=booking.user
+            client_mobile=booking.mobile
+
+            # Get driver information
+            driver_mobile = user.phone
+            driver_name = AddDriver.objects.get(driver_user=user)
+
             serializer= PlacebookingSerializer(booking, data=data, partial=True)
             #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
                 serializer._validated_data['accepted_driver_name'] = user.first_name
                 serializer._validated_data['accepted_driver_number'] = user.phone
-                driver_name = AddDriver.objects.get(driver_user=user)
-                whatsapp_number = f"whatsapp:+91{client_mobile}"
-                msg="""Dear {client_name}
-
-                                Mr. {driver_name}
-                                Mobile - {driver_mobile}
-                                Will be arriving at your destination.
-
-                                Date -{date}
-                                Time -{time}
-
-                                Our rates - https://www.driveronhire.com/rates
-
-                                *T&C Apply
-                                https://www.driveronhire.com/privacy-policy
-
-                                Thanks 
-                                Driveronhire.com
-                                Any issue or feedback call us 02243439090"""
-                message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
-                data.setdefault("accepted_driver",user.id)
-                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-                #utils.gupshupWhatsapp(self, whatsapp_number, message)
-                # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
-                #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
                 serializer.save()
-                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+
+            # Compose message
+            date = booking.booking_date
+            time = booking.client_booking_time
+            whatsapp_number = f"whatsapp:+91{client_mobile}"
+            msg="""Dear {client_name}
+
+                            Mr. {driver_name}
+                            Mobile - {driver_mobile}
+                            Will be arriving at your destination.
+
+                            Date -{date}
+                            Time -{time}
+
+                            Our rates - https://www.driveronhire.com/rates
+
+                            *T&C Apply
+                            https://www.driveronhire.com/privacy-policy
+
+                            Thanks 
+                            Driveronhire.com
+                            Any issue or feedback call us 02243439090"""
+            message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+            data.setdefault("accepted_driver",user.id)
+            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            #utils.gupshupWhatsapp(self, whatsapp_number, message)
+            # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
+            #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
+            return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
         else:
             return Response({'msg':'Not Accpeted', 'error':serializer.errors})
@@ -510,6 +521,7 @@ class Agentbookingview(APIView):
 
        # Extracting latitude and longitude from Point field data
         coordinates = data['client_location']['coordinates']
+        print("Co-ordinates: ", coordinates)
         longitude, latitude = coordinates  # Note: order is (longitude, latitude)
       
 
@@ -789,7 +801,9 @@ class Agentbooking_accept(APIView):
         #     #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
-                driver_name = AddDriver.objects.get(driver_user=user)
+                serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
+                # print("driver name: ", driver_name)
+                # print(type(driver_name))
         #         whatsapp_number = f"whatsapp:+91{client_mobile}"
         #         msg="""Dear {client_name}
 
@@ -809,7 +823,7 @@ class Agentbooking_accept(APIView):
         #                         Driveronhire.com
         #                         Any issue or feedback call us 02243439090"""
         #         message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
-                data.setdefault("accepted_driver",user.id)
+                # data.setdefault("accepted_driver",user.id)
         #         # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)

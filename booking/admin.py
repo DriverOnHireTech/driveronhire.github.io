@@ -31,6 +31,11 @@ class DeclineplaceagnebookingAdmin(admin.ModelAdmin):
 
 admin.site.register(Declinebooking,DeclineplaceagnebookingAdmin)
 
+class Decline1PlaceBooking(admin.ModelAdmin):
+    fields=['placebooking', 'agentbooking', 'refuse_driver_user']
+
+admin.site.register(Declinebooking1, Decline1PlaceBooking)
+
 class Placebookingnotisent(admin.ModelAdmin):
     list_display=['id','user', 'place_booking']
 

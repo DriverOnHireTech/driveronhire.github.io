@@ -309,4 +309,16 @@ class Declinebooking(models.Model):
 
     def __str__(self):
         return str(self.placebooking)
+
+
+class Declinebooking1(models.Model):
+    status=models.CharField(max_length=100, null=True, blank=True)
+    placebooking=models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
+    agentbooking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
+    refuse_driver_user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    refuse_time=models.DateField(auto_now_add=True)
+
+
+    def __str__(self):
+        return str(self.placebooking)
     
