@@ -735,7 +735,6 @@ class Agentbooking_bystatus(APIView):
 class Agentbookingfilterquary(APIView):
     def get(self, request, *args, **kwargs):
         try:
-
             mobile_number= request.GET.get('mobile_number')
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
@@ -749,33 +748,25 @@ class Agentbookingfilterquary(APIView):
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
+            elif status:
+                bookingstatus= AgentBooking.objects.filter(status=status)
+                countstatus=bookingstatus.count()
+                print("coun of status", countstatus)
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})         
             elif bookingfor:
                 pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
-                return Response({'msg':'Your serach type bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
-            
-            elif status:
-                pending_booking=AgentBooking.objects.filter(status=status)
-                number_of_booking= pending_booking.count()
-                
-                serializer =Agentbookingserailizer(pending_booking, many=True)
+                return Response({'msg':'Your search type bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
 
             elif to_date:
-                try:
-                    # Parse the string into a datetime object
-                    to_date_obj = datetime.strptime(to_date, "%Y-%m-%d")
-                    # Format the datetime object into "%d-%m-%Y" format
-                    formatted_to_date = to_date_obj.strftime("%d-%m-%Y")
-                except ValueError:
-                    return Response({'error': 'Invalid date format for to_date. Please provide the date in YYYY-MM-DD format.'})
-                pending_booking=AgentBooking.objects.filter(to_date__lte=to_date)
+                pending_booking=AgentBooking.objects.filter(to_date=to_date)
                 number_of_booking= pending_booking.count()
-                
                 serializer =Agentbookingserailizer(pending_booking, many=True)
-                return Response({'msg':'Your serach date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
+                return Response({'msg':'Your search date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             
             else:
@@ -785,7 +776,7 @@ class Agentbookingfilterquary(APIView):
                 return Response({'msg':'No Data found', 'data':serializer.data})
         
         except AgentBooking.DoesNotExist:
-            return Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
+             Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
 
