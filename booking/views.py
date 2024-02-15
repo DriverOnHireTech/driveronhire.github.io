@@ -147,6 +147,52 @@ class MyBookingList(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+    def patch(self, request, id, format=None):
+        """
+        Update booking status to pending, clear driver_name and accepted_driver fields,
+        and send notifications to the drivers.
+        """
+        try:
+            booking = PlaceBooking.objects.get(id=id)
+            booking.status = "pending"
+            booking.accepted_driver_name = None
+            booking.accepted_driver = None
+            booking.accepted_driver_number = None
+            booking.save()
+
+            # Send notifications to drivers
+            drivers = AddDriver.objects.filter(id__in=booking.notifydrivers_set.values_list('driver', flat=True))
+            users = drivers.values_list('driver_user', flat=True)
+            registration_ids = FCMDevice.objects.filter(user__in=users).values_list('registration_id', flat=True)
+
+            for token in registration_ids:
+                if token is None or not token.strip():
+                    print("Invalid token")
+                    continue
+
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title="Booking Reposted",
+                        body=f"Booking ID: {booking.id} is again posted."
+                    ),
+                    token=token
+                )
+                # Send the message
+                try:
+                    response = messaging.send(message)
+                    print(response)
+                except Exception as e:
+                    print(f"Error sending notification to token {token}: {e}")
+
+            return Response({'message': 'Booking updated successfully'}, status=status.HTTP_200_OK)
+
+        except PlaceBooking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
     def get(self, request):
         user = request.user
         xyz = AddDriver.objects.filter(driver_user=user)
@@ -672,6 +718,54 @@ class Agentbookingview(APIView):
         agentdata=AgentBooking.objects.get(id=id)
         agentdata.delete()
         return Response({'msg':'Data Delete'}, status=status.HTTP_200_OK)
+
+
+class AgentBookingReshedule(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, id, format=None):
+        """
+        Update booking status to pending, clear driver-related fields,
+        and send notifications to the drivers.
+        """
+        try:
+            booking = AgentBooking.objects.get(id=id)
+            booking.status = "pending"
+            booking.driver_name = None
+            booking.accepted_driver = None
+            booking.save()
+
+            # Send notifications to drivers
+            drivers = AddDriver.objects.filter(id__in=booking.notifydriversagent_set.values_list('driver', flat=True))
+            users = drivers.values_list('driver_user', flat=True)
+            registration_ids = FCMDevice.objects.filter(user__in=users).values_list('registration_id', flat=True)
+
+            for token in registration_ids:
+                if token is None or not token.strip():
+                    print("Invalid token")
+                    continue
+
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title="Booking Updated",
+                        body=f"Booking ID: {booking.id} status updated to pending."
+                    ),
+                    token=token
+                )
+                # Send the message
+                try:
+                    response = messaging.send(message)
+                    print(response)
+                except Exception as e:
+                    print(f"Error sending notification to token {token}: {e}")
+
+            return Response({'message': 'Booking updated successfully'}, status=status.HTTP_200_OK)
+
+        except AgentBooking.DoesNotExist:
+            return Response({'error': 'Booking not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class AgentBookingApp(APIView):

@@ -10,8 +10,9 @@ from django.utils import timezone
 from django.conf import settings
 from user_master.models import State, City, Branch, Zone, Location
 from multiselectfield import MultiSelectField
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from datetime import date, timedelta
 
 # from user_master.models import region
 # from booking.models import PlaceBooking
@@ -322,6 +323,7 @@ class Driverappstatus(models.Model):
     paymentamount=models.BigIntegerField(null=True, blank=True)
     tax_amount=models.BigIntegerField(null=True, blank=True)
     total_amount_paid=models.BigIntegerField(null=True, blank=True)
+    last_profile_update_date = models.DateField()
     is_paid=models.BooleanField(null=True, blank=True, default=False)
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
     recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)
@@ -332,12 +334,13 @@ class Driverappstatus(models.Model):
         return str(self.is_paid)
     
 # Define the signal receiver function to update status
-@receiver(pre_save, sender=Driverappstatus)
+@receiver(post_save, sender=Driverappstatus)
 def update_package_status(sender, instance, **kwargs):
     # Check if the expiry date has passed and the status is active
     if instance.expiry_date and instance.expiry_date < timezone.now().date() and instance.status == 'active':
         # If conditions met, update status to inactive
         instance.status = 'inactive'
+        instance.save() 
 
 """End App Status"""
 
