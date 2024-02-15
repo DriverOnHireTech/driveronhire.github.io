@@ -39,12 +39,12 @@ class Userprofileview(APIView):
        
     def get(self, request):
          try:
-              user=request.user
-              print("user: ", user.phone)
+            #   user=request.user
+            #   print("user: ", user.phone)
             #   user_profile=UserProfile.objects.get(user=user)
             #   user_profile.mobile_number = user.phone
             #   user_profile.save()
-              user_profile=UserProfile.objects.all()
+              user_profile=UserProfile.objects.all().order_by('-id')
               serializer=UserProfileSerializer(user_profile, many=True)
               return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
          except UserProfile.DoesNotExist:

@@ -24,6 +24,7 @@ from authentication import utils
 from geopy import Nominatim
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
+from client_management.models import UserProfile
 
  
 # from geopy.geocoders import Nominatim
@@ -225,23 +226,23 @@ class Acceptedride(APIView):
                 serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
                 whatsapp_number = f"91{client_mobile}"
-                msg="""Dear {client_name}
+                # msg="""Dear {client_name}
 
-                                Mr. {driver_name}
-                                Mobile - {driver_mobile}
-                                Will be arriving at your destination.
+                #                 Mr. {driver_name}
+                #                 Mobile - {driver_mobile}
+                #                 Will be arriving at your destination.
 
-                                Date -{date}
-                                Time -{time}
+                #                 Date -{date}
+                #                 Time -{time}
 
-                                Our rates - https://www.driveronhire.com/rates
+                #                 Our rates - https://www.driveronhire.com/rates
 
-                                *T&C Apply
-                                https://www.driveronhire.com/privacy-policy
+                #                 *T&C Apply
+                #                 https://www.driveronhire.com/privacy-policy
 
-                                Thanks 
-                                Driveronhire.com
-                                Any issue or feedback call us 02243439090"""
+                #                 Thanks 
+                #                 Driveronhire.com
+                #                 Any issue or feedback call us 02243439090"""
                 #message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id) 
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
@@ -273,7 +274,7 @@ class Acceptedride(APIView):
                             Any issue or feedback call us 02243439090"""
             message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
             data.setdefault("accepted_driver",user.id)
-            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
             #utils.gupshupWhatsapp(self, whatsapp_number, message)
             # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
             #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
@@ -637,12 +638,61 @@ class Agentbookingview(APIView):
         else:
             data=request.data
             request_type=data['request_type']
+            mobile_number=request.data['mobile_number']
             
             # checking request type
             if request_type=="Guest":
-                serializer=Agentbookingserailizer(data)
-                if serializer.is_valid():
-                    serializer.save()
+                client_info = UserProfile.objects.filter(mobile_number=mobile_number).first()
+                fav_drivers = client_info.addfavoritedriver.all()
+                if fav_drivers:
+                    fav_driver_ids = list(fav_driver.id for fav_driver in fav_drivers)
+                    print("Favorite driver IDs:", fav_driver_ids)
+                    serializer=Agentbookingserailizer(data=data)
+                    if serializer.is_valid():
+                        serializer.save()
+                        if fav_drivers.exists():
+
+                        
+                            devices = FCMDevice.objects.filter(user__in=fav_driver_ids)
+                            #serializer.validated_data['user_id'] = user
+                            
+                            booking_id = serializer.data.get('id')
+                            print("booking id", booking_id)
+                        
+                            notify=NotifydriversAgent.objects.create()
+                            notify.agent_booking = AgentBooking.objects.get(id=booking_id)
+                            notify.save()
+                            notify.driver.set(fav_driver_ids)
+                            registration_ids = []
+                            for device in devices:
+                                registration_id = device.registration_id
+                                registration_ids.append(registration_id)
+                                
+                            # Send notification using FCM
+                            for token in registration_ids:
+                                if token is None or not token.strip():
+                                    print("Invalid token")
+                                    continue
+                                message = messaging.Message(
+                                    notification=messaging.Notification(
+                                        title="New Booking",
+                                        body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
+                                        
+                                    ),
+                                    token= token 
+                                )
+                                    # Send the message
+                                try:
+
+                                    response = messaging.send(message)
+                                    print("Notification sent:", response) 
+                                except Exception as e:
+                                    print(f"Error sending notification to token {token}:{e}")
+                    else:
+                        print("No favorite drivers found for this user.")
+
+                
+                    
                     return Response({'msg':'Guest booking done'}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({'msg':'Guest booking not done'}, status=status.HTTP_204_NO_CONTENT)
