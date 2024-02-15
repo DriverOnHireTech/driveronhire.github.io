@@ -8,6 +8,8 @@ urlpatterns = [
 
     path('booking/', views.MyBookingList.as_view(), name='booking'),
 
+    path('booking/<int:id>/', views.MyBookingList.as_view(), name='booking'),
+
     path('allbooking/', views.getbooking.as_view(), name='all_booking'),
 
     path('book_leter/', views.ScheduleBookingView.as_view(), name='book_leter'),
@@ -39,6 +41,8 @@ urlpatterns = [
     path('agent_booking_app/', views.AgentBookingApp.as_view(), name='agent-booking-app'), # this is for get request for mobile app
 
     path('agent_booking/<int:id>/', views.AgentDetailView.as_view(), name='agent-booking-id'),
+
+    path('agent_booking_reshedule/<int:id>/', views.AgentBookingReshedule.as_view(), name='reshudle_booking'), # if driver cancel then booking float again
 
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
 

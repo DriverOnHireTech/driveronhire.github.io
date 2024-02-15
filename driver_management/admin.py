@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(BasicDetail)
+admin.site.register(AddDriverNew)
 
 admin.site.register(ReferDriver)
 admin.site.register(Driverleave)

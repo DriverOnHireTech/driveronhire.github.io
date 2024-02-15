@@ -4,6 +4,7 @@ from .serializers import *
 from datetime import datetime, timedelta, time, timezone
 from rest_framework.response import Response
 from rest_framework import status
+import math
 
 class InvoiceGenerate(APIView):
     
@@ -19,7 +20,7 @@ class InvoiceGenerate(APIView):
         trip_type = Placebooking_data['trip_type']
         print("Trip type: ", trip_type)
         car_type = Placebooking_data['car_type']   
-        print("Car type: ", car_type)   
+        print("Car type: ", car_type)
 
         user = request.user
 
@@ -28,6 +29,7 @@ class InvoiceGenerate(APIView):
             outskirt_charge = Placebooking_data['outskirt_charge']
             deuty_started_time = Placebooking_data.get('deuty_started')
             deuty_end_datetime = Placebooking_data.get('deuty_end')
+            package_value = Placebooking_data.get('packege')
 
             # Convert deuty_started to a datetime object with timezone information
             deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
@@ -41,6 +43,16 @@ class InvoiceGenerate(APIView):
 
             # Printing the time difference
             print("Time Difference:", time_difference)
+
+            package_hours = int(package_value.split('hrs')[0])
+            remaining_time = timedelta()
+
+            if time_difference.total_seconds() > package_hours * 3600:
+                remaining_time = time_difference - timedelta(hours=package_hours)
+            
+            rounded_hours = math.ceil(remaining_time.total_seconds() / 3600)
+            print("Remaining Time:", rounded_hours)
+
             def base_price():
                 if trip_type == "roundTrip":
                     if car_type == "Luxury":
@@ -165,27 +177,26 @@ class InvoiceGenerate(APIView):
             def total_price():
                 base_charge = base_price()
                 print("Base charge: ",base_charge)
+                night_charge = 0
+                
                 if deuty_started_datetime.date() != deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
-                        charge_with_night_allowance = base_charge + 200
-                        print("Night charge: ",charge_with_night_allowance)
-                        total_charge = charge_with_night_allowance + outskirt_charge
-                        print("outskirt charge: ", total_charge)
-                        return total_charge
-                    else:
-                        total_charge = base_charge + outskirt_charge
-                        print("outskirt charge without nigt: ", total_charge)
-                        return total_charge
-                else:
-                    charge_with_night_allowance = base_charge + 200
-                    print("Night charge: ",charge_with_night_allowance)
-                    total_charge = charge_with_night_allowance + outskirt_charge
-                    print("outskirt charge: ", total_charge)
-                    return total_charge
+                        night_charge = 200
+                        print("Night charge: ",night_charge)
                         
-            
-            price = total_price()
-            print(price)
+                    else:
+                        night_charge = 0
+                        
+                else:
+                    night_charge = 200
+                    print("Night charge: ",night_charge)
+
+                total_charge = base_charge + night_charge + outskirt_charge     
+                print("total charge: ", total_charge)   
+                
+
+                return total_charge, base_charge, night_charge, outskirt_charge, rounded_hours
+
         
         if booking_type == "outstation":
             no_of_days = Placebooking_data['no_of_days']
@@ -270,11 +281,24 @@ class InvoiceGenerate(APIView):
                     print(f"Night charge added: {night_charge}")
                 else:
                     print("Normal charge.")
-            
 
+        price = total_price()
+        total_price = price[0]
+        base_price = price[1]
+        night_charge = price[2]
+        outskirt_charge = price[3]
+        additional_hours = price[4]
+        extra_hour_charge = additional_hours*100
+        print("data : ", data)
         inv_seri =  InvoiceSerializer(data = data)
         if inv_seri.is_valid():
             inv_seri.validated_data['placebooking'] = Placebooking_data_id
+            inv_seri.validated_data['base_charge'] = base_price
+            inv_seri.validated_data['total_charge'] = total_price
+            inv_seri.validated_data['night_charge'] = night_charge
+            inv_seri.validated_data['outskirt_charge'] = outskirt_charge
+            inv_seri.validated_data['additional_hours'] = additional_hours
+            inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
             # inv_seri.validated_data['user_id'] = user.id
             # print("data: ", data)
             inv_seri.save()
@@ -282,7 +306,7 @@ class InvoiceGenerate(APIView):
 
             return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
         else:
-             return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+             return Response({'msg': 'Unable to generate', 'data':inv_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
     def get(self, request, id):
