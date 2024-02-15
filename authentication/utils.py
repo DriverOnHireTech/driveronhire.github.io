@@ -80,9 +80,7 @@ def gupshupsms(self, phone, otp):
     payload = {
         "method": "sendMessage",
         "send_to": phone,
-        "msg": """Your One-Time Password(OTP) for Driver Mobile Application is 
-{}
-Driveronhire""".format(otp),
+        "msg": """Your OTP is {} For booking a driver from driveronhire""".format(otp),
         "msg_type": "TEXT",
         "userid": "2000142458",
         "auth_scheme": "PLAIN",
@@ -91,4 +89,23 @@ Driveronhire""".format(otp),
     }
 
     response = requests.post(url, data=payload)
+    return response
 
+#Booking confirmantion 
+def driverdetailssent(self, userphone,drivername, drivernumber):
+    url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
+    payload = {
+        "method": "sendMessage",
+        "send_to": userphone,
+        "msg": """Driver Details, Driver name-{} Mob no-{} Would arrive at ur destination on ur mentioned date & time.
+Driveronhire
+https://driveronhire.com/rates/""".format(drivername,drivernumber),
+        "msg_type": "TEXT",
+        "userid": "2000142458",
+        "auth_scheme": "PLAIN",
+        "password": "9892098920",
+        "format": "JSON"
+    }
+
+    response = requests.post(url, data=payload)
+    return response
