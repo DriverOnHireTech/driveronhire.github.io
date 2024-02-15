@@ -223,6 +223,31 @@ class Acceptedride(APIView):
                 serializer.validated_data['accepted_driver']=user
                 serializer._validated_data['accepted_driver_name'] = user.first_name
                 serializer._validated_data['accepted_driver_number'] = user.phone
+                driver_name = AddDriver.objects.get(driver_user=user)
+                whatsapp_number = f"91{client_mobile}"
+                msg="""Dear {client_name}
+
+                                Mr. {driver_name}
+                                Mobile - {driver_mobile}
+                                Will be arriving at your destination.
+
+                                Date -{date}
+                                Time -{time}
+
+                                Our rates - https://www.driveronhire.com/rates
+
+                                *T&C Apply
+                                https://www.driveronhire.com/privacy-policy
+
+                                Thanks 
+                                Driveronhire.com
+                                Any issue or feedback call us 02243439090"""
+                #message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+                data.setdefault("accepted_driver",user.id)
+                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+                utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
+                # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
+                #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
                 serializer.save()
 
             # Compose message
