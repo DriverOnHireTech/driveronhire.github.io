@@ -333,9 +333,8 @@ def update_package_status(sender, instance, **kwargs):
     if instance.expiry_date and instance.expiry_date < timezone.now().date() and instance.status == 'active':
         # If conditions met, update status to inactive
         instance.status = 'inactive'
-
-    if instance.driver_name.driving_status=="Approve":
-        instance.driver_name.driving_status="Reject"
+        if instance.driver_name.driving_status=="Approve":
+            instance.driver_name.driving_status="Reject"
 """End App Status"""
 
 class ReferDriver(models.Model):
