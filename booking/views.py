@@ -287,7 +287,7 @@ class Acceptedride(APIView):
                                 Driveronhire.com
                                 Any issue or feedback call us 02243439090"""
                 #message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
-                data.setdefault("accepted_driver",user.id)
+                data.setdefault("accepted_driver",user.id) 
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
                 # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
@@ -682,8 +682,18 @@ class Agentbookingview(APIView):
             else:
                 return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response({'msg':'Guest booking'})
-            print("Guest Booking block")
+            data=request.data
+            request_type=data['request_type']
+            
+            # checking request type
+            if request_type=="Guest":
+                serializer=Agentbookingserailizer(data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({'msg':'Guest booking done'}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'msg':'Guest booking not done'}, status=status.HTTP_204_NO_CONTENT)
+
         
         
 
