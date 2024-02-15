@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from booking.models import PlaceBooking, AgentBooking
+from driver_management.models import AddDriver
 
 class AddClient(models.Model):
     client_name = models.CharField(max_length=20)
@@ -23,7 +25,8 @@ class UserCar(models.Model):
 # User Profile
 
 class UserProfile(models.Model):
-    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user", null=True,blank=True)
+    addfavoritedriver=models.ManyToManyField(AddDriver,null=True, blank=True)
     user_name=models.CharField(max_length=200, null=True, blank=True)
     usercar=models.CharField(max_length=200, null=True, blank=True)
     cartype=models.CharField(max_length=200, null=True, blank=True)
