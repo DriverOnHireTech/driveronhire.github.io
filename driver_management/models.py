@@ -288,7 +288,7 @@ class AddDriver(models.Model):
     Purchase_uniform = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, blank=True, null=True)
     scheduled_driving_test = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10,blank=True, null=True)
     driving_test_date = models.DateField(blank=True, null=True)
-    driving_status = models.CharField(choices=(("Approve", "Approve"), ("Reject", "Reject")), max_length=10, blank=True, null=True)
+    driving_status = models.CharField(max_length=50, blank=True, null=True)
     is_approval_done = models.CharField(choices=(("Yes", "Yes"), ("No", "No")), max_length=10, blank=True, null=True)
     police_verification = models.CharField(choices=(("Processing", "Processing"), ("Certified", "Certified"), ("Rejected", "Rejected")), max_length=10, blank=True, null=True)
     week_off = models.CharField(choices=(("Monday", "Monday"), ("Tuesday", "Tuesday"), ("Wednesday", "Wednesday"),
@@ -302,7 +302,7 @@ class AddDriver(models.Model):
         "Location in Map", geography=True, blank=True, null=True,
         srid=4326, help_text="Point(latitude longitude)")
     total_exp=models.IntegerField(null=True, blank=True)
-    #driver_app_status=models.ForeignKey(Driverappstatus, on_delete=models.CASCADE, null=True, blank=True)
+    driver_app_status=models.BooleanField(default=True)
     driver_update_date= models.DateField(auto_now_add=True, null=True,blank=True)
     has_received_notification = models.BooleanField(default=False, null=True, blank=True)
 
@@ -315,7 +315,6 @@ class Driverappstatus(models.Model):
     PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("Bronze", "Bronze"), ("silver", "silver"),("DiwaliScheme", "DiwaliScheme"))
     Status=(('active','active'), ('inactive', 'inactive'))
     driver_name=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
-    # driver_
     driverusername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
     driver_name1=models.CharField(max_length=100, null=True, blank=True)
     driver_mobile = models.CharField(max_length=100, null=True, blank=True)
@@ -340,8 +339,13 @@ def update_package_status(sender, instance, **kwargs):
     if instance.expiry_date and instance.expiry_date < timezone.now().date() and instance.status == 'active':
         # If conditions met, update status to inactive
         instance.status = 'inactive'
-        instance.save() 
+        if instance.driver_name:
+            print("driver name: ", instance.driver_name.driving_status)
 
+            if instance.driver_name.driving_status=="Approve":
+                print("this line executed")
+                instance.driver_name.driving_status="Reject"
+                instance.driver_name.save()
 """End App Status"""
 
 class ReferDriver(models.Model):
