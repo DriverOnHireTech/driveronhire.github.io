@@ -680,8 +680,9 @@ class Agentbookingview(APIView):
                 # serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
             else:
-                    return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
+            return Response({'msg':'Guest booking'})
             print("Guest Booking block")
         
         
