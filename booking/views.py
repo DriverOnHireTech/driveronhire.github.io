@@ -25,10 +25,6 @@ from geopy import Nominatim
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
 from client_management.models import UserProfile
-<<<<<<< HEAD
-=======
-
->>>>>>> f1a16a4d5440b9c735e90deed17c620177837b49
 
 # from geopy.geocoders import Nominatim
 # import geocoder

@@ -41,7 +41,6 @@ CSRF_TRUSTED_ORIGINS=[
 # Application definition
 
 INSTALLED_APPS = [
-    "django_crontab",
     "channels",
     "jazzmin",
     "authentication",
@@ -72,7 +71,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddl`eware',
     'django.middleware.common.CommonMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -253,6 +252,6 @@ EMAIL_USE_SSL = False
 user_id=env('user_id')
 password=env('password')
 
-CRONJOBS = [
-    ('*/1 * * * *', 'booking.cron.print_hello')
-]
+# CRONJOBS = [
+#     ('*/1 * * * *', 'booking.cron.print_hello')
+# ]
