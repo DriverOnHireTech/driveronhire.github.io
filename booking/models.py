@@ -149,7 +149,7 @@ class AgentBooking(models.Model):
     car_transmission = models.CharField(max_length=100, blank=True, null=True)
     bookingfor= models.CharField(choices=booking_type,max_length=150, null=True, blank=True)
     source= models.CharField(max_length=100, null=True,blank=True)
-    #from_date= models.DateField(auto_now_add=False, null=True, blank=True)
+    bookingfordate= models.DateTimeField(auto_now_add=False, null=True, blank=True)
     to_date=models.DateField(auto_now_add=False,null=True, blank=True)
     start_time=models.TimeField(auto_now_add=False, null=True, blank=True)
     religion= models.CharField(max_length=100, null=True,blank=True)

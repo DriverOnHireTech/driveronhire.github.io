@@ -134,16 +134,26 @@ class SendOTPAPIView(APIView):
         
         try:
             driver = User.objects.get(phone=phone)
+            otp = generate_otp()  # Replace with your OTP generation logic
+            print("otp: ",otp)
+
+            # Save the OTP in the  user model
+            driver.otp = otp
+            driver.save()
+            # Send otp via Gupshup
+            gupshupsms(self, send_phone,otp)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Generate OTP and save it in the user profile
-        otp = generate_otp()  # Replace with your OTP generation logic
-        print("otp: ",otp)
+        # otp = generate_otp()  # Replace with your OTP generation logic
+        # print("otp: ",otp)
 
-        # Save the OTP in the  user model
-        driver.otp = otp
-        driver.save()
+        # # Save the OTP in the  user model
+        # driver.otp = otp
+        # driver.save()
+        # # Send otp via Gupshup
+        # gupshupsms(self, send_phone,otp)
 
         # Send OTP via Twilio
         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
