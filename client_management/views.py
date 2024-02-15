@@ -39,8 +39,8 @@ class Userprofileview(APIView):
        
     def get(self, request):
          try:
-              user=request.user
-              print("user: ", user.phone)
+            #   user=request.user
+            #   print("user: ", user.phone)
             #   user_profile=UserProfile.objects.get(user=user)
             #   user_profile.mobile_number = user.phone
             #   user_profile.save()

@@ -27,7 +27,7 @@ class Addfavoritedriveradmin(admin.ModelAdmin):
 admin.site.register(AddfavoriteDriver, Addfavoritedriveradmin)
 
 class DeclineplaceagnebookingAdmin(admin.ModelAdmin):
-    list_display=['id', 'placebooking', 'agentbooking', 'refuse_driver_user', 'refuse_time']
+    list_display=['id', 'placebooking',  'refuse_driver_user', 'refuse_time']
 
 admin.site.register(Declinebooking,DeclineplaceagnebookingAdmin)
 
