@@ -297,7 +297,7 @@ class AddDriver(models.Model):
         "Location in Map", geography=True, blank=True, null=True,
         srid=4326, help_text="Point(latitude longitude)")
     total_exp=models.IntegerField(null=True, blank=True)
-    #driver_app_status=models.ForeignKey(Driverappstatus, on_delete=models.CASCADE, null=True, blank=True)
+    driver_app_status=models.BooleanField(default=True)
     driver_update_date= models.DateField(auto_now_add=True, null=True,blank=True)
     has_received_notification = models.BooleanField(default=False, null=True, blank=True)
 
@@ -310,7 +310,6 @@ class Driverappstatus(models.Model):
     PACKAGE=(("Gold", "Gold"),("Gold2", "Gold2"),("Platinium", "Platinium"), ("Platinium2", "Platinium2"), ("Bronze", "Bronze"), ("silver", "silver"),("DiwaliScheme", "DiwaliScheme"))
     Status=(('active','active'), ('inactive', 'inactive'))
     driver_name=models.ForeignKey(AddDriver ,on_delete=models.CASCADE,null=True, blank=True)
-    # driver_
     driverusername=models.ForeignKey(settings.AUTH_USER_MODEL ,on_delete=models.CASCADE,null=True, blank=True)
     driver_name1=models.CharField(max_length=100, null=True, blank=True)
     driver_mobile = models.CharField(max_length=100, null=True, blank=True)
@@ -335,6 +334,8 @@ def update_package_status(sender, instance, **kwargs):
         # If conditions met, update status to inactive
         instance.status = 'inactive'
 
+    if instance.driver_name.driving_status=="Approve":
+        instance.driver_name.driving_status="Reject"
 """End App Status"""
 
 class ReferDriver(models.Model):
