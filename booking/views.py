@@ -25,6 +25,7 @@ from geopy import Nominatim
 from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
 from client_management.models import UserProfile
+from driver_management.models import AddDriver
 
 
 # from geopy.geocoders import Nominatim
@@ -686,6 +687,8 @@ class Agentbookingview(APIView):
             data=request.data
             request_type=data['request_type']
             mobile_number=request.data['mobile_number']
+            booking_for = request.data['bookingfor']
+            car_type = request.data['car_type']
             
             # checking request type
             if request_type=="Guest":
@@ -694,15 +697,19 @@ class Agentbookingview(APIView):
                 if fav_drivers:
                     fav_driver_ids = list(fav_driver.id for fav_driver in fav_drivers)
                     print("Favorite driver IDs:", fav_driver_ids)
+                    drivers = AddDriver.objects.filter(id__in=fav_driver_ids)
+                    print("drivers data: ", drivers)
+                    driver_users = [driver.driver_user for driver in drivers]
+                    print("driver user: ", driver_users)
                     serializer=Agentbookingserailizer(data=data)
                     if serializer.is_valid():
                         serializer.save()
                         if fav_drivers.exists():
 
-                        
-                            devices = FCMDevice.objects.filter(user__in=fav_driver_ids)
+                            print("fav drivers:", fav_drivers)
+                            devices = FCMDevice.objects.filter(user__in=driver_users)
                             #serializer.validated_data['user_id'] = user
-                            
+                            print("fcm device: ",devices)
                             booking_id = serializer.data.get('id')
                             print("booking id", booking_id)
                         
@@ -714,7 +721,7 @@ class Agentbookingview(APIView):
                             for device in devices:
                                 registration_id = device.registration_id
                                 registration_ids.append(registration_id)
-                                
+                            print("registrations id: ", registration_ids)   
                             # Send notification using FCM
                             for token in registration_ids:
                                 if token is None or not token.strip():
@@ -722,9 +729,8 @@ class Agentbookingview(APIView):
                                     continue
                                 message = messaging.Message(
                                     notification=messaging.Notification(
-                                        title="New Booking",
-                                        body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
-                                        
+                                        title="New Guest Booking",
+                                        body=f"Booking for: {booking_for}\n car type: {car_type} ",       
                                     ),
                                     token= token 
                                 )
