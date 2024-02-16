@@ -692,18 +692,16 @@ class Agentbookingview(APIView):
                 fav_drivers = client_info.addfavoritedriver.all()
                 if fav_drivers:
                     fav_driver_ids = list(fav_driver.id for fav_driver in fav_drivers)
-                    print("Favorite driver IDs:", fav_driver_ids)
+
                     serializer=Agentbookingserailizer(data=data)
                     if serializer.is_valid():
                         serializer.save()
                         if fav_drivers.exists():
 
-                        
                             devices = FCMDevice.objects.filter(user__in=fav_driver_ids)
                             #serializer.validated_data['user_id'] = user
                             
                             booking_id = serializer.data.get('id')
-                            print("booking id", booking_id)
                         
                             notify=NotifydriversAgent.objects.create()
                             notify.agent_booking = AgentBooking.objects.get(id=booking_id)
@@ -767,7 +765,6 @@ class Agentbookingview(APIView):
             else:
                 alldata=AgentBooking.objects.all().order_by('-id')
                 number_of_booking=alldata.count()
-                print("number of booking", number_of_booking)
                 serializer = Agentbookingserailizer(alldata, many=True)
                 pagination = cutomepegination()
                 paginated_queryset = pagination.paginate_queryset(alldata, request)
@@ -930,7 +927,6 @@ class Agentbookingfilterquary(APIView):
             elif status:
                 bookingstatus= AgentBooking.objects.filter(status=status)
                 countstatus=bookingstatus.count()
-                print("coun of status", countstatus)
                 serializer=Agentbookingserailizer(bookingstatus, many=True)
                 return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})         
             elif bookingfor:
@@ -981,11 +977,8 @@ class Agentbooking_accept(APIView):
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
                 serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-<<<<<<< HEAD
-=======
                 # print("driver name: ", driver_name)
                 # print(type(driver_name))
->>>>>>> f1a16a4d5440b9c735e90deed17c620177837b49
         #         whatsapp_number = f"whatsapp:+91{client_mobile}"
         #         msg="""Dear {client_name}
 
@@ -1110,7 +1103,6 @@ class Guestbookingapi(APIView):
             data = request.data
             user = request.user
             driver_instance = AddDriver.objects.get(driver_user=user.id)
-            print("driver instance", driver_instance)
             driver_mobile = User.objects.get(id=user.id)
             serializer = Agentbookingserailizer(data=data)
 
