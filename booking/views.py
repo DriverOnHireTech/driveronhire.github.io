@@ -1115,7 +1115,6 @@ class Guestbookingapi(APIView):
             data = request.data
             user = request.user
             driver_instance = AddDriver.objects.get(driver_user=user.id)
-            print("driver instance", driver_instance)
             driver_mobile = User.objects.get(id=user.id)
             serializer = Agentbookingserailizer(data=data)
 

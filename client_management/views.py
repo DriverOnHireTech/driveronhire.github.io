@@ -67,3 +67,10 @@ class Userprofileview(APIView):
                         return Response({'msg': f"Driver with id {driver_id} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'msg':'Profile updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
 # End User Profile
+    
+#get single user profile 
+class getsingleuserprofile(APIView):
+     def get(self, request, id):
+          profile=UserProfile.objects.get(id=id)
+          serializer=UserProfileSerializer(profile)
+          return Response({'msg':'single profile', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
