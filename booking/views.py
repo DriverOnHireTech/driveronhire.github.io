@@ -604,7 +604,7 @@ class Agentbookingview(APIView):
             
             # checking request type
             if request_type=="Guest":
-                serializer=Agentbookingserailizer(data)
+                serializer=Agentbookingserailizer(data=data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response({'msg':'Guest booking done'}, status=status.HTTP_201_CREATED)
