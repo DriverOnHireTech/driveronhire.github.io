@@ -42,6 +42,7 @@ class MyBranchSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class MyReferenceSerializers(serializers.ModelSerializer):
     class Meta:
         model = Reference
@@ -86,3 +87,9 @@ class chargestwohrsserailizer(serializers.ModelSerializer):
     class Meta:
         model= localtwohrscharges
         fields="__all__"
+
+""""Query selector"""
+class citylocatioserializer(serializers.ModelSerializer):
+    class Meta:
+        model:citylocation
+        fields='__all__'

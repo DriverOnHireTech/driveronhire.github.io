@@ -268,5 +268,5 @@ admin.site.register(out_stn_charges_stay)
 admin.site.register(pune_A_location)
 admin.site.register(pune_B_location)
 """Pune Location End"""
-
+admin.site.register(citylocation)
 

@@ -465,3 +465,9 @@ class twohrscharges(APIView):
             return Response({"msg":"Local 2hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
         except chargestwohrsserailizer.DoesNotExist:
             return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+
+""""Get location based on city query parameter"""
+class locatiobycity(APIView):
+    def get(self, request):
+        pass

@@ -39,14 +39,30 @@ class Userprofileview(APIView):
        
     def get(self, request):
          try:
-              user=request.user
-              print("user: ", user.phone)
+  
             #   user_profile=UserProfile.objects.get(user=user)
             #   user_profile.mobile_number = user.phone
             #   user_profile.save()
-              user_profile=UserProfile.objects.all()
+              user_profile=UserProfile.objects.all().order_by('-id')
               serializer=UserProfileSerializer(user_profile, many=True)
               return Response({'msg':'user profile', 'data':serializer.data}, status=status.HTTP_200_OK)
          except UserProfile.DoesNotExist:
               return Response({'msg':'No data found'}, status=status.HTTP_204_NO_CONTENT)
+         
+    def patch(self, request,id):
+            data=request.data
+            add_driver_data = request.data.get('addfavoritedriver')
+            profile=UserProfile.objects.get(id=id)
+            serializer=UserProfileSerializer(profile, partialy=True)
+            if serializer.is_valid():
+                 serializer.save()
+            if add_driver_data:
+            # Assuming 'addfavoritedriver' contains a list of driver IDs
+                for driver_id in add_driver_data:
+                    try:
+                        driver = AddDriver.objects.get(id=driver_id)
+                        serializer.instance.addfavoritedriver.add(driver)
+                    except AddDriver.DoesNotExist:
+                        return Response({'msg': f"Driver with id {driver_id} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'msg':'Profile updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
 # End User Profile

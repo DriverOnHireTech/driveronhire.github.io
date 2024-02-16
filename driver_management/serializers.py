@@ -24,8 +24,11 @@ class Driverlocationserializer(serializers.ModelSerializer):
 
 
 class MyDriverSerializer(serializers.ModelSerializer):
-    transmission_type = serializers.MultipleChoiceField(choices=transmission_option)
-    car_type = serializers.MultipleChoiceField(choices=car_option)
+    # transmission_type = serializers.MultipleChoiceField(choices=transmission_option)
+    # car_type = serializers.MultipleChoiceField(choices=car_option)
+
+    transmission_type = serializers.ListField(child=serializers.ChoiceField(choices=transmission_option))
+    car_type = serializers.ListField(child=serializers.ChoiceField(choices=car_option))
     
     first_name=serializers.CharField()
     class Meta:
