@@ -220,9 +220,15 @@ class Invoice(models.Model):
     placebooking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE,null=True, blank=True)
     add_favourite = models.BooleanField(default=False, null=True, blank=True)
     invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
+    base_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
+    night_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
+    outskirt_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
+    extra_hour_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
+    additional_hours = models.IntegerField(null=True, blank=True, default=0)  # New field for additional hours
+    total_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
 
-    def __str__(self):
-        return self.driver.first_name
+    # def __str__(self):
+    #     return self.driver.first_name
   
 
 class Feedback(models.Model):
@@ -303,5 +309,16 @@ class Declinebooking(models.Model):
 
     def __str__(self):
         return str(self.placebooking)
-    
 
+
+class Declinebooking1(models.Model):
+    status=models.CharField(max_length=100, null=True, blank=True)
+    placebooking=models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
+    agentbooking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
+    refuse_driver_user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    refuse_time=models.DateField(auto_now_add=True)
+
+
+    def __str__(self):
+        return str(self.placebooking)
+    

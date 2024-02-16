@@ -41,6 +41,7 @@ CSRF_TRUSTED_ORIGINS=[
 # Application definition
 
 INSTALLED_APPS = [
+    "django_crontab",
     "channels",
     "jazzmin",
     "authentication",
@@ -252,3 +253,7 @@ EMAIL_USE_SSL = False
 # calling gupshup user&pass
 user_id=env('user_id')
 password=env('password')
+
+CRONJOBS = [
+    ('*/1 * * * *', 'booking.cron.print_hello')
+]

@@ -4,6 +4,7 @@ from .serializers import *
 from datetime import datetime, timedelta, time, timezone
 from rest_framework.response import Response
 from rest_framework import status
+import math
 
 class InvoiceGenerate(APIView):
     
@@ -24,6 +25,7 @@ class InvoiceGenerate(APIView):
             outskirt_charge = Placebooking_data['outskirt_charge']
             deuty_started_time = Placebooking_data.get('deuty_started')
             deuty_end_datetime = Placebooking_data.get('deuty_end')
+            package_value = Placebooking_data.get('packege')
 
             # Convert deuty_started to a datetime object with timezone information
             deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
@@ -230,17 +232,30 @@ class InvoiceGenerate(APIView):
                     print(f"Night charge added: {night_charge}")
                 else:
                     print("Normal charge.")
-            
 
+        price = total_price()
+        total_price = price[0]
+        base_price = price[1]
+        night_charge = price[2]
+        outskirt_charge = price[3]
+        additional_hours = price[4]
+        extra_hour_charge = additional_hours*100
+        print("data : ", data)
         inv_seri =  InvoiceSerializer(data = data)
         if inv_seri.is_valid():
             inv_seri.validated_data['placebooking'] = Placebooking_data_id
+            inv_seri.validated_data['base_charge'] = base_price
+            inv_seri.validated_data['total_charge'] = total_price
+            inv_seri.validated_data['night_charge'] = night_charge
+            inv_seri.validated_data['outskirt_charge'] = outskirt_charge
+            inv_seri.validated_data['additional_hours'] = additional_hours
+            inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
             # inv_seri.validated_data['user_id'] = user.id
             # print("data: ", data)
             inv_seri.save()
             return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
         else:
-             return Response({'msg': 'Unable to generate', 'data':inv_seri.error}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+             return Response({'msg': 'Unable to generate', 'data':inv_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
     def get(self, request, id):
