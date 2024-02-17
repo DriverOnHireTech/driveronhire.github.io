@@ -684,6 +684,7 @@ class Agentbookingview(APIView):
                 return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             data=request.data
+            user=request.user
             request_type=data['request_type']
             mobile_number=request.data['mobile_number']
             booking_for = request.data['bookingfor']
@@ -692,23 +693,21 @@ class Agentbookingview(APIView):
             # checking request type
             if request_type=="Guest":
                 client_info = UserProfile.objects.filter(mobile_number=mobile_number).first()
+                if client_info is None:
+                    return Response({'msg':'User number profile not created'}, status=status.HTTP_204_NO_CONTENT)
+
                 fav_drivers = client_info.addfavoritedriver.all()
                 if fav_drivers:
                     fav_driver_ids = list(fav_driver.id for fav_driver in fav_drivers)
-                    print("Favorite driver IDs:", fav_driver_ids)
                     drivers = AddDriver.objects.filter(id__in=fav_driver_ids)
-                    print("drivers data: ", drivers)
                     driver_users = [driver.driver_user for driver in drivers]
-                    print("driver user: ", driver_users)
                     serializer=Agentbookingserailizer(data=data)
                     if serializer.is_valid():
+                        serializer._validated_data['booking_created_by']=user.first_name
                         serializer.save()
                         if fav_drivers.exists():
-
-                            print("fav drivers:", fav_drivers)
                             devices = FCMDevice.objects.filter(user__in=driver_users)
                             #serializer.validated_data['user_id'] = user
-                            print("fcm device: ",devices)
                             booking_id = serializer.data.get('id')
                         
                             notify=NotifydriversAgent.objects.create()
@@ -718,8 +717,7 @@ class Agentbookingview(APIView):
                             registration_ids = []
                             for device in devices:
                                 registration_id = device.registration_id
-                                registration_ids.append(registration_id)
-                            print("registrations id: ", registration_ids)   
+                                registration_ids.append(registration_id)   
                             # Send notification using FCM
                             for token in registration_ids:
                                 if token is None or not token.strip():
@@ -1118,6 +1116,7 @@ class Guestbookingapi(APIView):
                 serializer.validated_data['driver_name'] = driver_instance
                 serializer.validated_data['accepted_driver'] = driver_mobile
                 serializer.validated_data['guest_booking'] = True
+                serializer.validated_data['request_type']="Guest"
                 serializer.save()
                 return Response({'msg': 'Guest Booking done', 'data': serializer.data}, status=status.HTTP_201_CREATED)
             else:

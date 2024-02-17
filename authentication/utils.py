@@ -109,3 +109,20 @@ https://driveronhire.com/rates/""".format(drivername,drivernumber),
 
     response = requests.post(url, data=payload)
     return response
+
+#Gupshup whatsapp function
+def gupshupwhatsapp(self, phone, msg):
+    url= "https://media.smsgupshup.com/GatewayAPI/rest"
+    payload={
+        "method":"SendMessage",
+        "send_to":phone,
+        "msg":"",
+        "msg_type": "TEXT",
+        "userid": "2000237293",
+        "auth_scheme": "PLAIN",
+        "password":"vrgnLDKp",
+        "format": "JSON"
+    }
+
+    response = requests.post(url, data=payload)
+    return response

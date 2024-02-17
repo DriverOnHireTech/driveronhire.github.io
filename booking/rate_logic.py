@@ -14,13 +14,9 @@ class InvoiceGenerate(APIView):
         placebooking_id = data['placebooking']
         Placebooking_data = PlaceBooking.objects.values().get(id=placebooking_id)
         Placebooking_data_id = PlaceBooking.objects.get(id=placebooking_id)
-        print("Place booking data: ", Placebooking_data)
         booking_type = Placebooking_data['booking_type']
-        print("booking type: ", booking_type)
         trip_type = Placebooking_data['trip_type']
-        print("Trip type: ", trip_type)
-        car_type = Placebooking_data['car_type']   
-        print("Car type: ", car_type)
+        car_type = Placebooking_data['car_type']      
 
         user = request.user
 
@@ -42,17 +38,7 @@ class InvoiceGenerate(APIView):
             time_difference = deuty_end_datetime - deuty_started_datetime
 
             # Printing the time difference
-            print("Time Difference:", time_difference)
-
-            package_hours = int(package_value.split('hrs')[0])
-            remaining_time = timedelta()
-
-            if time_difference.total_seconds() > package_hours * 3600:
-                remaining_time = time_difference - timedelta(hours=package_hours)
             
-            rounded_hours = math.ceil(remaining_time.total_seconds() / 3600)
-            print("Remaining Time:", rounded_hours)
-
             def base_price():
                 if trip_type == "roundTrip":
                     if car_type == "Luxury":
@@ -66,63 +52,50 @@ class InvoiceGenerate(APIView):
                                 # Add 100 for each additional hour beyond 4 hours
                                 additional_cost = (additional_hours * 100) -200
                                 bill = 500 + additional_cost
-                                print("This is luxury car 2 hour with addition hour")
                                 return bill
                         elif packege == "4hrs":
                             if time_difference < timedelta(hours=4):
-                                print("This is luxury car 4 hour")
                                 return 600
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
-                                print(additional_hours)
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 600 + additional_cost
-                                print("This is luxury car 4 hour with addition hour")
                                 return bill
                         elif packege == "8hrs":
                             if time_difference < timedelta(hours=8):
-                                print("This is luxury car 8 hour")
                                 return 900
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 900 + additional_cost
-                                print("This is luxury car 8 hour with addition hour")
                                 return bill
                     else:
                         if packege == "2hrs":
                             if time_difference < timedelta(hours=2):
-                                print("This is Normal car 2 hour")
                                 return 400
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100)-200
                                 bill = 400 + additional_cost
-                                print("This is Normal car 2 hour with addition hour")
                                 return bill
                         elif packege == "4hrs":
                             if time_difference < timedelta(hours=4):
-                                print("This is Normal car 4 hour")
                                 return 500
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) -400
                                 bill = 500 + additional_cost
-                                print("This is Normal car 4 hour with addition hour")
                                 return bill
                         elif packege == "8hrs":
                             if time_difference < timedelta(hours=8):
-                                print("This is Normal car 8 hour")
                                 return 800
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 800 + additional_cost
-                                print("This is Normal car 8 hour with addition hour")
                                 return bill
 
                 elif trip_type == "oneWay":
-                    print("One way")
                     if car_type == "Luxury":
                         if packege == "2hrs":
                             if time_difference < timedelta(hours=2):
@@ -176,17 +149,14 @@ class InvoiceGenerate(APIView):
                             
             def total_price():
                 base_charge = base_price()
-                print("Base charge: ",base_charge)
-                night_charge = 0
-                
                 if deuty_started_datetime.date() != deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
-                        night_charge = 200
-                        print("Night charge: ",night_charge)
-                        
+                        charge_with_night_allowance = base_charge + 200
+                        total_charge = charge_with_night_allowance + outskirt_charge
+                        return total_charge
                     else:
-                        night_charge = 0
-                        
+                        total_charge = base_charge + outskirt_charge
+                        return total_charge
                 else:
                     night_charge = 200
                     print("Night charge: ",night_charge)
@@ -195,7 +165,7 @@ class InvoiceGenerate(APIView):
                 print("total charge: ", total_charge)   
                 
 
-                return total_charge, base_charge, night_charge, outskirt_charge, rounded_hours
+                return total_charge, base_charge, night_charge, outskirt_charge
 
             price = total_price()
             total_price = price[0]
@@ -227,40 +197,32 @@ class InvoiceGenerate(APIView):
             no_of_days = Placebooking_data['no_of_days']
             deuty_started_time = Placebooking_data.get('deuty_started')
             deuty_started_time += timedelta(hours=5, minutes=30)
-            print("duty start time: ", deuty_started_time)
             deuty_end_datetime = Placebooking_data.get('deuty_end')
             deuty_end_datetime += timedelta(hours=5, minutes=30)
-            print("duty end time: ", deuty_end_datetime)
             deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
-            print("duty start: ", deuty_started_datetime)
+
 
             if deuty_end_datetime.tzinfo is None:
                 deuty_end_datetime = deuty_end_datetime.replace(tzinfo=timezone.utc)
             time_difference = deuty_end_datetime - deuty_started_datetime
-            print("Time Difference:", time_difference)
-            print("number os days: ", no_of_days)
 
             if car_type == "Luxury":
                 if deuty_end_datetime.date() > deuty_started_datetime.date() and deuty_end_datetime.time() >= time(6, 0):
                     # Add 1 extra day if duty ended tomorrow
                     # Add 1 extra day
                     no_of_days += 1
-                    print("Extra day added")
                 elif deuty_end_datetime.time() > time(23, 0) or deuty_end_datetime.time() < time(6, 0):
                     # Add 200 for night charge
                     night_charge = 200
-                    print(f"Night charge added: {night_charge}")
                 else:
                     print("Normal charges")
             else:
                 if deuty_end_datetime.date() > deuty_started_datetime.date() and deuty_end_datetime.time() >= time(6, 0):
                     # Add 1 extra day if duty ended tomorrow
                     no_of_days += 1
-                    print("Extra day added")
                 elif deuty_end_datetime.time() > time(23, 0) or deuty_end_datetime.time() < time(6, 0):
                     # Add 200 for night charge
                     night_charge = 200
-                    print(f"Night charge added: {night_charge}")
                 else:
                     print("Normal charge.")
 
@@ -269,29 +231,22 @@ class InvoiceGenerate(APIView):
             no_of_days = Placebooking_data['no_of_days']
             deuty_started_time = Placebooking_data.get('deuty_started')
             deuty_started_time += timedelta(hours=5, minutes=30)
-            print("duty start time: ", deuty_started_time)
             deuty_end_datetime = Placebooking_data.get('deuty_end')
             deuty_end_datetime += timedelta(hours=5, minutes=30)
-            print("duty end time: ", deuty_end_datetime)
             deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
-            print("duty start: ", deuty_started_datetime)
 
             if deuty_end_datetime.tzinfo is None:
                 deuty_end_datetime = deuty_end_datetime.replace(tzinfo=timezone.utc)
             time_difference = deuty_end_datetime - deuty_started_datetime
-            print("Time Difference:", time_difference)
-            print("number os days: ", no_of_days)
 
             if car_type == "Luxury":
                 if deuty_end_datetime.date() > deuty_started_datetime.date() and deuty_end_datetime.time() >= time(6, 0):
                     # Add 1 extra day if duty ended tomorrow
                     # Add 1 extra day
                     no_of_days += 1
-                    print("Extra day added")
                 elif deuty_end_datetime.time() > time(23, 0) or deuty_end_datetime.time() < time(6, 0):
                     # Add 200 for night charge
                     night_charge = 200
-                    print(f"Night charge added: {night_charge}")
                 else:
                     print("Normal charges")
             else:
@@ -299,7 +254,6 @@ class InvoiceGenerate(APIView):
                     # Add 1 extra day if duty ended tomorrow
                     # Add 1 extra day
                     no_of_days += 1
-                    print("Extra day added")
                 elif deuty_end_datetime.time() > time(23, 0) or deuty_end_datetime.time() < time(6, 0):
                     # Add 200 for night charge
                     night_charge = 200
