@@ -791,9 +791,11 @@ class Agentbookingview(APIView):
     
     def patch(self, request, id):
         data=request.data
+        user =request.user
         agent_booking= AgentBooking.objects.get(id=id)
         serializer= Agentbookingserailizer(agent_booking, data=data, partial=True)
         if serializer.is_valid():
+                serializer.validated_data['booking_created_by_name']=user.first_name
                 serializer.save()
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
@@ -1274,3 +1276,27 @@ class TestAgentDeclineBooking(APIView):
         else:
             return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
             
+class dashboardbooking(APIView):
+    """
+    Using this api we are getting live booking analytics
+    """
+    def get(self, request):
+        bookingfor="local"
+        outstation_booking="outstation"
+        drop="drop"
+        filter_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
+        local_booking_count=filter_booking.count()
+        print("Local count:", local_booking_count)
+
+        #OutStation booking count
+        outs_booking=AgentBooking.objects.filter(bookingfor=outstation_booking)
+        outcount=outs_booking.count()
+        print("Out count:", outcount)
+
+        #Drop Booking Count
+        drop_booking=AgentBooking.objects.filter(bookingfor=drop)
+        dropcount=drop_booking.count()
+        print("Drop booking:", dropcount)
+
+        #serializer=Agentbookingserailizer(filter_booking,many=True)
+        return Response({'msg':'Local booking', 'local_booking_count':local_booking_count, 'outcount':outcount, 'dropcount':dropcount})
