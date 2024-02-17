@@ -56,16 +56,17 @@ class InvoiceSerializer(serializers.ModelSerializer):
     
     # driver =  serializers.SerializerMethodField()
     placebooking = serializers.SerializerMethodField()
+    driver=serializers.SerializerMethodField()
     class Meta:
         model = Invoice
         fields = "__all__"
 
   
     
-    # def get_driver(self, obj):
-    #     driver =  obj.driver
-    #     driver_seri = MyDriverSerializer(driver)
-    #     return driver_seri.data
+    def get_driver(self, obj):
+        driver =  obj.driver
+        driver_seri = MyDriverSerializer(driver)
+        return driver_seri.data
     
     def get_placebooking(self, obj):
         placebooking =  obj.placebooking
