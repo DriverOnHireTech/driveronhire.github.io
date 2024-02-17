@@ -703,7 +703,7 @@ class Agentbookingview(APIView):
                     driver_users = [driver.driver_user for driver in drivers]
                     serializer=Agentbookingserailizer(data=data)
                     if serializer.is_valid():
-                        serializer._validated_data['booking_created_by']=user.first_name
+                        # serializer._validated_data['booking_created_by']=user.first_name
                         serializer.save()
                         if fav_drivers.exists():
                             devices = FCMDevice.objects.filter(user__in=driver_users)

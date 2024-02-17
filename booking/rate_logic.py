@@ -172,8 +172,8 @@ class InvoiceGenerate(APIView):
             base_price = price[1]
             night_charge = price[2]
             outskirt_charge = price[3]
-            additional_hours = price[4]
-            extra_hour_charge = additional_hours*100
+            # additional_hours = price[4]
+            # extra_hour_charge = additional_hours*100
             print("data : ", data)
             inv_seri =  InvoiceSerializer(data = data)
             if inv_seri.is_valid():
@@ -182,8 +182,8 @@ class InvoiceGenerate(APIView):
                 inv_seri.validated_data['total_charge'] = total_price
                 inv_seri.validated_data['night_charge'] = night_charge
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge
-                inv_seri.validated_data['additional_hours'] = additional_hours
-                inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
+                # inv_seri.validated_data['additional_hours'] = additional_hours
+                # inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
                 # inv_seri.validated_data['user_id'] = user.id
                 # print("data: ", data)
                 inv_seri.save()
