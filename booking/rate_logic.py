@@ -197,7 +197,32 @@ class InvoiceGenerate(APIView):
 
                 return total_charge, base_charge, night_charge, outskirt_charge, rounded_hours
 
-        
+            price = total_price()
+            total_price = price[0]
+            base_price = price[1]
+            night_charge = price[2]
+            outskirt_charge = price[3]
+            additional_hours = price[4]
+            extra_hour_charge = additional_hours*100
+            print("data : ", data)
+            inv_seri =  InvoiceSerializer(data = data)
+            if inv_seri.is_valid():
+                inv_seri.validated_data['placebooking'] = Placebooking_data_id
+                inv_seri.validated_data['base_charge'] = base_price
+                inv_seri.validated_data['total_charge'] = total_price
+                inv_seri.validated_data['night_charge'] = night_charge
+                inv_seri.validated_data['outskirt_charge'] = outskirt_charge
+                inv_seri.validated_data['additional_hours'] = additional_hours
+                inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
+                # inv_seri.validated_data['user_id'] = user.id
+                # print("data: ", data)
+                inv_seri.save()
+                print("serializer data: ", inv_seri.validated_data )
+
+                return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'msg': 'Unable to generate', 'data':inv_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
         if booking_type == "outstation":
             no_of_days = Placebooking_data['no_of_days']
             deuty_started_time = Placebooking_data.get('deuty_started')
@@ -282,31 +307,7 @@ class InvoiceGenerate(APIView):
                 else:
                     print("Normal charge.")
 
-        price = total_price()
-        total_price = price[0]
-        base_price = price[1]
-        night_charge = price[2]
-        outskirt_charge = price[3]
-        additional_hours = price[4]
-        extra_hour_charge = additional_hours*100
-        print("data : ", data)
-        inv_seri =  InvoiceSerializer(data = data)
-        if inv_seri.is_valid():
-            inv_seri.validated_data['placebooking'] = Placebooking_data_id
-            inv_seri.validated_data['base_charge'] = base_price
-            inv_seri.validated_data['total_charge'] = total_price
-            inv_seri.validated_data['night_charge'] = night_charge
-            inv_seri.validated_data['outskirt_charge'] = outskirt_charge
-            inv_seri.validated_data['additional_hours'] = additional_hours
-            inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
-            # inv_seri.validated_data['user_id'] = user.id
-            # print("data: ", data)
-            inv_seri.save()
-            print("serializer data: ", inv_seri.validated_data )
-
-            return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
-        else:
-             return Response({'msg': 'Unable to generate', 'data':inv_seri.errors}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
     
 
     def get(self, request, id):

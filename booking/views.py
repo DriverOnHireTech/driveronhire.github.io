@@ -923,16 +923,16 @@ class Agentbookingfilterquary(APIView):
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')         
 
-            if mobile_number:
-                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
+            if mobile_number and status and bookingfor and to_date:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking,many=True)
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
-            elif status:
-                bookingstatus= AgentBooking.objects.filter(status=status)
+            elif status and to_date:
+                bookingstatus= AgentBooking.objects.filter(status=status, to_date=to_date)
                 countstatus=bookingstatus.count()
                 serializer=Agentbookingserailizer(bookingstatus, many=True)
                 return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})         
