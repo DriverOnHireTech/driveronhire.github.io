@@ -687,7 +687,7 @@ class Agentbookingview(APIView):
             user=request.user
             request_type=data['request_type']
             mobile_number=request.data['mobile_number']
-            booking_for = request.data['bookingfor']
+            bookingfor = data['bookingfor']
             car_type = request.data['car_type']
             
             # checking request type
@@ -703,7 +703,7 @@ class Agentbookingview(APIView):
                     driver_users = [driver.driver_user for driver in drivers]
                     serializer=Agentbookingserailizer(data=data)
                     if serializer.is_valid():
-                        # serializer._validated_data['booking_created_by']=user.first_name
+                        serializer.validated_data['booking_created_by_name']=user.first_name
                         serializer.save()
                         if fav_drivers.exists():
                             devices = FCMDevice.objects.filter(user__in=driver_users)
@@ -726,7 +726,7 @@ class Agentbookingview(APIView):
                                 message = messaging.Message(
                                     notification=messaging.Notification(
                                         title="New Guest Booking",
-                                        body=f"Booking for: {booking_for}\n car type: {car_type} ",       
+                                        body=f"Booking for: {bookingfor}\n car type: {car_type} ",       
                                     ),
                                     token= token 
                                 )
@@ -742,7 +742,7 @@ class Agentbookingview(APIView):
 
                 
                     
-                    return Response({'msg':'Guest booking done'}, status=status.HTTP_201_CREATED)
+                    return Response({'msg':'Guest booking done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({'msg':'Guest booking not done'}, status=status.HTTP_204_NO_CONTENT)
 
