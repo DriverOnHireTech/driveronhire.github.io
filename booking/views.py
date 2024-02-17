@@ -1131,7 +1131,7 @@ class Guestbookingapi(APIView):
         
     def get(self, request):
         try:
-            guestbooking=AgentBooking.objects.filter(guest_booking=True).order_by('-id')
+            guestbooking=AgentBooking.objects.filter(guest_booking=True, status='pending').order_by('-id')
             serializer=Agentbookingserailizer(guestbooking, many=True)
             return Response({'msg':'All guest booking', 'data':serializer.data}, status=status.HTTP_200_OK)
 
