@@ -94,7 +94,6 @@ class Agentbookingserailizer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
-        print("Data: ",data)
         data['id'] = instance.id
 
         if 'driver_name' in data:

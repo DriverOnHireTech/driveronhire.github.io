@@ -27,7 +27,6 @@ from .zone_logic import zone_get, return_charges
 from client_management.models import UserProfile
 from driver_management.models import AddDriver
 
-
 # from geopy.geocoders import Nominatim
 # import geocoder
 
@@ -271,23 +270,23 @@ class Acceptedride(APIView):
                 serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
                 whatsapp_number = f"91{client_mobile}"
-                msg="""Dear {client_name}
+                # msg="""Dear {client_name}
 
-                                Mr. {driver_name}
-                                Mobile - {driver_mobile}
-                                Will be arriving at your destination.
+                #                 Mr. {driver_name}
+                #                 Mobile - {driver_mobile}
+                #                 Will be arriving at your destination.
 
-                                Date -{date}
-                                Time -{time}
+                #                 Date -{date}
+                #                 Time -{time}
 
-                                Our rates - https://www.driveronhire.com/rates
+                #                 Our rates - https://www.driveronhire.com/rates
 
-                                *T&C Apply
-                                https://www.driveronhire.com/privacy-policy
+                #                 *T&C Apply
+                #                 https://www.driveronhire.com/privacy-policy
 
-                                Thanks 
-                                Driveronhire.com
-                                Any issue or feedback call us 02243439090"""
+                #                 Thanks 
+                #                 Driveronhire.com
+                #                 Any issue or feedback call us 02243439090"""
                 #message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
                 data.setdefault("accepted_driver",user.id) 
                 #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
@@ -319,7 +318,7 @@ class Acceptedride(APIView):
                             Any issue or feedback call us 02243439090"""
             message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
             data.setdefault("accepted_driver",user.id)
-            utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
             #utils.gupshupWhatsapp(self, whatsapp_number, message)
             # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
             #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
@@ -771,7 +770,6 @@ class Agentbookingview(APIView):
             else:
                 alldata=AgentBooking.objects.all().order_by('-id')
                 number_of_booking=alldata.count()
-                print("number of booking", number_of_booking)
                 serializer = Agentbookingserailizer(alldata, many=True)
                 pagination = cutomepegination()
                 paginated_queryset = pagination.paginate_queryset(alldata, request)
@@ -918,47 +916,37 @@ class Agentbooking_bystatus(APIView):
 class Agentbookingfilterquary(APIView):
     def get(self, request, *args, **kwargs):
         try:
-
             mobile_number= request.GET.get('mobile_number')
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')         
 
-            if mobile_number:
-                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
+            if mobile_number and status and bookingfor and to_date:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
-                serializer =Agentbookingserailizer(pending_booking, many=True)
+                serializer =Agentbookingserailizer(pending_booking,many=True)
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
+            elif status and to_date:
+                bookingstatus= AgentBooking.objects.filter(status=status, to_date=to_date)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})         
             elif bookingfor:
                 pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking, many=True)
                 
-                return Response({'msg':'Your serach type bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
-            
-            elif status:
-                pending_booking=AgentBooking.objects.filter(status=status)
-                number_of_booking= pending_booking.count()
-                
-                serializer =Agentbookingserailizer(pending_booking, many=True)
+                return Response({'msg':'Your search type bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
 
             elif to_date:
-                try:
-                    # Parse the string into a datetime object
-                    to_date_obj = datetime.strptime(to_date, "%Y-%m-%d")
-                    # Format the datetime object into "%d-%m-%Y" format
-                    formatted_to_date = to_date_obj.strftime("%d-%m-%Y")
-                except ValueError:
-                    return Response({'error': 'Invalid date format for to_date. Please provide the date in YYYY-MM-DD format.'})
-                pending_booking=AgentBooking.objects.filter(to_date__lte=to_date)
+                pending_booking=AgentBooking.objects.filter(to_date=to_date)
                 number_of_booking= pending_booking.count()
-                
                 serializer =Agentbookingserailizer(pending_booking, many=True)
-                return Response({'msg':'Your serach date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
+                return Response({'msg':'Your search date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             
             else:
@@ -968,7 +956,7 @@ class Agentbookingfilterquary(APIView):
                 return Response({'msg':'No Data found', 'data':serializer.data})
         
         except AgentBooking.DoesNotExist:
-            return Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
+             Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
 
