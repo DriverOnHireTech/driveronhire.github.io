@@ -99,15 +99,11 @@ class updatedriver(APIView):
     permission_classes = [IsAuthenticated]
     def patch(self, request):
         data= request.data
-        print("Data: ",data)
         user= request.user
-        print("User: ",user.id)
         driver = AddDriver.objects.get(driver_user=user.id)
-        print("Again Driver: ", driver.id)
         serializer =MyDriverSerializer(driver, data=request.data, partial=True)
         if serializer.is_valid(): 
             serializer.save()
-            print("Serializer Data: ", serializer.data)
             return Response({"msg":"location updated", "data":serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -221,9 +217,7 @@ class Bookingreports(APIView):
             booking_time= request.GET.get('booking_time')
 
             booking_time = datetime.strptime(booking_time, '%Y-%m-%d%H:%M:%S')  # Assuming date format 'YYYY-MM-DD'
-            print(booking_time)
             end_date_time = booking_time + timedelta(days=30)
-            print(end_date_time)
 
             #filter record between the dates
             if booking_time:
@@ -267,7 +261,6 @@ class DriverappstatusView(APIView):
         
         # driverusername = request.data.get()
         paymentamount=request.data['paymentamount']
-        print(type(paymentamount))
         tax_amount=request.data['tax_amount']
         total_pay_amount= int(paymentamount) + int(tax_amount)
         total_pay_amount=round(total_pay_amount)

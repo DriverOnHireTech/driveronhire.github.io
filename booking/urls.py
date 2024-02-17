@@ -20,7 +20,7 @@ urlpatterns = [
 
     path('singlebooking/<int:id>/', views.get_bookingbyid.as_view(), name='single-booking'), # single Booking Get
 
-    path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'),
+    path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'), # Accept booking from website 
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 

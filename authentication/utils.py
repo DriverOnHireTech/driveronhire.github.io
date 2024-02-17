@@ -89,7 +89,7 @@ def gupshupsms(self, phone, otp):
     }
 
     response = requests.post(url, data=payload)
-    return response
+    return print("OTP sent")
 
 #Booking confirmantion 
 def driverdetailssent(self, userphone,drivername, drivernumber):
