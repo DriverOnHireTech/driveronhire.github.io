@@ -685,6 +685,7 @@ class Agentbookingview(APIView):
                 return Response({'msg':'Booking not done', 'error':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             data=request.data
+            user=request.user
             request_type=data['request_type']
             mobile_number=request.data['mobile_number']
             booking_for = request.data['bookingfor']
@@ -693,6 +694,9 @@ class Agentbookingview(APIView):
             # checking request type
             if request_type=="Guest":
                 client_info = UserProfile.objects.filter(mobile_number=mobile_number).first()
+                if client_info is None:
+                    return Response({'msg':'User number profile not created'}, status=status.HTTP_204_NO_CONTENT)
+
                 fav_drivers = client_info.addfavoritedriver.all()
                 if fav_drivers:
                     fav_driver_ids = list(fav_driver.id for fav_driver in fav_drivers)
@@ -700,6 +704,7 @@ class Agentbookingview(APIView):
                     driver_users = [driver.driver_user for driver in drivers]
                     serializer=Agentbookingserailizer(data=data)
                     if serializer.is_valid():
+                        serializer._validated_data['booking_created_by']=user.first_name
                         serializer.save()
                         if fav_drivers.exists():
                             devices = FCMDevice.objects.filter(user__in=driver_users)
