@@ -269,6 +269,7 @@ class Acceptedride(APIView):
                 serializer._validated_data['accepted_driver_name'] = user.first_name
                 serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
+                serializer.validated_data['driver'] = driver_name
                 whatsapp_number = f"91{client_mobile}"
                 # msg="""Dear {client_name}
 
