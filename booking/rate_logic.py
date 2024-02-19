@@ -162,21 +162,18 @@ class InvoiceGenerate(APIView):
                     night_charge = 200
                     print("Night charge: ",night_charge)
 
-                total_charge = base_charge + night_charge + outskirt_charge     
-                print("total charge: ", total_charge)   
+                total_charge = base_charge + night_charge + outskirt_charge 
                 
 
                 return total_charge, base_charge
 
             price = total_price()
-            print(price)
             total_price_value = price[0]
             base_price = price[1]
             night_charge = price[2]
             outskirt_charge = price[3]
             # additional_hours = price[4]
             # extra_hour_charge = additional_hours*100
-            print("data : ", price)
             inv_seri =  InvoiceSerializer(data = data)
             if inv_seri.is_valid():
                 inv_seri.validated_data['placebooking'] = Placebooking_data_id
@@ -189,7 +186,6 @@ class InvoiceGenerate(APIView):
                 inv_seri.validated_data['driver'] = AddDriver.objects.get(id=driver_id)
                 # print("data: ", data)
                 inv_seri.save()
-                print("serializer data: ", inv_seri.validated_data )
 
                 return Response({'msg': 'invice is generate', 'data':inv_seri.data}, status=status.HTTP_201_CREATED)
             else:
