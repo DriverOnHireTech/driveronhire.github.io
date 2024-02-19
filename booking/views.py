@@ -1214,6 +1214,7 @@ class TestDeclineBooking(APIView):
         user = request.user
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
+        one_hour_ago = datetime.now() - timedelta(hours=1)
 
         #Get client booking time 
         # client_booking_time = request.data.get('client_booking_time')
@@ -1229,14 +1230,20 @@ class TestDeclineBooking(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending") & Q(booking_time=one_hour_ago))
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
+
+                if not data_list:  # No bookings accepted by any driver
+                    return Response({'data': []}, status=status.HTTP_200_OK)
+                else:
+                    revers_records = data_list[::-1]
+                    return Response({'data': revers_records}, status=status.HTTP_200_OK)
                     
-                revers_recors= data_list[::-1]
-                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
+                # revers_recors= data_list[::-1]
+                # return Response({'data':revers_recors}, status=status.HTTP_200_OK)
             
             else:
                 return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
@@ -1253,7 +1260,7 @@ class TestAgentDeclineBooking(APIView):
         user = request.user
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
-    
+        one_hour_ago = datetime.now() - timedelta(hours=1)
 
         # Check if the user is a notified driver
         #try:
@@ -1266,7 +1273,7 @@ class TestAgentDeclineBooking(APIView):
             data_list = []
             for booking_idd in notify_driver_data:
                 
-                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending"))
+                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending") & Q (booking_time=one_hour_ago))
                 
                 decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
                 
@@ -1286,3 +1293,27 @@ class TestAgentDeclineBooking(APIView):
         else:
             return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
             
+class dashboardbooking(APIView):
+    """
+    Using this api we are getting live booking analytics
+    """
+    def get(self, request):
+        bookingfor="local"
+        outstation_booking="outstation"
+        drop="drop"
+        filter_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
+        local_booking_count=filter_booking.count()
+        print("Local count:", local_booking_count)
+
+        #OutStation booking count
+        outs_booking=AgentBooking.objects.filter(bookingfor=outstation_booking)
+        outcount=outs_booking.count()
+        print("Out count:", outcount)
+
+        #Drop Booking Count
+        drop_booking=AgentBooking.objects.filter(bookingfor=drop)
+        dropcount=drop_booking.count()
+        print("Drop booking:", dropcount)
+
+        #serializer=Agentbookingserailizer(filter_booking,many=True)
+        return Response({'msg':'Local booking', 'local_booking_count':local_booking_count, 'outcount':outcount, 'dropcount':dropcount})
