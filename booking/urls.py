@@ -45,7 +45,7 @@ urlpatterns = [
     path('agent_booking/<int:id>/', views.AgentDetailView.as_view(), name='agent-booking-id'),
 
     # if driver cancel then booking float again
-    path('agent_booking_reshedule/<int:id>/', views.AgentBookingReshedule.as_view(), name='reshudle_booking'), 
+    path('agent_booking_reschedule/<int:id>/', views.AgentBookingReshedule.as_view(), name='reshudle_booking'), 
 
     path('updaterecods/<int:id>/', views.Agentbookingview.as_view(), name='update_agentbooking'),
 
