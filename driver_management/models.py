@@ -322,7 +322,7 @@ class Driverappstatus(models.Model):
     paymentamount=models.BigIntegerField(null=True, blank=True)
     tax_amount=models.BigIntegerField(null=True, blank=True)
     total_amount_paid=models.BigIntegerField(null=True, blank=True)
-    last_profile_update_date = models.DateField()
+    last_profile_update_date = models.DateField(auto_now_add=True)
     is_paid=models.BooleanField(null=True, blank=True, default=False)
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
     recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)

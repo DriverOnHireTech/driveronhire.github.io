@@ -74,3 +74,4 @@ class getsingleuserprofile(APIView):
           profile=UserProfile.objects.get(id=id)
           serializer=UserProfileSerializer(profile)
           return Response({'msg':'single profile', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+          

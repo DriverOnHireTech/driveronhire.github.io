@@ -28,7 +28,8 @@ class InvoiceGenerate(APIView):
             package_value = Placebooking_data.get('packege')
 
             # Convert deuty_started to a datetime object with timezone information
-            deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
+            deuty_started_datetime = datetime.combine(datetime.today(), deuty_started_time)
+            deuty_started_datetime = deuty_started_datetime.replace(tzinfo=timezone.utc)
 
             # Make sure deuty_end_datetime has timezone information (if not already)
             if deuty_end_datetime.tzinfo is None:
@@ -149,7 +150,7 @@ class InvoiceGenerate(APIView):
                             
             def total_price():
                 base_charge = base_price()
-                if deuty_started_datetime.date() != deuty_end_datetime.date():
+                if deuty_started_datetime.date() == deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
                         charge_with_night_allowance = base_charge + 200
                         total_charge = charge_with_night_allowance + outskirt_charge
@@ -184,7 +185,7 @@ class InvoiceGenerate(APIView):
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge
                 # inv_seri.validated_data['additional_hours'] = additional_hours
                 # inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
-                # inv_seri.validated_data['user_id'] = user.id
+                # inv_seri.validated_data['user_id'] = driver_id
                 # print("data: ", data)
                 inv_seri.save()
                 print("serializer data: ", inv_seri.validated_data )
