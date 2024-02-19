@@ -93,6 +93,7 @@ class PlaceBooking(models.Model):
     deuty_end=models.DateTimeField( null=True, blank=True)
     journy_started=models.CharField(max_length=100, choices=journys, default='pending')
     booking_time=models.DateTimeField(auto_now_add=True)
+    driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE, related_name='driver_name', null=True, blank=True)
     
    
     def __str__(self):
