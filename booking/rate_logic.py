@@ -16,7 +16,7 @@ class InvoiceGenerate(APIView):
         Placebooking_data_id = PlaceBooking.objects.get(id=placebooking_id)
         booking_type = Placebooking_data['booking_type']
         trip_type = Placebooking_data['trip_type']
-        car_type = Placebooking_data['car_type']      
+        car_type = Placebooking_data['car_type']  
 
         user = request.user
 
@@ -28,8 +28,7 @@ class InvoiceGenerate(APIView):
             package_value = Placebooking_data.get('packege')
 
             # Convert deuty_started to a datetime object with timezone information
-            deuty_started_datetime = datetime.combine(datetime.today(), deuty_started_time)
-            deuty_started_datetime = deuty_started_datetime.replace(tzinfo=timezone.utc)
+            deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
 
             # Make sure deuty_end_datetime has timezone information (if not already)
             if deuty_end_datetime.tzinfo is None:
@@ -169,6 +168,7 @@ class InvoiceGenerate(APIView):
                 return total_charge, base_charge, night_charge, outskirt_charge
 
             price = total_price()
+            print ("price :", price)
             total_price = price[0]
             base_price = price[1]
             night_charge = price[2]
