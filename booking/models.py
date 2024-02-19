@@ -219,7 +219,7 @@ class Invoice(models.Model):
     driver = models.ForeignKey(AddDriver, on_delete=models.CASCADE, null=True, blank=True)
     placebooking = models.ForeignKey(PlaceBooking, on_delete=models.CASCADE,null=True, blank=True)
     add_favourite = models.BooleanField(default=False, null=True, blank=True)
-    invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
+    # invoice_generate =  models.DateTimeField(auto_now_add=True,null=True, blank=True)
     base_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
     night_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)
     outskirt_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, default=0)

@@ -93,7 +93,8 @@ CORS_ORIGIN_WHITELIST = (
     'https://driversonhire.in',
     'https://driveronhire.com',
     'https://www.driveronhire.com',
-    'http://driveronhire.com.s3-website.us-east-2.amazonaws.com' #driveronhire.com 
+    'http://driveronhire.com.s3-website.us-east-2.amazonaws.com', #driveronhire.com 
+    'https://dohfrontend.vercel.app', 
 
 )
 
