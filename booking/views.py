@@ -590,6 +590,7 @@ class Agentbookingview(APIView):
         
         data=request.data
         request_type=data['request_type']
+        id=data['id']
         user=request.user
         if request_type=="Normal":
             client_name =data['client_name']
@@ -663,7 +664,7 @@ class Agentbookingview(APIView):
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
-                                body=f"Trip Type:{booking_for}\n Car Type:{car_type}",
+                                body=f"Booking id:{id}\n Trip Type:{booking_for}\n Car Type:{car_type} \n Trip type:{trip_type}",
                                 
                             ),
                             token= token 
@@ -755,19 +756,6 @@ class Agentbookingview(APIView):
         page = request.query_params.get('page', 1)
 
         try:
-
-            # mobile_number= request.GET.get('mobile_number')
-            # client_name= request.GET.get('client_name')
-            # if(mobile_number or client_name):
-            #     clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name)).order_by('-id')
-            #     serializer = Agentbookingserailizer(clinet_data, many=True)
-            #     pagination = cutomepegination()
-            #     paginated_queryset = pagination.paginate_queryset(clinet_data, request)
-            #     serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
-
-            #     # Return the paginated response
-            #     return pagination.get_paginated_response(serialized_data.data)
-            # else:
             alldata=AgentBooking.objects.filter(Q(guest_booking=False) | Q(guest_booking=True, status="active")).order_by('-id')
             number_of_booking=alldata.count()
             serializer = Agentbookingserailizer(alldata, many=True)
@@ -819,6 +807,8 @@ class AgentBookingReshedule(APIView):
         try:
             booking = AgentBooking.objects.get(id=id)
             booking.status = "pending"
+            booking_for=booking.bookingfor
+            package=booking.packege
             booking.driver_name = None
             booking.accepted_driver = None
             booking.save()
@@ -836,7 +826,7 @@ class AgentBookingReshedule(APIView):
                 message = messaging.Message(
                     notification=messaging.Notification(
                         title="Booking Updated",
-                        body=f"Booking ID: {booking.id} status updated to pending."
+                        body=f"Booking ID: {booking.id} \n Booking type:{booking_for}\n Booking package:{package}."
                     ),
                     token=token
                 )
@@ -1214,6 +1204,7 @@ class TestDeclineBooking(APIView):
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
         one_hour_ago = datetime.now() - timedelta(hours=1)
+        print(f"Time:{one_hour_ago}")
 
         #Get client booking time 
         # client_booking_time = request.data.get('client_booking_time')
@@ -1229,11 +1220,12 @@ class TestDeclineBooking(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending") & Q(booking_time=one_hour_ago))
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending") & Q(booking_time__lte=one_hour_ago))
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
+                    data_list = [booking for booking in data_list if datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%fZ') >= one_hour_ago]
 
                 if not data_list:  # No bookings accepted by any driver
                     return Response({'data': []}, status=status.HTTP_200_OK)
