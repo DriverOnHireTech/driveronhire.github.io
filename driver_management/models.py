@@ -340,10 +340,8 @@ def update_package_status(sender, instance, **kwargs):
         # If conditions met, update status to inactive
         instance.status = 'inactive'
         if instance.driver_name:
-            print("driver name: ", instance.driver_name.driving_status)
 
             if instance.driver_name.driving_status=="Approve":
-                print("this line executed")
                 instance.driver_name.driving_status="Reject"
                 instance.driver_name.save()
 """End App Status"""
