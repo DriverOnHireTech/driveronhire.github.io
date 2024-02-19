@@ -16,7 +16,7 @@ class InvoiceGenerate(APIView):
         Placebooking_data_id = PlaceBooking.objects.get(id=placebooking_id)
         booking_type = Placebooking_data['booking_type']
         trip_type = Placebooking_data['trip_type']
-        car_type = Placebooking_data['car_type']      
+        car_type = Placebooking_data['car_type']   
 
         user = request.user
 
@@ -28,8 +28,7 @@ class InvoiceGenerate(APIView):
             package_value = Placebooking_data.get('packege')
 
             # Convert deuty_started to a datetime object with timezone information
-            deuty_started_datetime = datetime.combine(datetime.today(), deuty_started_time)
-            deuty_started_datetime = deuty_started_datetime.replace(tzinfo=timezone.utc)
+            deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
 
             # Make sure deuty_end_datetime has timezone information (if not already)
             if deuty_end_datetime.tzinfo is None:
@@ -156,8 +155,9 @@ class InvoiceGenerate(APIView):
                         total_charge = charge_with_night_allowance + outskirt_charge
                         return total_charge
                     else:
+                        night_charge = 0
                         total_charge = base_charge + outskirt_charge
-                        return total_charge
+                        return total_charge, base_charge, night_charge, outskirt_charge
                 else:
                     night_charge = 200
                     print("Night charge: ",night_charge)
@@ -166,21 +166,22 @@ class InvoiceGenerate(APIView):
                 print("total charge: ", total_charge)   
                 
 
-                return total_charge, base_charge, night_charge, outskirt_charge
+                return total_charge, base_charge
 
             price = total_price()
-            total_price = price[0]
+            print(price)
+            total_price_value = price[0]
             base_price = price[1]
             night_charge = price[2]
             outskirt_charge = price[3]
             # additional_hours = price[4]
             # extra_hour_charge = additional_hours*100
-            print("data : ", data)
+            print("data : ", price)
             inv_seri =  InvoiceSerializer(data = data)
             if inv_seri.is_valid():
                 inv_seri.validated_data['placebooking'] = Placebooking_data_id
                 inv_seri.validated_data['base_charge'] = base_price
-                inv_seri.validated_data['total_charge'] = total_price
+                inv_seri.validated_data['total_charge'] = total_price_value
                 inv_seri.validated_data['night_charge'] = night_charge
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge
                 # inv_seri.validated_data['additional_hours'] = additional_hours
