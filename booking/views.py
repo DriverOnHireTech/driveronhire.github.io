@@ -1213,6 +1213,7 @@ class TestDeclineBooking(APIView):
         user = request.user
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
+        one_hour_ago = datetime.now() - timedelta(hours=1)
 
         #Get client booking time 
         # client_booking_time = request.data.get('client_booking_time')
@@ -1228,7 +1229,7 @@ class TestDeclineBooking(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending") & Q(booking_time=one_hour_ago))
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
