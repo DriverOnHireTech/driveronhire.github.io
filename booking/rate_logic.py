@@ -184,7 +184,7 @@ class InvoiceGenerate(APIView):
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge
                 # inv_seri.validated_data['additional_hours'] = additional_hours
                 # inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
-                # inv_seri.validated_data['user_id'] = user.id
+                inv_seri.validated_data['driver'] = AddDriver.objects.get(id=driver_id)
                 # print("data: ", data)
                 inv_seri.save()
                 print("serializer data: ", inv_seri.validated_data )

@@ -756,27 +756,27 @@ class Agentbookingview(APIView):
 
         try:
 
-            mobile_number= request.GET.get('mobile_number')
-            client_name= request.GET.get('client_name')
-            if(mobile_number or client_name):
-                clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name)).order_by('-id')
-                serializer = Agentbookingserailizer(clinet_data, many=True)
-                pagination = cutomepegination()
-                paginated_queryset = pagination.paginate_queryset(clinet_data, request)
-                serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
+            # mobile_number= request.GET.get('mobile_number')
+            # client_name= request.GET.get('client_name')
+            # if(mobile_number or client_name):
+            #     clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name)).order_by('-id')
+            #     serializer = Agentbookingserailizer(clinet_data, many=True)
+            #     pagination = cutomepegination()
+            #     paginated_queryset = pagination.paginate_queryset(clinet_data, request)
+            #     serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
 
-                # Return the paginated response
-                return pagination.get_paginated_response(serialized_data.data)
-            else:
-                alldata=AgentBooking.objects.all().order_by('-id')
-                number_of_booking=alldata.count()
-                serializer = Agentbookingserailizer(alldata, many=True)
-                pagination = cutomepegination()
-                paginated_queryset = pagination.paginate_queryset(alldata, request)
-                serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
+            #     # Return the paginated response
+            #     return pagination.get_paginated_response(serialized_data.data)
+            # else:
+            alldata=AgentBooking.objects.filter(Q(guest_booking=False) | Q(guest_booking=True, status="active")).order_by('-id')
+            number_of_booking=alldata.count()
+            serializer = Agentbookingserailizer(alldata, many=True)
+            pagination = cutomepegination()
+            paginated_queryset = pagination.paginate_queryset(alldata, request)
+            serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
 
-                # Return the paginated response
-                return pagination.get_paginated_response(serialized_data.data)
+            # Return the paginated response
+            return pagination.get_paginated_response(serialized_data.data)
 
 
             serializer = Agentbookingserailizer(page, many=True)
@@ -791,11 +791,11 @@ class Agentbookingview(APIView):
     
     def patch(self, request, id):
         data=request.data
-        user =request.user
+        user = request.user
         agent_booking= AgentBooking.objects.get(id=id)
         serializer= Agentbookingserailizer(agent_booking, data=data, partial=True)
         if serializer.is_valid():
-                serializer.validated_data['booking_created_by_name']=user.first_name
+                serializer.validated_data['booking_created_by_name'] = user.first_name
                 serializer.save()
                 return Response({'msg':'Booking is updated', 'data':serializer.data}, status=status.HTTP_200_OK)
         else:
@@ -921,9 +921,16 @@ class Agentbookingfilterquary(APIView):
             mobile_number= request.GET.get('mobile_number')
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
-            to_date=request.GET.get('to_date')         
+            to_date=request.GET.get('to_date')
+            id = request.GET.get('id')         
 
-            if mobile_number and status and bookingfor and to_date:
+            if id:
+                pending_booking=AgentBooking.objects.filter(id=id)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
+            elif mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
