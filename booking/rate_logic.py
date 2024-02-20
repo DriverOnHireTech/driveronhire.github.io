@@ -151,9 +151,12 @@ class InvoiceGenerate(APIView):
                 base_charge = base_price()
                 if deuty_started_datetime.date() == deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
+                        night_charge = 200
                         charge_with_night_allowance = base_charge + 200
+                        
                         total_charge = charge_with_night_allowance + outskirt_charge
-                        return total_charge
+                        print(type(outskirt_charge))
+                        return total_charge, base_charge, night_charge, outskirt_charge
                     else:
                         night_charge = 0
                         total_charge = base_charge + outskirt_charge
@@ -169,7 +172,7 @@ class InvoiceGenerate(APIView):
                 return total_charge, base_charge
 
             price = total_price()
-            print(price)
+            print("price", price)
             total_price_value = price[0]
             base_price = price[1]
             night_charge = price[2]

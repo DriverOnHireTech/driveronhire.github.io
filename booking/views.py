@@ -754,7 +754,6 @@ class Agentbookingview(APIView):
 
     def get(self, request):
         page = request.query_params.get('page', 1)
-        print("This line")
         try:
             mobile_number= request.GET.get('mobile_number')
             client_name= request.GET.get('client_name')
@@ -1237,7 +1236,7 @@ class TestDeclineBooking(APIView):
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
-                    data_list = [booking for booking in data_list if datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%fZ') >= one_hour_ago]
+                    #data_list = [booking for booking in data_list if datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%fZ') >= one_hour_ago]
 
                 if not data_list:  # No bookings accepted by any driver
                     return Response({'data': []}, status=status.HTTP_200_OK)
