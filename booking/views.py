@@ -562,11 +562,18 @@ class Agentbookingview(APIView):
             # message_number = f"+91{mobile_number}"
             whatsapp_number = f"whatsapp:+91{mobile_number}"
             bookingfor=request.data['bookingfor']
+            pickup_location=request.data['pickup_location']
+            drop_location=request.data['drop_location']
+
+            pickup_zone = zone_get(pickup_location)
+            drop_zone = zone_get(drop_location)
+            extra_charges = return_charges(pickup_zone, drop_zone)
 
             # if AgentBooking.objects.filter(id=id).exists():
             serializer= Agentbookingserailizer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by_name']=user.first_name
+                serializer.validated_data['outskirt_charge']=extra_charges
                 serializer.save()
 
                 user_location_point = Point(latitude, longitude, srid=4326)
@@ -701,9 +708,7 @@ class Agentbookingview(APIView):
                     return Response({'msg':'Guest booking done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({'msg':'Guest booking not done'}, status=status.HTTP_204_NO_CONTENT)
-
-        
-        
+ 
 
     pagination_class = PageNumberPagination
 
