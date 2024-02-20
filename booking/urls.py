@@ -24,7 +24,11 @@ urlpatterns = [
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
-    path('invoice/', InvoiceGenerate.as_view(), name='invoice'),
+    # invoice for placebooking
+    path('invoice/', InvoiceGenerate.as_view(), name='invoice'), 
+
+    # Invoice for agent booking
+    path('invoice_agent/', InvoiceGenerateAgent.as_view(), name='invoice-agent'),
 
     path('invoice/<int:id>/', InvoiceGenerate.as_view(), name='get_invoice'),
 
