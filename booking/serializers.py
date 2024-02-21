@@ -59,7 +59,6 @@ class DriverSerializer(serializers.ModelSerializer):
 
 class InvoiceSerializer(serializers.ModelSerializer):
     
-    # driver =  serializers.SerializerMethodField()
     placebooking = serializers.SerializerMethodField()
     driver=serializers.SerializerMethodField()
     class Meta:
@@ -80,7 +79,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
 class InvoiceSerializerAgent(serializers.ModelSerializer):
     
-    # driver =  serializers.SerializerMethodField()
     agentbooking = serializers.SerializerMethodField()
     driver=serializers.SerializerMethodField()
     class Meta:
@@ -111,7 +109,6 @@ class Feedbackserializer(serializers.ModelSerializer):
 class Agentbookingserailizer(serializers.ModelSerializer):
 
     class Meta:
-        # driver_name=serializers.SerializerMethodField()
         driver_name = MyDriverSerializer()
         model= AgentBooking
         fields= "__all__"
