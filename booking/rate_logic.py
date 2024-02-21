@@ -24,7 +24,11 @@ class InvoiceGenerate(APIView):
             packege = Placebooking_data['packege']
             outskirt_charge = Placebooking_data['outskirt_charge']
             deuty_started_time = Placebooking_data.get('deuty_started')
+            deuty_started_time += timedelta(hours=5, minutes=30)
+            print('deuty_started_time', deuty_started_time)
             deuty_end_datetime = Placebooking_data.get('deuty_end')
+            deuty_end_datetime += timedelta(hours=5, minutes=30)
+            print('deuty_end_datetime', deuty_end_datetime)
             package_value = Placebooking_data.get('packege')
 
             # Convert deuty_started to a datetime object with timezone information
@@ -45,136 +49,138 @@ class InvoiceGenerate(APIView):
                         if packege == "2hrs":
                             if time_difference < timedelta(hours=2):
                                 print("This is luxury car 2 hour")
-                                return 500
+                                return 500, 0, 0
                             else:
                                 # Calculate the number of additional hours (rounded up)
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 # Add 100 for each additional hour beyond 4 hours
                                 additional_cost = (additional_hours * 100) -200
                                 bill = 500 + additional_cost
-                                return bill
+                                return 500, 0, additional_cost
                         elif packege == "4hrs":
                             if time_difference < timedelta(hours=4):
-                                return 600
+                                return 600, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 600 + additional_cost
-                                return bill
+                                return 600, 0, additional_cost
                         elif packege == "8hrs":
                             if time_difference < timedelta(hours=8):
-                                return 900
+                                return 900, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 900 + additional_cost
-                                return bill
+                                return 900, 0, additional_cost
                     else:
                         if packege == "2hrs":
                             if time_difference < timedelta(hours=2):
-                                return 400
+                                return 400, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100)-200
                                 bill = 400 + additional_cost
-                                return bill
+                                return 400, 0, additional_cost
                         elif packege == "4hrs":
                             if time_difference < timedelta(hours=4):
-                                return 500
+                                return 500, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) -400
                                 bill = 500 + additional_cost
-                                return bill
+                                return 500, 0, additional_cost
                         elif packege == "8hrs":
                             if time_difference < timedelta(hours=8):
-                                return 800
+                                return 800, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 800 + additional_cost
-                                return bill
+                                return 800, 0, additional_cost
 
                 elif trip_type == "oneWay":
                     if car_type == "Luxury":
                         if packege == "2hrs":
                             if time_difference < timedelta(hours=2):
-                                return 600
+                                return 500, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 200
                                 bill = 600 + additional_cost
-                                return bill
+                                return 500, 100, additional_cost
                         elif packege == "4hrs":
                             if time_difference < timedelta(hours=4):
-                                return 700
+                                return 600, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 700 + additional_cost
-                                return bill
+                                return 600, 100, additional_cost
                         elif packege == "8hrs":
                             if time_difference < timedelta(hours=8):
-                                return 1000
+                                return 900, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 1000 + additional_cost
-                                return bill
+                                return 900, 100, additional_cost
                     else:
                         if packege == "2hrs":
                             if time_difference < timedelta(hours=2):
-                                return 500
+                                return 400, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 200
                                 bill = 500 + additional_cost
-                                return bill
+                                return 400, 100, additional_cost
                         elif packege == "4hrs":
                             if time_difference < timedelta(hours=4):
-                                return 600
+                                return 500, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 600 + additional_cost
-                                return bill
+                                return 500, 100, additional_cost
                         elif packege == "8hrs":
                             if time_difference < timedelta(hours=8):
-                                return 900
+                                return 800, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 900 + additional_cost
-                                return bill
+                                return 800, 100, additional_cost
                             
             def total_price():
-                base_charge = base_price()
+                all_charges = base_price()
+                base_charge = all_charges[0]
+                one_way_charge = all_charges[1]
+                extra_hour_charge = all_charges[2]
+
                 if deuty_started_datetime.date() == deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
                         night_charge = 200
-                        charge_with_night_allowance = base_charge + 200
-                        total_charge = charge_with_night_allowance + outskirt_charge
-                        return total_charge, base_charge, night_charge, outskirt_charge
+                        total_charge = base_charge + night_charge + outskirt_charge + one_way_charge + extra_hour_charge
+                        return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
                     else:
                         night_charge = 0
-                        total_charge = base_charge + outskirt_charge
-                        return total_charge, base_charge, night_charge, outskirt_charge
+                        total_charge = base_charge + night_charge + outskirt_charge + one_way_charge + extra_hour_charge
+                        return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
                 else:
                     night_charge = 200
                     print("Night charge: ",night_charge)
 
-                total_charge = base_charge + night_charge + outskirt_charge 
-                
-
-                return total_charge, base_charge
+                    total_charge = base_charge + night_charge + outskirt_charge + one_way_charge + extra_hour_charge
+                    return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
 
             price = total_price()
             total_price_value = price[0]
             base_price = price[1]
             night_charge = price[2]
             outskirt_charge = price[3]
+            one_way_charge = price[4]
+            extra_hour_charge = price[5]
             # additional_hours = price[4]
-            # extra_hour_charge = additional_hours*100
             inv_seri =  InvoiceSerializer(data = data)
             if inv_seri.is_valid():
                 inv_seri.validated_data['placebooking'] = Placebooking_data_id
@@ -182,8 +188,8 @@ class InvoiceGenerate(APIView):
                 inv_seri.validated_data['total_charge'] = total_price_value
                 inv_seri.validated_data['night_charge'] = night_charge
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge
-                # inv_seri.validated_data['additional_hours'] = additional_hours
-                # inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
+                inv_seri.validated_data['one_way_charge'] = one_way_charge
+                inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
                 inv_seri.validated_data['driver'] = AddDriver.objects.get(id=driver_id)
                 # print("data: ", data)
                 inv_seri.save()
@@ -312,137 +318,138 @@ class InvoiceGenerateAgent(APIView):
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
                                 print("This is luxury car 2 hour")
-                                return 500
+                                return 500, 0, 0
                             else:
                                 # Calculate the number of additional hours (rounded up)
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 # Add 100 for each additional hour beyond 4 hours
                                 additional_cost = (additional_hours * 100) -200
                                 bill = 500 + additional_cost
-                                return bill
+                                return 500, 0, additional_cost
                         elif packege == "4":
                             if time_difference < timedelta(hours=4):
-                                return 600
+                                return 600, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 600 + additional_cost
-                                return bill
+                                return 600, 0, additional_cost
                         elif packege == "8":
                             if time_difference < timedelta(hours=8):
-                                return 900
+                                return 900, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 900 + additional_cost
-                                return bill
+                                return 900, 0, additional_cost
                     else:
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
-                                return 400
+                                return 400, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100)-200
                                 bill = 400 + additional_cost
-                                return bill
+                                return 400, 0, additional_cost
                         elif packege == "4":
                             if time_difference < timedelta(hours=4):
-                                return 500
+                                return 500, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) -400
                                 bill = 500 + additional_cost
-                                return bill
+                                return 500, 0, additional_cost
                         elif packege == "8":
                             if time_difference < timedelta(hours=8):
-                                return 800
+                                return 800, 0, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 800 + additional_cost
-                                return bill
+                                return 800, 0, additional_cost
 
                 elif trip_type == "One Way":
                     if car_type == "Luxury" or "SUV Luxury" or "Sedan Luxury":
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
-                                return 600
+                                return 500, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 200
                                 bill = 600 + additional_cost
-                                return bill
+                                return 500, 100, additional_cost
                         elif packege == "4":
                             if time_difference < timedelta(hours=4):
-                                return 700
+                                return 600, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 700 + additional_cost
-                                return bill
+                                return 600, 100, additional_cost
                         elif packege == "8":
                             if time_difference < timedelta(hours=8):
-                                return 1000
+                                return 900, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 1000 + additional_cost
-                                return bill
+                                return 900, 100, additional_cost
                     else:
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
-                                return 500
+                                return 400, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 200
                                 bill = 500 + additional_cost
-                                return bill
+                                return 400, 100, additional_cost
                         elif packege == "4":
                             if time_difference < timedelta(hours=4):
-                                return 600
+                                return 500, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 400
                                 bill = 600 + additional_cost
-                                return bill
+                                return 500, 100, additional_cost
                         elif packege == "8":
                             if time_difference < timedelta(hours=8):
-                                return 900
+                                return 800, 100, 0
                             else:
                                 additional_hours = int((time_difference.total_seconds() - 1) // 3600) + 1
                                 additional_cost = (additional_hours * 100) - 800
                                 bill = 900 + additional_cost
-                                return bill
+                                return 800, 100, additional_cost
                             
             def total_price():
-                base_charge = base_price()
-                print("base charge: ", base_charge)
+                all_charges = base_price()
+                base_charge = all_charges[0]
+                one_way_charge = all_charges[1]
+                extra_hour_charge = all_charges[2]
+
                 if deuty_started_datetime.date() == deuty_end_datetime.date():
                     if deuty_end_datetime.time() > time(23, 0) or deuty_started_datetime.time() < time(6, 0):
                         night_charge = 200
                         charge_with_night_allowance = base_charge + 200
-                        total_charge = charge_with_night_allowance + outskirt_charge
-                        return total_charge, base_charge, night_charge, outskirt_charge
+                        total_charge = base_charge + night_charge + outskirt_charge + one_way_charge + extra_hour_charge
+                        return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
                     else:
                         night_charge = 0
-                        total_charge = base_charge + outskirt_charge
-                        return total_charge, base_charge, night_charge, outskirt_charge
+                        total_charge = base_charge + night_charge + outskirt_charge + one_way_charge + extra_hour_charge
+                        return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
                 else:
                     night_charge = 200
                     print("Night charge: ",night_charge)
-
-                total_charge = base_charge + night_charge + outskirt_charge 
-                
-
-                return total_charge, base_charge
+                    total_charge = base_charge + night_charge + outskirt_charge + one_way_charge + extra_hour_charge
+                    return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
 
             price = total_price()
             total_price_value = price[0]
             base_price = price[1]
             night_charge = price[2]
             outskirt_charge = price[3]
+            one_way_charge = price[4]
+            extra_hour_charge = price[5]
             # additional_hours = price[4]
-            # extra_hour_charge = additional_hours*100
             inv_seri =  InvoiceSerializerAgent(data = data)
             if inv_seri.is_valid():
                 inv_seri.validated_data['agentbooking'] = Placebooking_data_id
@@ -450,8 +457,8 @@ class InvoiceGenerateAgent(APIView):
                 inv_seri.validated_data['total_charge'] = total_price_value
                 inv_seri.validated_data['night_charge'] = night_charge
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge
-                # inv_seri.validated_data['additional_hours'] = additional_hours
-                # inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
+                inv_seri.validated_data['one_way_charge'] = one_way_charge
+                inv_seri.validated_data['extra_hour_charge'] = extra_hour_charge
                 inv_seri.validated_data['driver'] = AddDriver.objects.get(id=driver_id)
                 # print("data: ", data)
                 inv_seri.save()

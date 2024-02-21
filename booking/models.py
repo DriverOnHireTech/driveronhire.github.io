@@ -228,6 +228,7 @@ class Invoice(models.Model):
     outskirt_charge = models.IntegerField(null=True, blank=True, default=0)
     extra_hour_charge = models.IntegerField( null=True, blank=True, default=0)
     additional_hours = models.IntegerField(null=True, blank=True, default=0)  # New field for additional hours
+    one_way_charge = models.IntegerField(null=True, blank=True, default=0)
     total_charge = models.IntegerField( null=True, blank=True, default=0)
 
     # def __str__(self):
