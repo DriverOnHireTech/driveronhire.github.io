@@ -43,6 +43,7 @@ class MyBookingList(APIView):
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
 
+
         pickup_zone = zone_get(pickup_location)
         drop_zone = zone_get(drop_location)
         extra_charges = return_charges(pickup_zone, drop_zone)
@@ -130,7 +131,7 @@ class MyBookingList(APIView):
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
-                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
+                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\n Pickup Location:{pickup_location}\nDrop Location:{drop_location}"
                                     
                                 ),
                                 token= token 
@@ -1152,12 +1153,7 @@ class TestDeclineBooking(APIView):
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
         one_hour_ago = datetime.now() - timedelta(hours=1)
-        print(f"Time:{one_hour_ago}")
 
-        #Get client booking time 
-        # client_booking_time = request.data.get('client_booking_time')
-        # print("Client booking time:", client_booking_time)
-        # print("Request data:", request.data)
 
         # Check if the user is a notified driver
         try:
@@ -1173,7 +1169,14 @@ class TestDeclineBooking(APIView):
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
-                    #data_list = [booking for booking in data_list if datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%fZ') >= one_hour_ago]
+                # Filter out bookings older than 1 hour
+                filtered_data_list = []
+                print("Blank list")
+                for booking in data_list:
+                    booking_time = datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%f%z')
+                    if booking_time >= one_hour_ago:
+                        filtered_data_list.append(booking)
+                        print("After list")
 
                 if not data_list:  # No bookings accepted by any driver
                     return Response({'data': []}, status=status.HTTP_200_OK)

@@ -144,6 +144,8 @@ class AgentBooking(models.Model):
     Alternet_number= models.BigIntegerField(null=True, blank=True)
     email=models.EmailField(null=True, blank=True)
     address=models.CharField(max_length=500, null=True, blank=True)
+    visiting_location= models.CharField(max_length=200, null=True, blank=True)
+    drop_location=models.CharField(max_length=300, null=True, blank=True)
     client_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
     car_company= models.CharField(max_length=100, null=True, blank=True)
     car_type = models.CharField(max_length=100, blank=True, null=True)
