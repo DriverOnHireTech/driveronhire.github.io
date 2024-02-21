@@ -231,6 +231,7 @@ class Invoice(models.Model):
     outskirt_charge = models.IntegerField(null=True, blank=True, default=0)
     extra_hour_charge = models.IntegerField( null=True, blank=True, default=0)
     additional_hours = models.IntegerField(null=True, blank=True, default=0)  # New field for additional hours
+    one_way_charge = models.IntegerField(null=True, blank=True, default=0)
     total_charge = models.IntegerField( null=True, blank=True, default=0)
 
     # def __str__(self):
@@ -323,7 +324,6 @@ class Declinebooking1(models.Model):
     agentbooking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
     refuse_driver_user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     refuse_time=models.DateField(auto_now_add=True)
-
 
     def __str__(self):
         return str(self.placebooking)

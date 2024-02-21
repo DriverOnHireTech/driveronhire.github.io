@@ -85,12 +85,11 @@ class getsingleuser(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        logged_user=request.user
         data =  request.data
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(request, phone=phone,password=password)
-        
+
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)
@@ -179,3 +178,20 @@ class VerifyOTPAPIView(APIView):
             return Response({'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+#Patch request for first name update
+class firtsnameupdate(APIView):
+    authentication_classes=[TokenAuthentication]
+    permission_classes=[IsAuthenticated]
+    def patch(self, request):
+        user = request.user
+        data=request.data
+        first_name=data.get('first_name')
+        serializer=NewUserSerializer(instance=user,data=data,partial=True)
+        if serializer.is_valid():
+            serializer.validated_data['first_name']=first_name
+            serializer.save()
+            return Response ({'msg':'First name updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
+        else:
+            return Response ({'msg':'First name not updated'}, status=status.HTTP_204_NO_CONTENT)
