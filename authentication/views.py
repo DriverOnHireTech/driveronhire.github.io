@@ -85,12 +85,11 @@ class getsingleuser(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        logged_user=request.user
         data =  request.data
         phone = data.get('phone')
         password = data.get('password')
         user = authenticate(request, phone=phone,password=password)
-        
+
         if user is not None:
             login(request, user)
             token,created = Token.objects.get_or_create(user=user)

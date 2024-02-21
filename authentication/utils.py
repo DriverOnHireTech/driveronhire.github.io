@@ -80,7 +80,7 @@ def gupshupsms(self, phone, otp):
     payload = {
         "method": "sendMessage",
         "send_to": phone,
-        "msg": """Your OTP is {} For booking a driver from driveronhire""".format(otp),
+        "msg": """Your OTP is {} for booking a driver from driveronhire""".format(otp),
         "msg_type": "TEXT",
         "userid": "2000142458",
         "auth_scheme": "PLAIN",
@@ -110,6 +110,24 @@ https://driveronhire.com/rates/""".format(drivername,drivernumber),
     response = requests.post(url, data=payload)
     return response
 
+def agnbookingpro(self, phone):
+    url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
+    payload = {
+        "method": "sendMessage",
+        "send_to": phone,
+        "msg": """Dear Customer, Your booking for 123 at 123 has been processed, we will share the driver details shortly. Driveronhire.""".format(drivername,drivernumber),
+        "msg_type": "TEXT",
+        "userid": "2000142458",
+        "auth_scheme": "PLAIN",
+        "password": "9892098920",
+        "format": "JSON"
+    }
+
+    response = requests.post(url, data=payload)
+    return response
+
+
+
 #Gupshup whatsapp function
 def gupshupwhatsapp(self, phone, msg):
     url= "https://media.smsgupshup.com/GatewayAPI/rest"
@@ -126,3 +144,6 @@ def gupshupwhatsapp(self, phone, msg):
 
     response = requests.post(url, data=payload)
     return response
+
+
+

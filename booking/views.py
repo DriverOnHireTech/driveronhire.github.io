@@ -43,6 +43,7 @@ class MyBookingList(APIView):
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
 
+
         pickup_zone = zone_get(pickup_location)
         drop_zone = zone_get(drop_location)
         extra_charges = return_charges(pickup_zone, drop_zone)
@@ -130,7 +131,7 @@ class MyBookingList(APIView):
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
-                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\nPickup Location:{pickup_location}\nDrop Location{drop_location}"
+                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\n Pickup Location:{pickup_location}\nDrop Location:{drop_location}"
                                     
                                 ),
                                 token= token 
@@ -545,7 +546,6 @@ class Agentbookingview(APIView):
         
         data=request.data
         request_type=data['request_type']
-        id=data['id']
         user=request.user
         if request_type=="Normal":
             client_name =data['client_name']
@@ -626,7 +626,7 @@ class Agentbookingview(APIView):
                         message = messaging.Message(
                             notification=messaging.Notification(
                                 title="New Booking",
-                                body=f"Booking id:{id}\n Trip Type:{booking_for}\n Car Type:{car_type} \n Trip type:{trip_type}",
+                                body=f"Trip Type:{booking_for}\n Car Type:{car_type} \n Trip type:{trip_type}",
                                 
                             ),
                             token= token 
@@ -714,17 +714,28 @@ class Agentbookingview(APIView):
 
     def get(self, request):
         page = request.query_params.get('page', 1)
-
         try:
-            alldata=AgentBooking.objects.filter(Q(guest_booking=False) | Q(guest_booking=True, status="active")).order_by('-id')
-            number_of_booking=alldata.count()
-            serializer = Agentbookingserailizer(alldata, many=True)
-            pagination = cutomepegination()
-            paginated_queryset = pagination.paginate_queryset(alldata, request)
-            serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
+            mobile_number= request.GET.get('mobile_number')
+            client_name= request.GET.get('client_name')
+            if(mobile_number or client_name):
+                clinet_data=AgentBooking.objects.filter(Q(mobile_number=mobile_number) | Q(client_name=client_name)).order_by('-id')
+                serializer = Agentbookingserailizer(clinet_data, many=True)
+                pagination = cutomepegination()
+                paginated_queryset = pagination.paginate_queryset(clinet_data, request)
+                serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
 
-            # Return the paginated response
-            return pagination.get_paginated_response(serialized_data.data)
+                # Return the paginated response
+                return pagination.get_paginated_response(serialized_data.data)
+            else:
+                alldata=AgentBooking.objects.filter(Q(guest_booking=False) | Q(guest_booking=True, status="active")).order_by('-id')
+                number_of_booking=alldata.count()
+                serializer = Agentbookingserailizer(alldata, many=True)
+                pagination = cutomepegination()
+                paginated_queryset = pagination.paginate_queryset(alldata, request)
+                serialized_data = Agentbookingserailizer(paginated_queryset, many=True)
+
+                # Return the paginated response
+                return pagination.get_paginated_response(serialized_data.data)
 
 
             serializer = Agentbookingserailizer(page, many=True)
@@ -984,7 +995,7 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%H:%M:%S")
+        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_200_OK)
@@ -1142,12 +1153,7 @@ class TestDeclineBooking(APIView):
         xyz = AddDriver.objects.filter(driver_user=user)
         driver_ids = [driver.id for driver in xyz]
         one_hour_ago = datetime.now() - timedelta(hours=1)
-        print(f"Time:{one_hour_ago}")
 
-        #Get client booking time 
-        # client_booking_time = request.data.get('client_booking_time')
-        # print("Client booking time:", client_booking_time)
-        # print("Request data:", request.data)
 
         # Check if the user is a notified driver
         try:
@@ -1163,7 +1169,14 @@ class TestDeclineBooking(APIView):
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
-                    data_list = [booking for booking in data_list if datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%fZ') >= one_hour_ago]
+                # Filter out bookings older than 1 hour
+                # filtered_data_list = []
+                # print("Blank list")
+                # for booking in data_list:
+                #     booking_time = datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%f%z')
+                #     if booking_time >= one_hour_ago:
+                #         filtered_data_list.append(booking)
+                #         print("After list")
 
                 if not data_list:  # No bookings accepted by any driver
                     return Response({'data': []}, status=status.HTTP_200_OK)
