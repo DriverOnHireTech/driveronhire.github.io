@@ -272,58 +272,12 @@ class Acceptedride(APIView):
                 driver_name = AddDriver.objects.get(driver_user=user)
                 serializer.validated_data['driver'] = driver_name
                 whatsapp_number = f"91{client_mobile}"
-                # msg="""Dear {client_name}
-
-                #                 Mr. {driver_name}
-                #                 Mobile - {driver_mobile}
-                #                 Will be arriving at your destination.
-
-                #                 Date -{date}
-                #                 Time -{time}
-
-                #                 Our rates - https://www.driveronhire.com/rates
-
-                #                 *T&C Apply
-                #                 https://www.driveronhire.com/privacy-policy
-
-                #                 Thanks 
-                #                 Driveronhire.com
-                #                 Any issue or feedback call us 02243439090"""
-                #message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
+               
                 data.setdefault("accepted_driver",user.id) 
-                #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
                 utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
-                #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
+                
                 serializer.save()
 
-            # Compose message
-            date = booking.booking_date
-            time = booking.client_booking_time
-            whatsapp_number = f"whatsapp:+91{client_mobile}"
-            msg="""Dear {client_name}
-
-                            Mr. {driver_name}
-                            Mobile - {driver_mobile}
-                            Will be arriving at your destination.
-
-                            Date -{date}
-                            Time -{time}
-
-                            Our rates - https://www.driveronhire.com/rates
-
-                            *T&C Apply
-                            https://www.driveronhire.com/privacy-policy
-
-                            Thanks 
-                            Driveronhire.com
-                            Any issue or feedback call us 02243439090"""
-            message=msg.format(client_name="sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
-            data.setdefault("accepted_driver",user.id)
-            #utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
-            #utils.gupshupWhatsapp(self, whatsapp_number, message)
-            # gupshup='https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to={{whatsapp_number}}\
-            #     &v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg={{msg}}'
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
         else:
@@ -609,11 +563,18 @@ class Agentbookingview(APIView):
             # message_number = f"+91{mobile_number}"
             whatsapp_number = f"whatsapp:+91{mobile_number}"
             bookingfor=request.data['bookingfor']
+            pickup_location=request.data['pickup_location']
+            drop_location=request.data['drop_location']
+
+            pickup_zone = zone_get(pickup_location)
+            drop_zone = zone_get(drop_location)
+            extra_charges = return_charges(pickup_zone, drop_zone)
 
             # if AgentBooking.objects.filter(id=id).exists():
             serializer= Agentbookingserailizer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by_name']=user.first_name
+                serializer.validated_data['outskirt_charge']=extra_charges
                 serializer.save()
 
                 user_location_point = Point(latitude, longitude, srid=4326)
@@ -748,9 +709,7 @@ class Agentbookingview(APIView):
                     return Response({'msg':'Guest booking done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({'msg':'Guest booking not done'}, status=status.HTTP_204_NO_CONTENT)
-
-        
-        
+ 
 
     pagination_class = PageNumberPagination
 
@@ -983,29 +942,7 @@ class Agentbooking_accept(APIView):
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
                 serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-                # print("driver name: ", driver_name)
-                # print(type(driver_name))
-        #         whatsapp_number = f"whatsapp:+91{client_mobile}"
-        #         msg="""Dear {client_name}
-
-        #                         Mr. {driver_name}
-        #                         Mobile - {driver_mobile}
-        #                         Will be arriving at your destination.
-
-        #                         Date -{date}
-        #                         Time -{time}
-
-        #                         Our rates - https://www.driveronhire.com/rates
-
-        #                         *T&C Apply
-        #                         https://www.driveronhire.com/privacy-policy
-
-        #                         Thanks 
-        #                         Driveronhire.com
-        #                         Any issue or feedback call us 02243439090"""
-        #         message=msg.format(client_name="Sir/Madam", driver_name=driver_name, driver_mobile=driver_mobile,date=date, time=time)
-                # data.setdefault("accepted_driver",user.id)
-        #         # utils.twilio_whatsapp(to_number=whatsapp_number, message=message)
+               
                 serializer.save()
                 return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
