@@ -545,6 +545,7 @@ class Agentbookingview(APIView):
     def post(self, request):
         
         data=request.data
+        print(data)
         request_type=data['request_type']
         user=request.user
         if request_type=="Normal":
@@ -559,21 +560,26 @@ class Agentbookingview(APIView):
             booking_for = request.data['bookingfor']
             trip_type=request.data['trip_type']
             mobile_number=request.data['mobile_number']
-            # message_number = f"+91{mobile_number}"
-            whatsapp_number = f"whatsapp:+91{mobile_number}"
+            message_number = f"91{mobile_number}"
             bookingfor=request.data['bookingfor']
             pickup_location=request.data['pickup_location']
             drop_location=request.data['drop_location']
+            to_date = request.data['to_date']
+            start_time_str = request.data['start_time']
+            start_time = datetime.strptime(start_time_str, '%H:%M:%S')
+            formatted_start_time = start_time.strftime('%I:%M %p')
+            print("formatted time: ", formatted_start_time)
 
             pickup_zone = zone_get(pickup_location)
             drop_zone = zone_get(drop_location)
-            extra_charges = return_charges(pickup_zone, drop_zone)
+            # extra_charges = return_charges(pickup_zone, drop_zone)
+            outskirt_charge = request.data['outskirt_charge']
 
             # if AgentBooking.objects.filter(id=id).exists():
             serializer= Agentbookingserailizer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by_name']=user.first_name
-                serializer.validated_data['outskirt_charge']=extra_charges
+                serializer.validated_data['outskirt_charge']=outskirt_charge
                 serializer.save()
 
                 user_location_point = Point(latitude, longitude, srid=4326)
@@ -640,7 +646,7 @@ class Agentbookingview(APIView):
                             print(f"Error sending notification to token {token}:{e}")
                 # serializer.save()
                 
-
+                utils.agnbookingpro(self, message_number, to_date, formatted_start_time)
                 # serializer.save()
                 return Response({'msg':'Booking done by Agent', 'data':serializer.data}, status=status.HTTP_201_CREATED)
             else:
@@ -702,9 +708,7 @@ class Agentbookingview(APIView):
                                     print(f"Error sending notification to token {token}:{e}")
                     else:
                         print("No favorite drivers found for this user.")
-
-                
-                    
+               
                     return Response({'msg':'Guest booking done', 'data':serializer.data}, status=status.HTTP_201_CREATED)
                 else:
                     return Response({'msg':'Guest booking not done'}, status=status.HTTP_204_NO_CONTENT)
