@@ -567,13 +567,15 @@ class Agentbookingview(APIView):
 
             pickup_zone = zone_get(pickup_location)
             drop_zone = zone_get(drop_location)
-            extra_charges = return_charges(pickup_zone, drop_zone)
+            # extra_charges = return_charges(pickup_zone, drop_zone)
+            outskirt_charge = request.data['outskirt_charge']
 
             # if AgentBooking.objects.filter(id=id).exists():
             serializer= Agentbookingserailizer(data=data)
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by_name']=user.first_name
-                serializer.validated_data['outskirt_charge']=extra_charges
+                serializer.validated_data['outskirt_charge']=outskirt_charge
+                serializer.validated_data['pickup_location']=pickup_location
                 serializer.save()
 
                 user_location_point = Point(latitude, longitude, srid=4326)
