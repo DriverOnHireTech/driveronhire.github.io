@@ -995,7 +995,7 @@ class Agentstartjourny(APIView):
         data = request.data
         user = request.user
         currenttime=datetime.now()
-        start_deuty=currenttime.strftime("%H:%M:%S")
+        start_deuty=currenttime.strftime("%Y-%m-%d %H:%M:%S")
         booking= AgentBooking.objects.get(id=id)
         if booking.deuty_started:
             return Response({'msg': 'Duty has already started', 'data': None}, status=status.HTTP_200_OK)
@@ -1170,13 +1170,13 @@ class TestDeclineBooking(APIView):
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
                 # Filter out bookings older than 1 hour
-                filtered_data_list = []
-                print("Blank list")
-                for booking in data_list:
-                    booking_time = datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%f%z')
-                    if booking_time >= one_hour_ago:
-                        filtered_data_list.append(booking)
-                        print("After list")
+                # filtered_data_list = []
+                # print("Blank list")
+                # for booking in data_list:
+                #     booking_time = datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%f%z')
+                #     if booking_time >= one_hour_ago:
+                #         filtered_data_list.append(booking)
+                #         print("After list")
 
                 if not data_list:  # No bookings accepted by any driver
                     return Response({'data': []}, status=status.HTTP_200_OK)
