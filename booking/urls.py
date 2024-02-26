@@ -24,6 +24,9 @@ urlpatterns = [
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
+    # This url will fetch all refuse booking
+    path('all_declinebooking/', views.all_refuse_booking.as_view(), name='all_decilnebooking'),
+
     # invoice for placebooking
     path('invoice/', InvoiceGenerate.as_view(), name='invoice'), 
 
