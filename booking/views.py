@@ -266,11 +266,11 @@ class Acceptedride(APIView):
             bdate=booking.booking_date
             btime=booking.client_booking_time
             bhrs=booking.packege
-            print(f"Your booking time:{btime}")
+            bcharge=booking.base_charges
+
             # booking time formate
             time_formate=datetime.now()
             booking_time=time.strftime(btime,"%H:%M")
-            print(f"AFter formate:{booking_time}")
 
             # Get driver information
             driver_mobile = user.phone
@@ -291,8 +291,7 @@ class Acceptedride(APIView):
                
                 data.setdefault("accepted_driver",user.id) 
                 #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs)
-                print("Response:", gupshup)
+                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
                 serializer.save()
 
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
