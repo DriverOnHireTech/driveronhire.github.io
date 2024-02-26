@@ -24,9 +24,6 @@ urlpatterns = [
 
     path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
 
-    #Get All Refuse booking Endpoint
-    path('allrefuse_booking/', views.all_refuse_booking.as_view(), name='all_refuse_booking'),
-
     # invoice for placebooking
     path('invoice/', InvoiceGenerate.as_view(), name='invoice'), 
 
