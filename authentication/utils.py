@@ -126,23 +126,45 @@ def agnbookingpro(self, phone, bookingdate, bookingtime):
     response = requests.post(url, data=payload)
     return response
 
-
+"""
+https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp&send_to=919372792693&v=1.1&format=json&msg_type=TEXT&method=SENDMESSAGE&msg=Dear+Customer%2C%0A%0AMr.Satish%0AMobile+-+9657847644%0AWill+be+arriving+at+your+destination.%0A%0ADate+-12-03-2024%0ATime+-4%3A00+pm%0ALocal+4+hrs+duty%0ACost++800+rupees%0AExtra+hrs+100+rupees%0A11+pm+to+6+am+200+traveling+allowance+%0A%0AOur+rates+-+https%3A%2F%2Fwww.driveronhire.com%2Frates%0A%0A%2AT%26C+Apply%0Ahttps%3A%2F%2Fwww.driveronhire.com%2Fprivacy-policy&isTemplate=true&header=Booking+Details&footer=Thanks++Driveronhire.com
+"""
 
 #Gupshup whatsapp function
-def gupshupwhatsapp(self, phone, msg):
-    url= "https://media.smsgupshup.com/GatewayAPI/rest"
+def gupshupwhatsapp(self,whatsapp_number, driver_name, driver_mobile, bdate, btime, bfor):
+    print("Function is trriger")
+    url= "http://media.smsgupshup.com/GatewayAPI/rest"   #https://media.smsgupshup.com/GatewayAPI/rest
     payload={
+        # "userid":"2000237293",
+        # "password":"vrgnLDKp",
+        # "send_to":"919372792693",
+        # "v":"1.1",
+        # "format":"json",
+        # "msg_type":"TEXT",
+        # "method":"SendMessage",
+        # "msg":"Dear+Customer%2C%0A%0AMr.Farooq%0AMobile+-+9657847644%0AWill+be+arriving+at+your+destination.%0A%0ADate+-23-02-2024%0ATime+-10%3A15%0ALocal+2+hrs+duty%0ACost++800+rupees%0AExtra+hrs+100+rupees%0A11+pm+to+6+am+200+traveling+allowance+%0A%0AOur+rates+-+https%3A%2F%2Fwww.driveronhire.com%2Frates%0A%0A%2AT%26C+Apply%0Ahttps%3A%2F%2Fwww.driveronhire.com%2Fprivacy-policy",
+        # "isTemplate":"true",
+        # "header":"Booking Details",
+        # "footer":"Thanks  Driveronhire.com"
         "method":"SendMessage",
-        "send_to":phone,
-        "msg":"",
+        "send_to":whatsapp_number,
+        "v":"1.1",
         "msg_type": "TEXT",
+        "msg":"""Dear Customer Mr.{} Mobile -{} Will be arriving at your destination. Date -{} Time -{} Local {} hrs duty\n 
+        Cost 800 rupees Extra hrs 100 rupees 11 pm to 6 am 200 traveling allowance\n
+        Our rates - https://www.driveronhire.com/rates\n 
+        *T&C Apply https://www.driveronhire.com/privacy-policy&""".format(driver_name,driver_mobile,bdate,btime,bfor),
         "userid": "2000237293",
         "auth_scheme": "PLAIN",
         "password":"vrgnLDKp",
-        "format": "JSON"
+        "format": "JSON",
+        "isTemplate":"true",
+        "header":"Booking Details",
+        "footer":"Thanks  Driveronhire.com"
     }
 
     response = requests.post(url, data=payload)
+    print("Response:", response)
     return response
 
 
