@@ -324,7 +324,6 @@ class Declinebooking1(models.Model):
     refuse_driver_user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     refuse_time=models.DateField(auto_now_add=True)
 
-
     def __str__(self):
         return str(self.placebooking)
     

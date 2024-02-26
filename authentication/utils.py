@@ -99,7 +99,7 @@ def driverdetailssent(self, userphone,drivername, drivernumber):
         "send_to": userphone,
         "msg": """Driver Details, Driver name-{} Mob no-{} Would arrive at ur destination on ur mentioned date & time.
 Driveronhire
-https://driveronhire.com/rates/""".format(drivername,drivernumber),
+""".format(drivername,drivernumber),
         "msg_type": "TEXT",
         "userid": "2000142458",
         "auth_scheme": "PLAIN",

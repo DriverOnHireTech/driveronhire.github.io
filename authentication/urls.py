@@ -17,4 +17,5 @@ urlpatterns = [
     path('generate_otp/', views.SendOTPAPIView.as_view(), name='generate_otp'),
     path('validate_otp/', views.VerifyOTPAPIView.as_view(), name='validate_otp'),
     path('delete/<int:id>/', views.Adduser.as_view(), name="Delete-user"),
+    path('firtnameupdate/', views.firtsnameupdate.as_view(), name='firstnameupdate'),
 ]

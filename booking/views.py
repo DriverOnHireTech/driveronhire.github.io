@@ -79,6 +79,11 @@ class MyBookingList(APIView):
                     if driver:
                         driver = driver.filter(Q(car_type__contains=car_type) & Q(transmission_type__contains=transmission_type))
                     
+                    if ((trip_type == "outstation") or (trip_type== "outstation_drop")):
+                        driver = driver.filter(driver_app_status_new__package_booking_type__contains=outstation)
+
+                        
+                    
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
                              ).filter(distance__lte=D(km=5)) # Radius will be changed to 5 km while deployment
