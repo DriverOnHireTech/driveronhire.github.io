@@ -110,12 +110,12 @@ Driveronhire
     response = requests.post(url, data=payload)
     return response
 
-def agnbookingpro(self, phone, bookingdate, bookingtime):
+def agnbookingpro(self, phone, to_date, start_time):
     url = "https://enterprise.smsgupshup.com/GatewayAPI/rest"
     payload = {
         "method": "sendMessage",
         "send_to": phone,
-        "msg": """Dear Customer, Your booking for {} at {} has been processed, we will share the driver details shortly. Driveronhire.""".format(bookingdate,bookingtime),
+        "msg": """Dear Customer, Your booking for {} at {} has been processed, we will share the driver details shortly. Driveronhire.""".format(to_date,start_time),
         "msg_type": "TEXT",
         "userid": "2000142458",
         "auth_scheme": "PLAIN",
