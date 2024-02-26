@@ -168,8 +168,7 @@ https://media.smsgupshup.com/GatewayAPI/rest?userid=2000237293&password=vrgnLDKp
 
 
 #Gupshup whatsapp function
-def gupshupwhatsapp(self, to_number, dname, dnumber, bdate, btime, bhrs):
-    print("Function is trriger")
+def gupshupwhatsapp(self, to_number, dname, dnumber, bdate, btime, bhrs,charge):
     url= "http://media.smsgupshup.com/GatewayAPI/rest"   #https://media.smsgupshup.com/GatewayAPI/rest
     payload={
         "userid":"2000237293",
@@ -185,6 +184,7 @@ def gupshupwhatsapp(self, to_number, dname, dnumber, bdate, btime, bhrs):
         "var3":bdate,
         "var4":btime,
         "var5":bhrs,
+        "var6":charge,
         #"msg":"Dear+Customer%2C%0A%0AMr.Farooq%0AMobile+-+9657847644%0AWill+be+arriving+at+your+destination.%0A%0ADate+-23-02-2024%0ATime+-10%3A15%0ALocal+2+hrs+duty%0ACost++800+rupees%0AExtra+hrs+100+rupees%0A11+pm+to+6+am+200+traveling+allowance+%0A%0AOur+rates+-+https%3A%2F%2Fwww.driveronhire.com%2Frates%0A%0A%2AT%26C+Apply%0Ahttps%3A%2F%2Fwww.driveronhire.com%2Fprivacy-policy",
         "isTemplate":"true",
         "header":"Booking Details",
@@ -192,5 +192,4 @@ def gupshupwhatsapp(self, to_number, dname, dnumber, bdate, btime, bhrs):
     }
 
     response = requests.post(url, data=payload)
-    print("Response:", response.json())
     return response
