@@ -258,6 +258,9 @@ class Acceptedride(APIView):
             # Get client information
             client_name=booking.user
             client_mobile=booking.mobile
+            bdate=booking.booking_date
+            btime=booking.client_booking_time
+            bfor=booking.packege
 
             # Get driver information
             driver_mobile = user.phone
@@ -274,8 +277,9 @@ class Acceptedride(APIView):
                 whatsapp_number = f"91{client_mobile}"
                
                 data.setdefault("accepted_driver",user.id) 
-                utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                
+                #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
+                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, btime, bfor)
+                print("Response:", gupshup)
                 serializer.save()
 
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -327,6 +331,16 @@ class declineplacebooking(APIView):
           declinebooking=Declinebooking.objects.filter(refuse_driver_user=user).order_by('-id')
           serializer=DeclinebookingSerializer(declinebooking, many=True)
           return Response({'msg':'decline booking data', 'data':serializer.data})
+    
+# Get All Refuse booking
+class all_refuse_booking(APIView):
+    def get(self, request):
+        try:
+            driver_decline_booking=Declinebooking.objects.all().order_by('-id')
+            serilaizer=DeclinebookingSerializer(driver_decline_booking, many=True)
+            return Response({'msg':'All refuse booking', 'data':serilaizer.data}, status=status.HTTP_200_OK)
+        except Declinebooking.DoesNotExist:
+            Response({'msg':'No Refuse Booking Found'}, status=status.HTTP_204_NO_CONTENT)
 """End decline"""
 
 
@@ -1160,23 +1174,29 @@ class TestDeclineBooking(APIView):
             is_notified_driver = Notifydrivers.objects.filter(driver=driver_ids[0]).exists()
             notify_driver_data = Notifydrivers.objects.filter(driver=driver_ids[0])
             
-           
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
                     booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
+
+                    # Get the booking time
+                    booking_time_str = booking.booking_time
+                    booking_time = datetime.fromisoformat(booking_time_str)
+
+                    # # Calculate the time difference between current time and booking time
+                    time_difference = datetime.now() - booking_time
+
+                    # # Define the threshold for removal (1 hour)
+                    threshold = timedelta(minute=10)
+
+                    # # If the time difference exceeds the threshold, skip this booking
+                    if time_difference > threshold:
+                        continue
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
-                # Filter out bookings older than 1 hour
-                # filtered_data_list = []
-                # print("Blank list")
-                # for booking in data_list:
-                #     booking_time = datetime.strptime(booking['booking_time'], '%Y-%m-%dT%H:%M:%S.%f%z')
-                #     if booking_time >= one_hour_ago:
-                #         filtered_data_list.append(booking)
-                #         print("After list")
+                
 
                 if not data_list:  # No bookings accepted by any driver
                     return Response({'data': []}, status=status.HTTP_200_OK)
