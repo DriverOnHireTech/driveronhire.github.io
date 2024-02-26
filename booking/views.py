@@ -325,6 +325,7 @@ class declineplacebooking(APIView):
             serializer.validated_data['placebooking']=placebooking
             serializer.validated_data['agentbooking']=agentbooking
             serializer.validated_data['refuse_driver_user']=user
+            serializer.validated_data['refuse_driver_name']= user.first_name
             serializer.save()
             return Response({'msg':'Duty decline', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
         else:
