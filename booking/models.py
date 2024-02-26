@@ -80,6 +80,7 @@ class PlaceBooking(models.Model):
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=500, null=True, blank=True)
     drop_location=models.CharField(max_length=500, null=True, blank=True)
+    base_charges=models.IntegerField(null=True, blank=True)
     Charges=models.BigIntegerField(null=True, blank=True)
     outskirt_charge = models.BigIntegerField(default=0)
     notification_sent = models.BooleanField(default=False, null=True, blank=True)
