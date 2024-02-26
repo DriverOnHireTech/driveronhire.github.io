@@ -1191,18 +1191,18 @@ class TestDeclineBooking(APIView):
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
 
                     # Get the booking time
-                    booking_time_str = booking.booking_time
-                    booking_time = datetime.fromisoformat(booking_time_str)
+                    # booking_time_str = booking.booking_time
+                    # booking_time = datetime.fromisoformat(booking_time_str)
 
-                    # # Calculate the time difference between current time and booking time
-                    time_difference = datetime.now() - booking_time
+                    # # # Calculate the time difference between current time and booking time
+                    # time_difference = datetime.now() - booking_time
 
-                    # # Define the threshold for removal (1 hour)
-                    threshold = timedelta(minute=10)
+                    # # # Define the threshold for removal (1 hour)
+                    # threshold = timedelta(minute=10)
 
-                    # # If the time difference exceeds the threshold, skip this booking
-                    if time_difference > threshold:
-                        continue
+                    # # # If the time difference exceeds the threshold, skip this booking
+                    # if time_difference > threshold:
+                    #     continue
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
                         data_list.extend(serializer.data)
