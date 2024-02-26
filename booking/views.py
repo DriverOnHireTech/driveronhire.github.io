@@ -265,10 +265,16 @@ class Acceptedride(APIView):
             client_mobile=booking.mobile
             bdate=booking.booking_date
             btime=booking.client_booking_time
-            bfor=booking.packege
+            bhrs=booking.packege
+            print(f"Your booking time:{btime}")
+            # booking time formate
+            time_formate=datetime.now()
+            booking_time=time.strftime(btime,"%H:%M")
+            print(f"AFter formate:{booking_time}")
 
             # Get driver information
             driver_mobile = user.phone
+            print("driver mobile: ", driver_mobile)
             driver_name = AddDriver.objects.get(driver_user=user)
 
             serializer= PlacebookingSerializer(booking, data=data, partial=True)
@@ -278,20 +284,22 @@ class Acceptedride(APIView):
                 serializer._validated_data['accepted_driver_name'] = user.first_name
                 serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
+                print("driver name: ", driver_name)
                 serializer.validated_data['driver'] = driver_name
-                whatsapp_number = f"91{client_mobile}"
+                whatsapp_number = client_mobile
+                print("whats app number: ", whatsapp_number)
                
                 data.setdefault("accepted_driver",user.id) 
                 #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, btime, bfor)
+                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs)
                 print("Response:", gupshup)
                 serializer.save()
 
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
         else:
-            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
-        return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # serializer=PlacebookingSerializer()
+            return Response({'msg':'Not Accpeted'})
 
 
 """Decline Booking by driver"""
