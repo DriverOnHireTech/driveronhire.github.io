@@ -192,4 +192,5 @@ def gupshupwhatsapp(self, to_number, dname, dnumber, bdate, btime, bhrs,charge):
     }
 
     response = requests.post(url, data=payload)
+    print("response:", response.json())
     return response

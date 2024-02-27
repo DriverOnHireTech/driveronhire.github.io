@@ -19,6 +19,7 @@ from rest_framework.pagination import PageNumberPagination
 from fcm_django.models import FCMDevice
 from django.db.models import Q
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import pagination
 from driver_management.paginations import cutomepegination
 from authentication import utils
 from geopy import Nominatim
@@ -136,7 +137,7 @@ class MyBookingList(APIView):
                             message = messaging.Message(
                                 notification=messaging.Notification(
                                     title="New Booking",
-                                    body=f"Trip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\n Pickup Location:{pickup_location}\nDrop Location:{drop_location}"
+                                    body=f"Booking id:{booking_id}\nTrip Type:{trip_type}\n Car Type:{car_type}\n Gear Type:{gear_type}\n Pickup Location:{pickup_location}\nDrop Location:{drop_location}"
                                     
                                 ),
                                 token= token 
@@ -267,6 +268,7 @@ class Acceptedride(APIView):
             btime=booking.client_booking_time
             bhrs=booking.packege
             bcharge=booking.base_charges
+            print("Base charges:", bcharge)
 
             # booking time formate
             time_formate=datetime.now()
@@ -347,6 +349,7 @@ class declineplacebooking(APIView):
     
 # Get All Refuse booking
 class all_refuse_booking(APIView):
+    pagination_class=cutomepegination
     def get(self, request):
         try:
             driver_decline_booking=Declinebooking.objects.all().order_by('-id')
