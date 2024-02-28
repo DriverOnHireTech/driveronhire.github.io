@@ -80,6 +80,7 @@ class PlaceBooking(models.Model):
     gear_type= models.CharField(max_length=100, null=True)
     pickup_location=models.CharField(max_length=500, null=True, blank=True)
     drop_location=models.CharField(max_length=500, null=True, blank=True)
+    base_charges=models.IntegerField(null=True, blank=True)
     Charges=models.BigIntegerField(null=True, blank=True)
     outskirt_charge = models.BigIntegerField(default=0)
     notification_sent = models.BooleanField(default=False, null=True, blank=True)
@@ -145,6 +146,7 @@ class AgentBooking(models.Model):
     email=models.EmailField(null=True, blank=True)
     address=models.CharField(max_length=500, null=True, blank=True)
     visiting_location= models.CharField(max_length=200, null=True, blank=True)
+    pickup_location = models.CharField(max_length=300, null=True, blank=True)
     drop_location=models.CharField(max_length=300, null=True, blank=True)
     client_location = gis_point.PointField(default='POINT (0 0)',srid=4326, blank=True, null=True)
     car_company= models.CharField(max_length=100, null=True, blank=True)
@@ -310,6 +312,7 @@ class Declinebooking(models.Model):
     placebooking=models.ForeignKey(PlaceBooking, on_delete=models.CASCADE, null=True, blank=True)
     agentbooking=models.ForeignKey(AgentBooking, on_delete=models.CASCADE, null=True, blank=True)
     refuse_driver_user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    refuse_driver_name=models.CharField(max_length=100, null=True, blank=True)
     refuse_time=models.DateField(auto_now_add=True)
 
 
