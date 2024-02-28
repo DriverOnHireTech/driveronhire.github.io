@@ -15,3 +15,7 @@ class cutomepegination(pagination.PageNumberPagination):
             'next': self.get_next_link(),
             'previous': self.get_previous_link()
         })
+    
+    def __init__(self):
+        super().__init__()
+        print("Custom pagination initialized")

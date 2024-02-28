@@ -354,7 +354,10 @@ class all_refuse_booking(APIView):
         try:
             driver_decline_booking=Declinebooking.objects.all().order_by('-id')
             serilaizer=DeclinebookingSerializer(driver_decline_booking, many=True)
-            return Response({'msg':'All refuse booking', 'data':serilaizer.data}, status=status.HTTP_200_OK)
+            pagination = cutomepegination()
+            paginated_queryset = pagination.paginate_queryset(driver_decline_booking, request)
+            serialized_data = DeclinebookingSerializer(paginated_queryset, many=True)
+            return pagination.get_paginated_response(serialized_data.data)
         except Declinebooking.DoesNotExist:
             Response({'msg':'No Refuse Booking Found'}, status=status.HTTP_204_NO_CONTENT)
 """End decline"""
@@ -963,7 +966,6 @@ class Agentbookingfilterquary(APIView):
              Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
-
 class Agentbooking_accept(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -1077,7 +1079,6 @@ class userprofile(APIView):
             return Response({'msg':'Profile is created','data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Unable to create profile', 'error':serializer.errors}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 """Guest Booking API endpoint"""
@@ -1274,6 +1275,7 @@ class TestAgentDeclineBooking(APIView):
         
         else:
             return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+  
             
 class dashboardbooking(APIView):
     """

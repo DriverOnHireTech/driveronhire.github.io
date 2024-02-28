@@ -268,6 +268,7 @@ class DriverappstatusView(APIView):
         # Check if the user with the given primary key exists
         if not User.objects.filter(id=drivername_id).exists():
             return Response({'msg': f'User with id={drivername_id} does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer=Driverappstatusserializer(data=data)
         if serializer.is_valid():
             data1 = User.objects.get(id=drivername_id)
@@ -275,6 +276,10 @@ class DriverappstatusView(APIView):
             serializer.validated_data["driver_name1"] = data1.first_name
             serializer.validated_data['total_amount_paid']=total_pay_amount
             serializer.save()
+
+            add_driver_instance = AddDriver.objects.get(id=request.data.get('driver_name'))
+            add_driver_instance.driver_app_status_new = serializer.instance
+            add_driver_instance.save()
             return Response({'msg':'Driver App status is created', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Record Not created', 'error':serializer.errors}, status=status.HTTP_204_NO_CONTENT)
