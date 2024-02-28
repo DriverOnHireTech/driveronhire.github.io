@@ -938,7 +938,6 @@ class Agentbookingfilterquary(APIView):
              Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
     
 
-
 class Agentbooking_accept(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -1052,7 +1051,6 @@ class userprofile(APIView):
             return Response({'msg':'Profile is created','data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
             return Response({'msg':'Unable to create profile', 'error':serializer.errors}, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 """Guest Booking API endpoint"""
@@ -1243,6 +1241,7 @@ class TestAgentDeclineBooking(APIView):
         
         else:
             return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+  
             
 class dashboardbooking(APIView):
     """

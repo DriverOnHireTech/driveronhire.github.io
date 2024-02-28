@@ -305,6 +305,7 @@ class AddDriver(models.Model):
     driver_app_status=models.BooleanField(default=True)
     driver_update_date= models.DateField(auto_now_add=True, null=True,blank=True)
     has_received_notification = models.BooleanField(default=False, null=True, blank=True)
+    driver_app_status_new = models.ForeignKey('Driverappstatus', on_delete=models.CASCADE,null=True, blank=True)
 
     def __str__(self):
         return self.first_name
@@ -327,10 +328,11 @@ class Driverappstatus(models.Model):
     status=models.CharField(choices=Status, max_length=100, null=True, blank=True)
     recharge_date=models.DateField(auto_now_add=False,null=True, blank=True)
     expiry_date=models.DateField(auto_now_add=False,null=True, blank=True)
+    package_booking_type = models.CharField(max_length=20, null=True, blank=True)
 
 
     def __str__(self):
-        return str(self.is_paid)
+        return str(self.package)
     
 # Define the signal receiver function to update status
 @receiver(post_save, sender=Driverappstatus)
