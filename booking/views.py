@@ -354,7 +354,10 @@ class all_refuse_booking(APIView):
         try:
             driver_decline_booking=Declinebooking.objects.all().order_by('-id')
             serilaizer=DeclinebookingSerializer(driver_decline_booking, many=True)
-            return Response({'msg':'All refuse booking', 'data':serilaizer.data}, status=status.HTTP_200_OK)
+            pagination = cutomepegination()
+            paginated_queryset = pagination.paginate_queryset(driver_decline_booking, request)
+            serialized_data = DeclinebookingSerializer(paginated_queryset, many=True)
+            return pagination.get_paginated_response(serialized_data.data)
         except Declinebooking.DoesNotExist:
             Response({'msg':'No Refuse Booking Found'}, status=status.HTTP_204_NO_CONTENT)
 """End decline"""
