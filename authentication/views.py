@@ -175,7 +175,7 @@ class VerifyOTPAPIView(APIView):
             user.save()
 
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            return Response({'msg':F"Your OTP {saved_otp}",'token': token.key}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
         
