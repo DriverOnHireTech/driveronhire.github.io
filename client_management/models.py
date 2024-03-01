@@ -39,6 +39,7 @@ class UserProfile(models.Model):
     mobile_number = models.CharField(max_length=50, null=True, blank=True)
     usercar=models.CharField(max_length=200, null=True, blank=True)
     cartype=models.CharField(max_length=200, null=True, blank=True)
+    useraddress=models.CharField(max_length=200, null=True, blank=True)
     useraddress1=models.ForeignKey(Address, on_delete=models.CASCADE, null=True, blank=True)
     addprofile=models.DateTimeField(auto_now_add=True)
     
