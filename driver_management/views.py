@@ -108,12 +108,21 @@ class updatedriver(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class updatedriverwithid(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
     def get(self, request, id):
         driver = AddDriver.objects.get(id=id)
         serializer = MyDriverSerializer(driver)
         return Response(serializer.data)
+
+    def patch(self, request, id):
+        data= request.data
+        driver = AddDriver.objects.get(id=id)
+        serializer =MyDriverSerializer(driver, data=request.data, partial=True)
+        if serializer.is_valid(): 
+            serializer.save()
+            return Response({"msg":"Driver updated", "data":serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """End update driver"""
 class Driversearch(ListAPIView):
