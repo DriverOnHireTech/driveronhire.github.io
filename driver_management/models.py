@@ -3,6 +3,8 @@ Driver management models
 """
 # from datetime import date
 from django.db import models
+from django.contrib.auth.models import Permission
+
 # from django.utils.html import mark_safe
 from django.contrib.gis.db import models as gis_point
 from user_master.models import region
@@ -334,6 +336,12 @@ class Driverappstatus(models.Model):
     def __str__(self):
         return str(self.package)
     
+    # class Meta:
+    #     permissions = (
+    #         ("can_view_Driverappstatus", "Can view Driverappstatus")
+    #         #("can_change_Driverappstatus", "Can change MyModel"),
+    #     )
+    
 # Define the signal receiver function to update status
 @receiver(post_save, sender=Driverappstatus)
 def update_package_status(sender, instance, **kwargs):
@@ -346,6 +354,8 @@ def update_package_status(sender, instance, **kwargs):
             if instance.driver_name.driving_status=="Approve":
                 instance.driver_name.driving_status="Reject"
                 instance.driver_name.save()
+
+
 """End App Status"""
 
 class ReferDriver(models.Model):
