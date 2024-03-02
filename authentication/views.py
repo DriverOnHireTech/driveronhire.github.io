@@ -168,7 +168,7 @@ class VerifyOTPAPIView(APIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'msg':F"Your OTP {saved_otp} accepted",'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_204_NO_CONTENT)
         
 
 #Patch request for first name update
