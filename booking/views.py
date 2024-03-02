@@ -599,7 +599,7 @@ class Agentbookingview(APIView):
             drop_location=request.data['drop_location']
             to_date = request.data['to_date']
             start_time_str = request.data['start_time']
-            start_time = datetime.strptime(start_time_str, '%H:%M:%S')
+            start_time = datetime.strptime(start_time_str, '%H:%M')
             formatted_start_time = start_time.strftime('%I:%M %p')
             print("formatted time: ", formatted_start_time)
 

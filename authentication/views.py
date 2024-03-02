@@ -102,7 +102,7 @@ class LoginView(APIView):
             else:
                 return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({"msg": "Unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"msg": "Unable to login"}, status=status.HTTP_204_NO_CONTENT)
     
 
 
@@ -135,7 +135,7 @@ class SendOTPAPIView(APIView):
             # Send otp via Gupshup
             gupshupsms(self, send_phone,otp)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
 
         # Send OTP via Twilio
         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -155,7 +155,7 @@ class VerifyOTPAPIView(APIView):
         try:
             user = User.objects.get(phone=phone)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
 
         # Retrieve OTP from the session
         saved_otp = user.otp
