@@ -1,16 +1,13 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from .models import User
-from .serializers import NewUserSerializer, UserLoginserializer, Fcmserializer
-import random
+from .serializers import NewUserSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from twilio.rest import Client
 from base_site import settings
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from .utils import username_gene, generate_otp, gupshupsms
@@ -28,7 +25,6 @@ class Adduser(APIView):
         if User.objects.filter(phone=phone).exists():
             return Response({'msg':'Number already exists'})
             
-        
         else:
             serailizer=NewUserSerializer(data=data)
             if serailizer.is_valid():
@@ -106,7 +102,7 @@ class LoginView(APIView):
             else:
                 return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({"msg": "Unable to login"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"msg": "Unable to login"}, status=status.HTTP_204_NO_CONTENT)
     
 
 
@@ -126,24 +122,20 @@ class Logoutapi(APIView):
     
 
 class SendOTPAPIView(APIView):
-
     def post(self, request, *args, **kwargs):
         phone = request.data.get('phone')
         send_phone = f"91{phone}"
-        
         try:
             driver = User.objects.get(phone=phone)
             otp = generate_otp()  # Replace with your OTP generation logic
             print("otp: ",otp)
-
             # Save the OTP in the  user model
             driver.otp = otp
             driver.save()
             # Send otp via Gupshup
             gupshupsms(self, send_phone,otp)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
+            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
 
         # Send OTP via Twilio
         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -152,7 +144,6 @@ class SendOTPAPIView(APIView):
         #     from_=settings.TWILIO_PHONE_NUMBER,
         #     to=send_phone
         # )
-
         return Response({'message': 'OTP sent successfully'}, status=status.HTTP_200_OK)
 
 class VerifyOTPAPIView(APIView):
@@ -164,7 +155,7 @@ class VerifyOTPAPIView(APIView):
         try:
             user = User.objects.get(phone=phone)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
 
         # Retrieve OTP from the session
         saved_otp = user.otp
@@ -175,9 +166,9 @@ class VerifyOTPAPIView(APIView):
             user.save()
 
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'msg':F"Your OTP {saved_otp}",'token': token.key}, status=status.HTTP_200_OK)
+            return Response({'msg':F"Your OTP {saved_otp} accepted",'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_204_NO_CONTENT)
         
 
 #Patch request for first name update
