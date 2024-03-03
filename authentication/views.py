@@ -102,7 +102,7 @@ class LoginView(APIView):
             else:
                 return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({"msg": "Unable to login"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({"msg": "Unable to login"}, status=status.HTTP_201_CREATED)
     
 
 
@@ -135,7 +135,7 @@ class SendOTPAPIView(APIView):
             # Send otp via Gupshup
             gupshupsms(self, send_phone,otp)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'error': 'User not found'}, status=status.HTTP_201_CREATED)
 
         # Send OTP via Twilio
         # client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -155,7 +155,7 @@ class VerifyOTPAPIView(APIView):
         try:
             user = User.objects.get(phone=phone)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'error': 'User not found'}, status=status.HTTP_201_CREATED)
 
         # Retrieve OTP from the session
         saved_otp = user.otp
@@ -168,7 +168,7 @@ class VerifyOTPAPIView(APIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'msg':F"Your OTP {saved_otp} accepted",'token': token.key}, status=status.HTTP_200_OK)
         else:
-            return Response({'error': 'Invalid OTP'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_201_CREATED)
         
 
 #Patch request for first name update
@@ -185,4 +185,4 @@ class firtsnameupdate(APIView):
             serializer.save()
             return Response ({'msg':'First name updated', 'data':serializer.data}, status=status.HTTP_201_CREATED)
         else:
-            return Response ({'msg':'First name not updated'}, status=status.HTTP_204_NO_CONTENT)
+            return Response ({'msg':'First name not updated'}, status=status.HTTP_201_CREATED)
