@@ -27,6 +27,7 @@ from user_master.models import ZoneA, ZoneB
 from .zone_logic import zone_get, return_charges
 from client_management.models import UserProfile
 from driver_management.models import AddDriver
+from django.utils import timezone as tz
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -1198,35 +1199,20 @@ class TestDeclineBooking(APIView):
             if is_notified_driver:
                 data_list = []
                 for booking_idd in notify_driver_data:
-                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & Q(status="pending"))
+                    booking = PlaceBooking.objects.filter(Q(id=booking_idd.place_booking.id) & 
+                        Q(status="pending") & 
+                        Q(booking_date__gte=tz.now().date()) & 
+                        Q(client_booking_time__gte=tz.now().time()))
                     decline_data = Declinebooking.objects.filter(placebooking=booking_idd.place_booking.id,refuse_driver_user=user).exists()
 
-                    # Get the booking time
-                    # booking_time_str = booking.booking_time
-                    # booking_time = datetime.fromisoformat(booking_time_str)
-
-                    # # # Calculate the time difference between current time and booking time
-                    # time_difference = datetime.now() - booking_time
-
-                    # # # Define the threshold for removal (1 hour)
-                    # threshold = timedelta(minute=10)
-
-                    # # # If the time difference exceeds the threshold, skip this booking
-                    # if time_difference > threshold:
-                    #     continue
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
+                        print("serializer data: ", serializer.data)
                         data_list.extend(serializer.data)
-                
 
-                if not data_list:  # No bookings accepted by any driver
-                    return Response({'data': []}, status=status.HTTP_200_OK)
-                else:
-                    revers_records = data_list[::-1]
-                    return Response({'data': revers_records}, status=status.HTTP_200_OK)
                     
-                # revers_recors= data_list[::-1]
-                # return Response({'data':revers_recors}, status=status.HTTP_200_OK)
+                revers_recors= data_list[::-1]
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
             
             else:
                 return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
@@ -1256,7 +1242,10 @@ class TestAgentDeclineBooking(APIView):
             data_list = []
             for booking_idd in notify_driver_data:
                 
-                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending"))
+                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & 
+                    Q(status="pending") & 
+                    Q(to_date__gte=tz.now().date()) & 
+                    Q(start_time__gte=tz.now().time()))
                 
                 decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
                 
