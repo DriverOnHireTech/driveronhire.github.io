@@ -975,10 +975,11 @@ class Agentbooking_accept(APIView):
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
-        # driver_mobile=user.phone
-        # driver=booking.accepted_driver
-        # date=booking.booking_date
-        # time=booking.client_booking_time
+        print("Client mobile", client_mobile)
+        todate=booking.to_date
+        print("todate:", todate)
+        start_time=booking.start_time
+        print("start_time:", start_time)
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -988,13 +989,13 @@ class Agentbooking_accept(APIView):
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
                 serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-               
+                
                 serializer.save()
-                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+                return Response({'msg':'booking accepted', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
-        else:
-            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
-        # return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({'msg':'Not Accpeted'})
+        return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # Filter driver based on package
