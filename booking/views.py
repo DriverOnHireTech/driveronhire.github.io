@@ -81,8 +81,8 @@ class MyBookingList(APIView):
                     if driver:
                         driver = driver.filter(Q(car_type__contains=car_type) & Q(transmission_type__contains=transmission_type))
                     
-                    if ((trip_type == "outstation") or (trip_type== "outstation_drop")):
-                        driver = driver.filter(driver_app_status_new__package_booking_type__contains=outstation)
+                    if ((trip_type == "Outstation") or (trip_type== "Outstation Drop")):
+                        driver = driver.filter(driver_app_status_new__package_booking_type__contains="outstation")
 
                         
                     
@@ -621,6 +621,9 @@ class Agentbookingview(APIView):
                 driver =AddDriver.objects.all()
                 if driver:
                     driver = driver.filter(car_type__contains=car_type)
+
+                if((bookingfor == "outstation") or (bookingfor == "drop")):
+                    driver = driver.filter(driver_app_status_new__package_booking_type__contains="outstation")
 
                 driver=driver.annotate(
                             distance = Distance('driverlocation', user_location_point)

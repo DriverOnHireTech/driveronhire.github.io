@@ -5,12 +5,6 @@ from user_master.serializers import *
 from authentication.serializers import NewUserSerializer
 
 
-class BasicDetailSerializer(serializers.ModelSerializer):
-    transmission_type = fields.MultipleChoiceField(choices=TRANSMISSION_OPTIONS)
-    car_type = fields.MultipleChoiceField(choices=CAR_OPTIONS)
-    class Meta:
-        model = AddDriverNew
-        fields = '__all__'
 
 
 class DriversignupSerializer(serializers.ModelSerializer):
@@ -26,8 +20,8 @@ class Driverlocationserializer(serializers.ModelSerializer):
 
 
 class MyDriverSerializer(serializers.ModelSerializer):
-    transmission_type = fields.MultipleChoiceField(choices=TRANSMISSION_OPTIONS)
-    car_type = fields.MultipleChoiceField(choices=CAR_OPTIONS)
+    transmission_type = fields.MultipleChoiceField(choices=transmission_option)
+    car_type = fields.MultipleChoiceField(choices=car_option)
     
     
     first_name=serializers.CharField()

@@ -3,7 +3,6 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('basic_detail/', BasicDetailView.as_view(), name='basic details'),
 
     path('api/driver/', MyDriverList.as_view(), name='driver-list'),
 
