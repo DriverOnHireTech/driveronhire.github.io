@@ -927,13 +927,13 @@ class Agentbookingfilterquary(APIView):
             print("Booking number", mobile_number,status, bookingfor, to_date)
                      
 
-            # if id:
-            #     pending_booking=AgentBooking.objects.filter(id=id)
-            #     number_of_booking= pending_booking.count()
-            #     serializer =Agentbookingserailizer(pending_booking,many=True)
-            #     return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            if mobile_number:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings by phone number', 'number_of_booking':number_of_booking,'data':serializer.data})
             
-            if mobile_number and status and bookingfor and to_date:
+            elif mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
