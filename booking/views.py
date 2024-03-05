@@ -924,19 +924,21 @@ class Agentbookingfilterquary(APIView):
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')
-            id = request.GET.get('id')         
+            print("Booking number", mobile_number,status, bookingfor, to_date)
+                     
 
-            if id:
-                pending_booking=AgentBooking.objects.filter(id=id)
-                number_of_booking= pending_booking.count()
-                serializer =Agentbookingserailizer(pending_booking,many=True)
-                return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            # if id:
+            #     pending_booking=AgentBooking.objects.filter(id=id)
+            #     number_of_booking= pending_booking.count()
+            #     serializer =Agentbookingserailizer(pending_booking,many=True)
+            #     return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
-            elif mobile_number and status and bookingfor and to_date:
+            if mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking,many=True)
+
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
