@@ -921,19 +921,14 @@ class Agentbookingfilterquary(APIView):
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')
-            id = request.GET.get('id')         
-
-            if id:
-                pending_booking=AgentBooking.objects.filter(id=id)
-                number_of_booking= pending_booking.count()
-                serializer =Agentbookingserailizer(pending_booking,many=True)
-                return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            print("filter data by cat:", mobile_number,status,bookingfor, to_date)
             
-            elif mobile_number and status and bookingfor and to_date:
+            if mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking,many=True)
+                print("Serializer:", serializer.data)
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
@@ -976,11 +971,8 @@ class Agentbooking_accept(APIView):
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
-        print("Client mobile", client_mobile)
         todate=booking.to_date
-        print("todate:", todate)
         start_time=booking.start_time
-        print("start_time:", start_time)
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -1291,3 +1283,45 @@ class dashboardbooking(APIView):
 
         #serializer=Agentbookingserailizer(filter_booking,many=True)
         return Response({'msg':'Local booking', 'local_booking_count':local_booking_count, 'outcount':outcount, 'dropcount':dropcount})
+    
+
+
+class AllZonedata(APIView):
+    def get(self, request):
+        #location_city=request.GET.get('location_city')
+        zone_a_data = ZoneA.objects.all()
+        zone_b_data = ZoneB.objects.all()
+        zone_c_data = ZoneC.objects.all()
+        zone_d_data = ZoneD.objects.all()
+        zone_e_data = ZoneE.objects.all()
+        zone_f_data = ZoneF.objects.all()
+        zone_g_data = ZoneG.objects.all()
+        # Pune location A model
+        pune_a_queryset = pune_A_location.objects.all()
+        pune_b=pune_B_location.objects.all() # Pune Location B model
+
+
+        zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
+        zone_b_serializer = ZoneBSerializer(zone_b_data, many=True)
+        zone_c_serializer = ZoneCSerializer(zone_c_data, many=True)
+        zone_d_serializer = ZoneDSerializer(zone_d_data, many=True)
+        zone_e_serializer = ZoneESerializer(zone_e_data, many=True)
+        zone_f_serializer = ZoneFSerializer(zone_f_data, many=True)
+        zone_g_serializer = ZoneGSerializer(zone_g_data, many=True)
+
+        """Pune location serializer"""
+        pune_a_serializer = punelocationASerializer(pune_a_queryset, many=True)
+        pune_b_serializer=punelocationBSerializer(pune_b, many=True)
+        """End pune location serializer"""
+         
+        
+        combined_data = (zone_a_serializer.data + 
+                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + 
+                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data+ pune_b_serializer.data)
+        
+        # Filter only data for the specified city
+        # filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
+        
+        # sorted_data = sorted(filtered_data, key=lambda x: x['location'])
+
+        return Response(combined_data)

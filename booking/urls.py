@@ -76,6 +76,9 @@ urlpatterns = [
     # this is for combining zone data that can show on pickup and drop location
     path('combine_data/', views.AllZoneData.as_view(), name='combine-data'), 
 
+    #All locatins new endpoint
+    path('all_locations/', views.AllZonedata.as_view(), name='all_location'),
+
     #Calculate Extra rates
     path('extra-rate/', ExtraRate.as_view(), name="extra_rate"),
 
