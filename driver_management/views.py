@@ -56,9 +56,6 @@ class driverlocation(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 
-class BasicDetailView(generics.ListCreateAPIView):
-    queryset = AddDriverNew.objects.all().order_by('id').reverse()
-    serializer_class = BasicDetailSerializer
 
 """Get 10 records and create driver"""
 class MyDriverList(generics.ListCreateAPIView):

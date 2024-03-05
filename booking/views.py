@@ -81,8 +81,8 @@ class MyBookingList(APIView):
                     if driver:
                         driver = driver.filter(Q(car_type__contains=car_type) & Q(transmission_type__contains=transmission_type))
                     
-                    if ((trip_type == "outstation") or (trip_type== "outstation_drop")):
-                        driver = driver.filter(driver_app_status_new__package_booking_type__contains=outstation)
+                    if ((trip_type == "Outstation") or (trip_type== "Outstation Drop")):
+                        driver = driver.filter(driver_app_status_new__package_booking_type__contains="outstation")
 
                         
                     
@@ -622,6 +622,9 @@ class Agentbookingview(APIView):
                 if driver:
                     driver = driver.filter(car_type__contains=car_type)
 
+                if((bookingfor == "outstation") or (bookingfor == "drop")):
+                    driver = driver.filter(driver_app_status_new__package_booking_type__contains="outstation")
+
                 driver=driver.annotate(
                             distance = Distance('driverlocation', user_location_point)
                                 ).filter(distance__lte=D(km=5))
@@ -921,14 +924,20 @@ class Agentbookingfilterquary(APIView):
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')
-            print("filter data by cat:", mobile_number,status,bookingfor, to_date)
+            print("Booking number", mobile_number,status, bookingfor, to_date)
+                     
+
+            # if id:
+            #     pending_booking=AgentBooking.objects.filter(id=id)
+            #     number_of_booking= pending_booking.count()
+            #     serializer =Agentbookingserailizer(pending_booking,many=True)
+            #     return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             if mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking,many=True)
-                print("Serializer:", serializer.data)
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
