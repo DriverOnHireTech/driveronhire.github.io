@@ -1247,10 +1247,7 @@ class TestAgentDeclineBooking(APIView):
             data_list = []
             for booking_idd in notify_driver_data:
                 
-                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & 
-                    Q(status="pending") & 
-                    Q(to_date__gte=tz.now().date()) & 
-                    Q(start_time__gte=tz.now().time()))
+                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending") & Q(to_date__gte=tz.now().date()) & Q(start_time__gte=tz.now().time()))
                 
                 decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
                 
