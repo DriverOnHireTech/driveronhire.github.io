@@ -269,7 +269,7 @@ class Acceptedride(APIView):
             btime=booking.client_booking_time
             bhrs=booking.packege
             bcharge=booking.base_charges
-            print("Base charges:", bcharge)
+            print("all details:", client_mobile,bdate,btime,bhrs,bcharge)
 
             # booking time formate
             time_formate=datetime.now()
