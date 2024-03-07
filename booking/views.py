@@ -294,7 +294,7 @@ class Acceptedride(APIView):
                
                 data.setdefault("accepted_driver",user.id) 
                 #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
+                utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
                 serializer.save()
 
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -1331,5 +1331,5 @@ class AllZonedata(APIView):
        # filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
         
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
-
+        
         return Response(sorted_data)
