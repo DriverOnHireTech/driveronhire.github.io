@@ -927,18 +927,17 @@ class Agentbookingfilterquary(APIView):
             print("Booking number", mobile_number,status, bookingfor, to_date)
                      
 
-            # if id:
-            #     pending_booking=AgentBooking.objects.filter(id=id)
-            #     number_of_booking= pending_booking.count()
-            #     serializer =Agentbookingserailizer(pending_booking,many=True)
-            #     return Response({'msg':'Your id search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            if mobile_number:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings by phone number', 'number_of_booking':number_of_booking,'data':serializer.data})
             
-            if mobile_number and status and bookingfor and to_date:
+            elif mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
                 
                 serializer =Agentbookingserailizer(pending_booking,many=True)
-
                 
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
@@ -981,10 +980,8 @@ class Agentbooking_accept(APIView):
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
-        # driver_mobile=user.phone
-        # driver=booking.accepted_driver
-        # date=booking.booking_date
-        # time=booking.client_booking_time
+        todate=booking.to_date
+        start_time=booking.start_time
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -994,13 +991,13 @@ class Agentbooking_accept(APIView):
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
                 serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-               
+                
                 serializer.save()
-                return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
+                return Response({'msg':'booking accepted', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
-        else:
-            return Response({'msg':'Not Accpeted', 'error':serializer.errors})
-        # return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return Response({'msg':'Not Accpeted'})
+        return Response({'msg': 'No booking to accept'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # Filter driver based on package
@@ -1292,3 +1289,45 @@ class dashboardbooking(APIView):
 
         #serializer=Agentbookingserailizer(filter_booking,many=True)
         return Response({'msg':'Local booking', 'local_booking_count':local_booking_count, 'outcount':outcount, 'dropcount':dropcount})
+    
+
+
+class AllZonedata(APIView):
+    def get(self, request):
+        #location_city=request.GET.get('location_city')
+        zone_a_data = ZoneA.objects.all()
+        zone_b_data = ZoneB.objects.all()
+        zone_c_data = ZoneC.objects.all()
+        zone_d_data = ZoneD.objects.all()
+        zone_e_data = ZoneE.objects.all()
+        zone_f_data = ZoneF.objects.all()
+        zone_g_data = ZoneG.objects.all()
+        # Pune location A model
+        pune_a_queryset = pune_A_location.objects.all()
+        pune_b=pune_B_location.objects.all() # Pune Location B model
+
+
+        zone_a_serializer = ZoneASerializer(zone_a_data, many=True)
+        zone_b_serializer = ZoneBSerializer(zone_b_data, many=True)
+        zone_c_serializer = ZoneCSerializer(zone_c_data, many=True)
+        zone_d_serializer = ZoneDSerializer(zone_d_data, many=True)
+        zone_e_serializer = ZoneESerializer(zone_e_data, many=True)
+        zone_f_serializer = ZoneFSerializer(zone_f_data, many=True)
+        zone_g_serializer = ZoneGSerializer(zone_g_data, many=True)
+
+        """Pune location serializer"""
+        pune_a_serializer = punelocationASerializer(pune_a_queryset, many=True)
+        pune_b_serializer=punelocationBSerializer(pune_b, many=True)
+        """End pune location serializer"""
+         
+        
+        combined_data = (zone_a_serializer.data + 
+                        zone_b_serializer.data + zone_c_serializer.data + zone_d_serializer.data + zone_e_serializer.data + 
+                        zone_f_serializer.data + zone_g_serializer.data + pune_a_serializer.data+ pune_b_serializer.data)
+        
+        #Filter only data for the specified city
+       # filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
+        
+        sorted_data = sorted(combined_data, key=lambda x: x['location'])
+
+        return Response(sorted_data)
