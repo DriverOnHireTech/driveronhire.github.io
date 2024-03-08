@@ -456,13 +456,24 @@ class Regionapi(APIView):
         return Response({'msg':'All Region List', 'data':serializer.data}, status=status.HTTP_200_OK)
 
 
-
+#Charges API endpoint
 class twohrscharges(APIView):
+    """2HRS driver service charges"""
     def get(self, request):
         try:
             _2hrs =localtwohrscharges.objects.all()
             serializer = chargestwohrsserailizer(_2hrs, many=True)
             return Response({"msg":"Local 2hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
+        except chargestwohrsserailizer.DoesNotExist:
+            return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+class fourhrscharges(APIView):
+    """4HRS driver service charges"""
+    def get(self, request):
+        try:
+            fourhrs =localfourhrscharges.objects.all()
+            serializer = localfourhrschargesSerializer(fourhrs, many=True)
+            return Response({"msg":"Local 4hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
         except chargestwohrsserailizer.DoesNotExist:
             return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
