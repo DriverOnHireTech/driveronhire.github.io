@@ -991,11 +991,14 @@ class Agentbooking_accept(APIView):
     def patch(self, request, id):
         data = request.data
         user = request.user
+        driver_mobile = user.phone
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
         todate=booking.to_date
         start_time=booking.start_time
+        bhrs=f"{booking.packege}hrs"
+        bcharge=booking.base_charges
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -1004,8 +1007,9 @@ class Agentbooking_accept(APIView):
         #     #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
-                serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-                
+                driver_name = AddDriver.objects.get(driver_user=user)
+                serializer.validated_data['driver_name'] = driver_name
+                utils.gupshupwhatsapp(self, client_mobile, driver_name, driver_mobile, todate, start_time, bhrs, bcharge)
                 serializer.save()
                 return Response({'msg':'booking accepted', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       

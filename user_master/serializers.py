@@ -91,7 +91,7 @@ class chargestwohrsserailizer(serializers.ModelSerializer):
 class localfourhrschargesSerializer(serializers.ModelSerializer):
     class Meta:
         model=localfourhrscharges
-        fileds="__all__"
+        fields="__all__"
 
 """"Query selector"""
 class citylocatioserializer(serializers.ModelSerializer):
