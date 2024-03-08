@@ -28,6 +28,7 @@ urlpatterns = [
     
     # Charges 
     path('twohrs/', twohrscharges.as_view(), name='two_hrs_charges'),
+    path('fourhrscharges/', fourhrscharges.as_view(), name='four_hrs_charges'),
 
     # URL for User
     path('createuser/', createUsermaster.as_view(), name='createuser'),
