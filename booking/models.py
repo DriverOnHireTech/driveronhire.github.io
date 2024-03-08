@@ -163,6 +163,7 @@ class AgentBooking(models.Model):
     packege=  models.CharField(max_length=100, null=True, blank=True)
     visiting_location= models.CharField(max_length=200, null=True, blank=True)
     outskirt_charge = models.BigIntegerField(default=0)
+    base_charges=models.IntegerField(null=True, blank=True)
     status= models.CharField(choices=Status, max_length=100, null=True, blank=True)
     cancelbooking_reason=models.CharField(choices=reason,max_length=500, null=True, blank=True)
     driver_name= models.ForeignKey(AddDriver, on_delete=models.CASCADE, related_name="agentbookings_driver_name", null=True, blank=True)
