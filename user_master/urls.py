@@ -29,7 +29,8 @@ urlpatterns = [
     # Charges 
     path('twohrs/', twohrscharges.as_view(), name='two_hrs_charges'),
     path('fourhrscharges/', fourhrscharges.as_view(), name='four_hrs_charges'),
-
+    path('eigthhrs/',eigthhrscharges.as_view(), name='eigth_hrs_charge'),
+    
     # URL for User
     path('createuser/', createUsermaster.as_view(), name='createuser'),
     # path('login/', Loginuser.as_view(), name='login'),
