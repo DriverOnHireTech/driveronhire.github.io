@@ -474,9 +474,18 @@ class fourhrscharges(APIView):
             fourhrs =localfourhrscharges.objects.all()
             serializer = localfourhrschargesSerializer(fourhrs, many=True)
             return Response({"msg":"Local 4hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
-        except chargestwohrsserailizer.DoesNotExist:
+        except localfourhrschargesSerializer.DoesNotExist:
             return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
+class eigthhrscharges(APIView):
+    """8HRS driver service charges"""
+    def get(self, request):
+        try:
+            fourhrs =localeigthhrscharges.objects.all()
+            serializer = Eigthhrschargesserializier(fourhrs, many=True)
+            return Response({"msg":"Local 8hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
+        except Eigthhrschargesserializier.DoesNotExist:
+            return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 """"Get location based on city query parameter"""
 class locatiobycity(APIView):
