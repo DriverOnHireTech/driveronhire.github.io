@@ -28,6 +28,7 @@ from .zone_logic import zone_get, return_charges
 from client_management.models import UserProfile
 from driver_management.models import AddDriver
 from django.utils import timezone as tz
+from .base_charge import get_base_charge
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -39,9 +40,17 @@ class MyBookingList(APIView):
     def post(self, request, format=None): 
         user=request.user
         data=request.data
+        message_number = f"91{user}"
         trip_type=request.data['trip_type']
         car_type= request.data['car_type']
         gear_type=request.data['gear_type']
+        packege = request.data['packege']
+        booking_date = request.data['booking_date']
+        start_time_str = request.data['client_booking_time']
+        start_time = datetime.strptime(start_time_str, '%H:%M')
+        formatted_start_time = start_time.strftime('%I:%M %p')
+        print("formatted time: ", formatted_start_time)
+        base_charge_web = get_base_charge(car_type, packege)
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
 
@@ -57,6 +66,7 @@ class MyBookingList(APIView):
                 serializer.validated_data['mobile'] = user.phone
                 serializer.validated_data['user']=user
                 serializer.validated_data['outskirt_charge']=extra_charges
+                serializer.validated_data['base_charges'] = base_charge_web
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -149,7 +159,8 @@ class MyBookingList(APIView):
                                 response = messaging.send(message)
                             except Exception as e:
                                 print(f"Error sending notification to token {token}:{e}")
-                    
+
+                utils.agnbookingpro(self, message_number, booking_date, formatted_start_time)    
                 # serializer.save()
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
@@ -294,7 +305,7 @@ class Acceptedride(APIView):
                
                 data.setdefault("accepted_driver",user.id) 
                 #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
+                utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
                 serializer.save()
 
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -597,12 +608,14 @@ class Agentbookingview(APIView):
             message_number = f"91{mobile_number}"
             bookingfor=request.data['bookingfor']
             pickup_location=request.data['pickup_location']
+            packege = request.data['packege']
             drop_location=request.data['drop_location']
             to_date = request.data['to_date']
             start_time_str = request.data['start_time']
             start_time = datetime.strptime(start_time_str, '%H:%M')
             formatted_start_time = start_time.strftime('%I:%M %p')
             print("formatted time: ", formatted_start_time)
+            base_charge_age = get_base_charge(car_type, packege)
 
             pickup_zone = zone_get(pickup_location)
             drop_zone = zone_get(drop_location)
@@ -614,6 +627,7 @@ class Agentbookingview(APIView):
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by_name']=user.first_name
                 serializer.validated_data['outskirt_charge']=outskirt_charge
+                serializer.validated_data['base_charges'] = base_charge_age
                 serializer.save()
 
                 user_location_point = Point(latitude, longitude, srid=4326)
@@ -977,11 +991,14 @@ class Agentbooking_accept(APIView):
     def patch(self, request, id):
         data = request.data
         user = request.user
+        driver_mobile = user.phone
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
         todate=booking.to_date
         start_time=booking.start_time
+        bhrs=f"{booking.packege}hrs"
+        bcharge=booking.base_charges
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -990,8 +1007,9 @@ class Agentbooking_accept(APIView):
         #     #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
-                serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-                
+                driver_name = AddDriver.objects.get(driver_user=user)
+                serializer.validated_data['driver_name'] = driver_name
+                utils.gupshupwhatsapp(self, client_mobile, driver_name, driver_mobile, todate, start_time, bhrs, bcharge)
                 serializer.save()
                 return Response({'msg':'booking accepted', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -1209,7 +1227,6 @@ class TestDeclineBooking(APIView):
 
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
-                        print("serializer data: ", serializer.data)
                         data_list.extend(serializer.data)
 
                     
@@ -1246,8 +1263,7 @@ class TestAgentDeclineBooking(APIView):
                 
                 booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & 
                     Q(status="pending") & 
-                    Q(to_date__gte=tz.now().date()) & 
-                    Q(start_time__gte=tz.now().time()))
+                    Q(to_date__gte=tz.now().date()))
                 
                 decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
                 
@@ -1332,5 +1348,5 @@ class AllZonedata(APIView):
        # filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
         
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
-
+        
         return Response(sorted_data)
