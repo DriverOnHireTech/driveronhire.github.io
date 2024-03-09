@@ -491,3 +491,23 @@ class eigthhrscharges(APIView):
 class locatiobycity(APIView):
     def get(self, request):
         pass
+
+#All charges combine API
+class allservicecharges(APIView):
+    """All service charges here"""
+    def get(self, request):
+        two_hrs_charges = localtwohrscharges.objects.all()
+        four_hrs_charges = localfourhrscharges.objects.all()
+        eight_hrs_charges = localeigthhrscharges.objects.all()
+
+        two_hrs_serializer = chargestwohrsserailizer(two_hrs_charges, many=True)
+        four_hrs_serializer = localfourhrschargesSerializer(four_hrs_charges, many=True)
+        eight_hrs_serializer = Eigthhrschargesserializier(eight_hrs_charges, many=True)
+
+        combined_data = {
+            'two_hours': two_hrs_serializer.data,
+            'four_hours': four_hrs_serializer.data,
+            'eight_hours': eight_hrs_serializer.data
+        }
+
+        return Response({'msg':'All service charges','data':combined_data}, status=status.HTTP_200_OK)
