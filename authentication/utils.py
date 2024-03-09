@@ -156,4 +156,5 @@ def gupshupwhatsapp(self, to_number, dname, dnumber, bdate, btime, bhrs,charge):
         "footer":"Thanks  Driveronhire.com"
     }
     response = requests.post(url, data=payload)
+    print("Response:", response.json())
     return response
