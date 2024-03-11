@@ -95,6 +95,7 @@ class LoginView(APIView):
                     device = FCMDevice.objects.get(registration_id=fcm_token)
                 except FCMDevice.DoesNotExist:
                     device = FCMDevice.objects.create(user=user, registration_id=fcm_token, type="android", name=user.get_username())
+                    print(f"FCM device created:{device}")
                     return Response({"msg": 'Welcome Customer', 'data': data, 'token': token.key}, status=status.HTTP_200_OK)
                 
                 # FCM device token already exists for another user
