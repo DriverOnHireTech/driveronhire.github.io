@@ -35,6 +35,8 @@ urlpatterns = [
 
     path('invoice/<int:id>/', InvoiceGenerate.as_view(), name='get_invoice'),
 
+     path('invoice_agent/<int:id>/', InvoiceGenerateAgent.as_view(), name='get-invoice-agent'),
+
     path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
 
     path('userprofile/', views.userprofile.as_view(), name='userprofile'),

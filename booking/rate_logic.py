@@ -289,7 +289,7 @@ class InvoiceGenerateAgent(APIView):
         Placebooking_data_id = AgentBooking.objects.get(id=placebooking_id)
         booking_type = Placebooking_data['bookingfor']
         trip_type = Placebooking_data['trip_type']
-        car_type = Placebooking_data['car_type']   
+        car_type = Placebooking_data['car_type']  
 
         user = request.user
 
@@ -314,7 +314,7 @@ class InvoiceGenerateAgent(APIView):
             
             def base_price():
                 if trip_type == "Round":
-                    if car_type == "Luxury" or "SUV Luxury" or "Sedan Luxury":
+                    if "Luxury" in car_type:
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
                                 print("This is luxury car 2 hour")
@@ -368,8 +368,8 @@ class InvoiceGenerateAgent(APIView):
                                 bill = 800 + additional_cost
                                 return 800, 0, additional_cost
 
-                elif trip_type == "One Way":
-                    if car_type == "Luxury" or "SUV Luxury" or "Sedan Luxury":
+                elif trip_type == "OneWay":
+                    if "Luxury" in car_type:
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
                                 return 500, 100, 0
@@ -422,6 +422,7 @@ class InvoiceGenerateAgent(APIView):
                             
             def total_price():
                 all_charges = base_price()
+                print("all charges: ", all_charges)
                 base_charge = all_charges[0]
                 one_way_charge = all_charges[1]
                 extra_hour_charge = all_charges[2]
@@ -443,8 +444,9 @@ class InvoiceGenerateAgent(APIView):
                     return total_charge, base_charge, night_charge, outskirt_charge, one_way_charge, extra_hour_charge
 
             price = total_price()
+            print("price: ", price)
             total_price_value = price[0]
-            base_price = price[1]
+            base_price_charge = price[1]
             night_charge = price[2]
             outskirt_charge = price[3]
             one_way_charge = price[4]
@@ -453,7 +455,7 @@ class InvoiceGenerateAgent(APIView):
             inv_seri =  InvoiceSerializerAgent(data = data)
             if inv_seri.is_valid():
                 inv_seri.validated_data['agentbooking'] = Placebooking_data_id
-                inv_seri.validated_data['base_charge'] = base_price
+                inv_seri.validated_data['base_charge'] = base_price_charge
                 inv_seri.validated_data['total_charge'] = total_price_value
                 inv_seri.validated_data['night_charge'] = night_charge
                 inv_seri.validated_data['outskirt_charge'] = outskirt_charge

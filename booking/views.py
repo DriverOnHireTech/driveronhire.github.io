@@ -98,7 +98,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=5)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=20)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -641,7 +641,7 @@ class Agentbookingview(APIView):
 
                 driver=driver.annotate(
                             distance = Distance('driverlocation', user_location_point)
-                                ).filter(distance__lte=D(km=5))
+                                ).filter(distance__lte=D(km=20))
                 
                 driver_data = []
                 for driver_obj in driver:
@@ -932,6 +932,7 @@ class Agentbooking_bystatus(APIView):
         
 # For CRM quary filter
 class Agentbookingfilterquary(APIView):
+
     def get(self, request, *args, **kwargs):
         try:
             mobile_number= request.GET.get('mobile_number')
@@ -939,27 +940,79 @@ class Agentbookingfilterquary(APIView):
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')
             print("Booking number", mobile_number,status, bookingfor, to_date)
-                     
 
-            if mobile_number:
-                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
-                number_of_booking= pending_booking.count()
-                serializer =Agentbookingserailizer(pending_booking,many=True)
-                return Response({'msg':'Your search bookings by phone number', 'number_of_booking':number_of_booking,'data':serializer.data})
-            
-            elif mobile_number and status and bookingfor and to_date:
+            if mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
-                
                 serializer =Agentbookingserailizer(pending_booking,many=True)
-                
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif mobile_number and status and bookingfor:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif mobile_number and status and to_date:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, to_date=to_date)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
+            elif mobile_number and bookingfor and to_date:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, bookingfor=bookingfor, to_date=to_date)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             elif status and to_date:
                 bookingstatus= AgentBooking.objects.filter(status=status, to_date=to_date)
                 countstatus=bookingstatus.count()
                 serializer=Agentbookingserailizer(bookingstatus, many=True)
-                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})         
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})   
+
+            elif status and mobile_number:
+                bookingstatus= AgentBooking.objects.filter(status=status, mobile_number=mobile_number)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data}) 
+
+            elif mobile_number and bookingfor:
+                bookingstatus= AgentBooking.objects.filter(mobile_number=mobile_number, bookingfor=bookingfor)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data}) 
+
+            elif mobile_number and to_date:
+                bookingstatus= AgentBooking.objects.filter(mobile_number=mobile_number, to_date=to_date)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data}) 
+
+            elif bookingfor and to_date:
+                pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor, to_date=to_date)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif status and bookingfor:
+                bookingstatus= AgentBooking.objects.filter(status=status, bookingfor=bookingfor)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})  
+
+            elif mobile_number:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings by phone number', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif status:
+                bookingstatus= AgentBooking.objects.filter(status=status)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})  
+
             elif bookingfor:
                 pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
                 number_of_booking= pending_booking.count()
@@ -972,8 +1025,7 @@ class Agentbookingfilterquary(APIView):
                 pending_booking=AgentBooking.objects.filter(to_date=to_date)
                 number_of_booking= pending_booking.count()
                 serializer =Agentbookingserailizer(pending_booking, many=True)
-                return Response({'msg':'Your search date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
-            
+                return Response({'msg':'Your search date wise', 'number_of_booking':number_of_booking,'data':serializer.data})        
             
             else:
                 bookings = AgentBooking.objects.all()
@@ -983,8 +1035,6 @@ class Agentbookingfilterquary(APIView):
         
         except AgentBooking.DoesNotExist:
              Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
-    
-
 class Agentbooking_accept(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
