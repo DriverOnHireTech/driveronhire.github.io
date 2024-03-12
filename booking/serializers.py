@@ -60,12 +60,11 @@ class DriverSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     
     placebooking = serializers.SerializerMethodField()
+    agentbooking = serializers.SerializerMethodField()
     driver=serializers.SerializerMethodField()
     class Meta:
         model = Invoice
         fields = "__all__"
-
-  
     
     def get_driver(self, obj):
         driver =  obj.driver
@@ -75,6 +74,11 @@ class InvoiceSerializer(serializers.ModelSerializer):
     def get_placebooking(self, obj):
         placebooking =  obj.placebooking
         driver_seri = PlacebookingSerializer(placebooking)
+        return driver_seri.data
+    
+    def get_agentbooking(self, obj):
+        agentbooking =  obj.agentbooking
+        driver_seri = Agentbookingserailizer(agentbooking)
         return driver_seri.data
 
 class InvoiceSerializerAgent(serializers.ModelSerializer):
