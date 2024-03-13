@@ -266,8 +266,6 @@ class InvoiceGenerate(APIView):
                 else:
                     print("Normal charge.")
 
-        
-    
 
     def get(self, request, id):
         try:
@@ -302,19 +300,24 @@ class InvoiceGenerateAgent(APIView):
 
             # Convert deuty_started to a datetime object with timezone information
             deuty_started_datetime = deuty_started_time.replace(tzinfo=timezone.utc)
+            print("deuty_started_datetime",deuty_started_datetime)
 
             # Make sure deuty_end_datetime has timezone information (if not already)
             if deuty_end_datetime.tzinfo is None:
+                print("this is deuty end datetime")
                 deuty_end_datetime = deuty_end_datetime.replace(tzinfo=timezone.utc)
 
             # Calculate the time difference
             time_difference = deuty_end_datetime - deuty_started_datetime
-
+            print("this is time difference")
             # Printing the time difference
             
             def base_price():
+                print("base price logic")
                 if trip_type == "Round":
+                    print("this is round trip")
                     if car_type == "Luxury" or "SUV Luxury" or "Sedan Luxury":
+                        print("this is luxury")
                         if packege == "2":
                             if time_difference < timedelta(hours=2):
                                 print("This is luxury car 2 hour")
@@ -352,6 +355,7 @@ class InvoiceGenerateAgent(APIView):
                                 bill = 400 + additional_cost
                                 return 400, 0, additional_cost
                         elif packege == "4":
+                            print("4 hour packege for normal car")
                             if time_difference < timedelta(hours=4):
                                 return 500, 0, 0
                             else:
@@ -368,7 +372,8 @@ class InvoiceGenerateAgent(APIView):
                                 bill = 800 + additional_cost
                                 return 800, 0, additional_cost
 
-                elif trip_type == "One Way":
+                elif trip_type == "OneWay":
+                    print("this is one way booking")
                     if car_type == "Luxury" or "SUV Luxury" or "Sedan Luxury":
                         if packege == "2":
                             if time_difference < timedelta(hours=2):

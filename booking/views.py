@@ -28,6 +28,7 @@ from .zone_logic import zone_get, return_charges
 from client_management.models import UserProfile
 from driver_management.models import AddDriver
 from django.utils import timezone as tz
+from .base_charge import get_base_charge
 
 # from geopy.geocoders import Nominatim
 # import geocoder
@@ -39,9 +40,17 @@ class MyBookingList(APIView):
     def post(self, request, format=None): 
         user=request.user
         data=request.data
+        message_number = f"91{user}"
         trip_type=request.data['trip_type']
         car_type= request.data['car_type']
         gear_type=request.data['gear_type']
+        packege = request.data['packege']
+        booking_date = request.data['booking_date']
+        start_time_str = request.data['client_booking_time']
+        start_time = datetime.strptime(start_time_str, '%H:%M')
+        formatted_start_time = start_time.strftime('%I:%M %p')
+        print("formatted time: ", formatted_start_time)
+        base_charge_web = get_base_charge(car_type, packege)
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
 
@@ -57,6 +66,7 @@ class MyBookingList(APIView):
                 serializer.validated_data['mobile'] = user.phone
                 serializer.validated_data['user']=user
                 serializer.validated_data['outskirt_charge']=extra_charges
+                serializer.validated_data['base_charges'] = base_charge_web
 
                 # Converting Current location latitude and longitude to user address using geopy
                 currant_location = serializer.validated_data.get('currant_location')
@@ -88,7 +98,7 @@ class MyBookingList(APIView):
                     
                     driver=driver.annotate(
                             distance = Distance('driverlocation', currant_location)
-                             ).filter(distance__lte=D(km=5)) # Radius will be changed to 5 km while deployment
+                             ).filter(distance__lte=D(km=20)) # Radius will be changed to 5 km while deployment
                     
                     driver_data = []
                     for driver_obj in driver:
@@ -148,9 +158,9 @@ class MyBookingList(APIView):
 
                                 response = messaging.send(message)
                             except Exception as e:
-                                print(f"Error sending notification to token {token}:{e}")
-                    
+                                print(f"Error sending notification to token {token}:{e}")   
                 # serializer.save()
+                utils.agnbookingpro(self, message_number, booking_date, formatted_start_time)
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
                         
         else:
@@ -294,7 +304,7 @@ class Acceptedride(APIView):
                
                 data.setdefault("accepted_driver",user.id) 
                 #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
-                gupshup=utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
+                utils.gupshupwhatsapp(self, whatsapp_number, driver_name, driver_mobile, bdate, booking_time, bhrs, bcharge)
                 serializer.save()
 
             return Response({'msg':'bookking Updated', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
@@ -603,7 +613,6 @@ class Agentbookingview(APIView):
             start_time = datetime.strptime(start_time_str, '%H:%M')
             formatted_start_time = start_time.strftime('%I:%M %p')
             print("formatted time: ", formatted_start_time)
-
             pickup_zone = zone_get(pickup_location)
             drop_zone = zone_get(drop_location)
             # extra_charges = return_charges(pickup_zone, drop_zone)
@@ -620,14 +629,14 @@ class Agentbookingview(APIView):
 
                 driver =AddDriver.objects.all()
                 if driver:
-                    driver = driver.filter(car_type__contains=car_type)
+                    driver = driver.filter(car_type__contains=car_type, driver_status="Approved")
 
                 if((bookingfor == "outstation") or (bookingfor == "drop")):
                     driver = driver.filter(driver_app_status_new__package_booking_type__contains="outstation")
 
                 driver=driver.annotate(
                             distance = Distance('driverlocation', user_location_point)
-                                ).filter(distance__lte=D(km=5))
+                                ).filter(distance__lte=D(km=20))
                 
                 driver_data = []
                 for driver_obj in driver:
@@ -918,6 +927,7 @@ class Agentbooking_bystatus(APIView):
         
 # For CRM quary filter
 class Agentbookingfilterquary(APIView):
+
     def get(self, request, *args, **kwargs):
         try:
             mobile_number= request.GET.get('mobile_number')
@@ -925,27 +935,79 @@ class Agentbookingfilterquary(APIView):
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')
             print("Booking number", mobile_number,status, bookingfor, to_date)
-                     
 
-            if mobile_number:
-                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
-                number_of_booking= pending_booking.count()
-                serializer =Agentbookingserailizer(pending_booking,many=True)
-                return Response({'msg':'Your search bookings by phone number', 'number_of_booking':number_of_booking,'data':serializer.data})
-            
-            elif mobile_number and status and bookingfor and to_date:
+            if mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
                 number_of_booking= pending_booking.count()
-                
                 serializer =Agentbookingserailizer(pending_booking,many=True)
-                
                 return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif mobile_number and status and bookingfor:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif mobile_number and status and to_date:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, to_date=to_date)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+            
+            elif mobile_number and bookingfor and to_date:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, bookingfor=bookingfor, to_date=to_date)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
             
             elif status and to_date:
                 bookingstatus= AgentBooking.objects.filter(status=status, to_date=to_date)
                 countstatus=bookingstatus.count()
                 serializer=Agentbookingserailizer(bookingstatus, many=True)
-                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})         
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})   
+
+            elif status and mobile_number:
+                bookingstatus= AgentBooking.objects.filter(status=status, mobile_number=mobile_number)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data}) 
+
+            elif mobile_number and bookingfor:
+                bookingstatus= AgentBooking.objects.filter(mobile_number=mobile_number, bookingfor=bookingfor)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data}) 
+
+            elif mobile_number and to_date:
+                bookingstatus= AgentBooking.objects.filter(mobile_number=mobile_number, to_date=to_date)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data}) 
+
+            elif bookingfor and to_date:
+                pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor, to_date=to_date)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your mobile search bookings', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif status and bookingfor:
+                bookingstatus= AgentBooking.objects.filter(status=status, bookingfor=bookingfor)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})  
+
+            elif mobile_number:
+                pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number)
+                number_of_booking= pending_booking.count()
+                serializer =Agentbookingserailizer(pending_booking,many=True)
+                return Response({'msg':'Your search bookings by phone number', 'number_of_booking':number_of_booking,'data':serializer.data})
+
+            elif status:
+                bookingstatus= AgentBooking.objects.filter(status=status)
+                countstatus=bookingstatus.count()
+                serializer=Agentbookingserailizer(bookingstatus, many=True)
+                return Response({'msg':'Your search status bookings', 'number_of_booking':countstatus,'data':serializer.data})  
+
             elif bookingfor:
                 pending_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
                 number_of_booking= pending_booking.count()
@@ -958,8 +1020,7 @@ class Agentbookingfilterquary(APIView):
                 pending_booking=AgentBooking.objects.filter(to_date=to_date)
                 number_of_booking= pending_booking.count()
                 serializer =Agentbookingserailizer(pending_booking, many=True)
-                return Response({'msg':'Your search date wise', 'number_of_booking':number_of_booking,'data':serializer.data})
-            
+                return Response({'msg':'Your search date wise', 'number_of_booking':number_of_booking,'data':serializer.data})        
             
             else:
                 bookings = AgentBooking.objects.all()
@@ -976,12 +1037,17 @@ class Agentbooking_accept(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
+        print("data: ", data)
         user = request.user
+        driver_mobile = user.phone
         booking= AgentBooking.objects.get(id=id)
         client_name=booking.client_name
         client_mobile=booking.mobile_number
         todate=booking.to_date
         start_time=booking.start_time
+        bhrs=f"{booking.packege}hrs"
+
+        bcharge=booking.base_charges
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
         
@@ -990,8 +1056,9 @@ class Agentbooking_accept(APIView):
         #     #booking.accepted_driver= user
             if serializer.is_valid():
                 serializer.validated_data['accepted_driver']=user
-                serializer.validated_data['driver_name'] = AddDriver.objects.get(driver_user=user)
-                
+                driver_name = AddDriver.objects.get(driver_user=user)
+                serializer.validated_data['driver_name'] = driver_name
+                utils.gupshupwhatsapp(self, client_mobile, driver_name, driver_mobile, todate, start_time, bhrs, bcharge)
                 serializer.save()
                 return Response({'msg':'booking accepted', 'data':serializer.data}, status=status.HTTP_202_ACCEPTED)
       
@@ -1209,7 +1276,6 @@ class TestDeclineBooking(APIView):
 
                     if not decline_data:
                         serializer = PlacebookingSerializer(booking, many=True)
-                        print("serializer data: ", serializer.data)
                         data_list.extend(serializer.data)
 
                     
@@ -1246,7 +1312,7 @@ class TestAgentDeclineBooking(APIView):
                 
                 booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending") & Q(to_date__gte=tz.now().date()) & Q(start_time__gte=tz.now().time()))
                 
-                decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
+                decline_data = Declinebooking1.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
                 
                 if not decline_data:
                     serializer = Agentbookingserailizer(booking, many=True)

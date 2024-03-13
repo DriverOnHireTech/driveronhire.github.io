@@ -23,7 +23,7 @@ class ClientregistrationSerializer(serializers.ModelSerializer):
         model = bookinguser
         fields = ['full_name', 'mobile_number', 'city', 'address']
 
-        
+      
 class PlacebookingSerializer(serializers.ModelSerializer):
     driver = serializers.SerializerMethodField()
     class Meta:
@@ -38,7 +38,8 @@ class PlacebookingSerializer(serializers.ModelSerializer):
         driver =  obj.driver
         driver_seri = MyDriverSerializer(driver)
         return driver_seri.data
-   
+
+
 class NotifyDriverSerializer(serializers.ModelSerializer):
     place_booking_id = serializers.SerializerMethodField()
 
@@ -49,7 +50,7 @@ class NotifyDriverSerializer(serializers.ModelSerializer):
     def get_place_booking_id(self, obj):
         place_booking = obj.place_booking
         return place_booking.id if place_booking else None
-    
+
 
 class DriverSerializer(serializers.ModelSerializer):
     class Meta:
@@ -60,12 +61,11 @@ class DriverSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     
     placebooking = serializers.SerializerMethodField()
+    agentbooking = serializers.SerializerMethodField()
     driver=serializers.SerializerMethodField()
     class Meta:
         model = Invoice
         fields = "__all__"
-
-  
     
     def get_driver(self, obj):
         driver =  obj.driver
@@ -77,6 +77,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
         driver_seri = PlacebookingSerializer(placebooking)
         return driver_seri.data
 
+    def get_agentbooking(self, obj):
+        agentbooking =  obj.agentbooking
+        driver_seri = Agentbookingserailizer(agentbooking)
+        return driver_seri.data
+
+
 class InvoiceSerializerAgent(serializers.ModelSerializer):
     
     agentbooking = serializers.SerializerMethodField()
@@ -85,8 +91,6 @@ class InvoiceSerializerAgent(serializers.ModelSerializer):
         model = Invoice
         fields = "__all__"
 
-  
-    
     def get_driver(self, obj):
         driver =  obj.driver
         driver_seri = MyDriverSerializer(driver)
@@ -103,7 +107,6 @@ class Feedbackserializer(serializers.ModelSerializer):
     class Meta:
         model =  Feedback
         fields = "__all__"
-    
 
 
 class Agentbookingserailizer(serializers.ModelSerializer):
@@ -112,8 +115,6 @@ class Agentbookingserailizer(serializers.ModelSerializer):
         driver_name = MyDriverSerializer()
         model= AgentBooking
         fields= "__all__"
-
-
     
     def to_representation(self, instance):
         data = super(Agentbookingserailizer, self).to_representation(instance)
@@ -133,8 +134,8 @@ class Agentbookingserailizer(serializers.ModelSerializer):
             #     'driver_name': driver_data,
             # })
         return data
-    
-   
+
+
 class BookLaterSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookLater
@@ -152,6 +153,7 @@ class GuestBookingserialzer(serializers.ModelSerializer):
         model=GuestBooking
         fields="__all__"
 
+
 class place_agent_booking_serializer(serializers.Serializer):
     table1_data = PlacebookingSerializer(many=True)
     table2_data = Agentbookingserailizer(many=True)
@@ -162,7 +164,7 @@ class ZoneASerializer(serializers.ModelSerializer):
         model = ZoneA
         fields = "__all__"
 
-    
+
 class ZoneBSerializer(serializers.ModelSerializer):
     class Meta:
         model = ZoneB
@@ -198,6 +200,7 @@ class ZoneGSerializer(serializers.ModelSerializer):
         model = ZoneG
         fields = "__all__"
 
+
 class DeclinebookingSerializer(serializers.ModelSerializer):
     placebooking=serializers.SerializerMethodField()
     agentbooking=serializers.SerializerMethodField()
@@ -215,11 +218,13 @@ class DeclinebookingSerializer(serializers.ModelSerializer):
         agnetseri=Agentbookingserailizer(agentbooking)
         return agnetseri.data
 
+
 #Pune location models and serializer
 class punelocationASerializer(serializers.ModelSerializer):
     class Meta:
         model=pune_A_location
         fields= '__all__'
+
 
 class punelocationBSerializer(serializers.ModelSerializer):
     class Meta:
