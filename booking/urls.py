@@ -5,8 +5,52 @@ from .extra_charges import ExtraRate
 from .rate_logic import *
 
 urlpatterns = [
-    path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'), #for CRM
-    path('agent_booking_app/', views.AgentBookingApp.as_view(), name='agent-booking-app'), # this is for get request for mobile app
+
+    path('booking/', views.MyBookingList.as_view(), name='booking'),
+
+    path('booking/<int:id>/', views.MyBookingList.as_view(), name='booking'),
+
+    path('allbooking/', views.getbooking.as_view(), name='all_booking'),
+
+    path('book_leter/', views.ScheduleBookingView.as_view(), name='book_leter'),
+
+    path('userbooking/', views.BookingListWithId.as_view(), name='booking-id'), # Get logged user booking
+
+    path('userbooking/<int:id>/', views.BookingListWithId.as_view(), name='booking-id'),
+
+    path('singlebooking/<int:id>/', views.get_bookingbyid.as_view(), name='single-booking'), # single Booking Get
+
+    path('Acceptedride/<int:id>/', views.Acceptedride.as_view(), name='accepted-booking'), # Accept booking from website 
+
+    path('decline_booking/', views.declineplacebooking.as_view(), name='decline_booking'),
+
+    # This url will fetch all refuse booking
+    path('all_declinebooking/', views.all_refuse_booking.as_view(), name='all_decilnebooking'),
+
+    # invoice for placebooking
+    path('invoice/', InvoiceGenerate.as_view(), name='invoice'), 
+
+    # Invoice for agent booking
+    path('invoice_agent/', InvoiceGenerateAgent.as_view(), name='invoice-agent'),
+
+    path('invoice/<int:id>/', InvoiceGenerate.as_view(), name='get_invoice'),
+
+     path('invoice_agent/<int:id>/', InvoiceGenerateAgent.as_view(), name='get-invoice-agent'),
+
+    path('UserFeedback/', views.FeedbackApi.as_view(), name='UserFeedback'),
+
+    path('userprofile/', views.userprofile.as_view(), name='userprofile'),
+
+    path('pendingbookings/', views.PendingBooking.as_view(), name='pendingbookings'),
+
+    path('upcoming_booking/', views.UpcomingBooking.as_view(), name='upcoming_booking'),
+
+    #for CRM
+    path('agent_booking/', views.Agentbookingview.as_view(), name='agent-booking'),  
+
+    # this is for get request for mobile app
+    path('agent_booking_app/', views.AgentBookingApp.as_view(), name='agent-booking-app'), 
+
     path('agent_booking/<int:id>/', views.AgentDetailView.as_view(), name='agent-booking-id'),
     path('agent_booking_reschedule/<int:id>/', views.AgentBookingReshedule.as_view(), name='reshudle_booking'), # if driver cancel then booking float again
     path('agent_booking_accept/<int:id>/', views.Agentbooking_accept.as_view(), name='agent_booking_accept'),  # agent booking accept by driver

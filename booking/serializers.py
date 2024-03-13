@@ -76,6 +76,11 @@ class InvoiceSerializer(serializers.ModelSerializer):
         placebooking =  obj.placebooking
         driver_seri = PlacebookingSerializer(placebooking)
         return driver_seri.data
+    
+    def get_agentbooking(self, obj):
+        agentbooking =  obj.agentbooking
+        driver_seri = Agentbookingserailizer(agentbooking)
+        return driver_seri.data
 
     def get_agentbooking(self, obj):
         agentbooking =  obj.agentbooking

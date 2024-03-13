@@ -158,7 +158,9 @@ class MyBookingList(APIView):
 
                                 response = messaging.send(message)
                             except Exception as e:
-                                print(f"Error sending notification to token {token}:{e}")   
+                                print(f"Error sending notification to token {token}:{e}")
+
+                utils.agnbookingpro(self, message_number, booking_date, formatted_start_time)    
                 # serializer.save()
                 utils.agnbookingpro(self, message_number, booking_date, formatted_start_time)
                 return Response({'data':serializer.data, 'drivers':driver_data}, status=status.HTTP_201_CREATED)
@@ -279,7 +281,7 @@ class Acceptedride(APIView):
             btime=booking.client_booking_time
             bhrs=booking.packege
             bcharge=booking.base_charges
-            print("Base charges:", bcharge)
+            print("all details:", client_mobile,bdate,btime,bhrs,bcharge)
 
             # booking time formate
             time_formate=datetime.now()
@@ -607,12 +609,15 @@ class Agentbookingview(APIView):
             message_number = f"91{mobile_number}"
             bookingfor=request.data['bookingfor']
             pickup_location=request.data['pickup_location']
+            packege = request.data['packege']
             drop_location=request.data['drop_location']
             to_date = request.data['to_date']
             start_time_str = request.data['start_time']
             start_time = datetime.strptime(start_time_str, '%H:%M')
             formatted_start_time = start_time.strftime('%I:%M %p')
             print("formatted time: ", formatted_start_time)
+            base_charge_age = get_base_charge(car_type, packege)
+
             pickup_zone = zone_get(pickup_location)
             drop_zone = zone_get(drop_location)
             # extra_charges = return_charges(pickup_zone, drop_zone)
@@ -623,6 +628,7 @@ class Agentbookingview(APIView):
             if serializer.is_valid():
                 serializer.validated_data['booking_created_by_name']=user.first_name
                 serializer.validated_data['outskirt_charge']=outskirt_charge
+                serializer.validated_data['base_charges'] = base_charge_age
                 serializer.save()
 
                 user_location_point = Point(latitude, longitude, srid=4326)
@@ -1030,8 +1036,6 @@ class Agentbookingfilterquary(APIView):
         
         except AgentBooking.DoesNotExist:
              Response({'msg':'No Data found', 'number_of_booking':number_of_booking,'data':serializer.data}, status=status.HTTP_204_NO_CONTENT)     
-    
-
 class Agentbooking_accept(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
@@ -1046,7 +1050,6 @@ class Agentbooking_accept(APIView):
         todate=booking.to_date
         start_time=booking.start_time
         bhrs=f"{booking.packege}hrs"
-
         bcharge=booking.base_charges
         if booking.status == "active":
                 return Response({'msg': 'booking already accepted by other driver'})
@@ -1310,7 +1313,9 @@ class TestAgentDeclineBooking(APIView):
             data_list = []
             for booking_idd in notify_driver_data:
                 
-                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & Q(status="pending") & Q(to_date__gte=tz.now().date()) & Q(start_time__gte=tz.now().time()))
+                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & 
+                    Q(status="pending") & 
+                    Q(to_date__gte=tz.now().date()))
                 
                 decline_data = Declinebooking1.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
                 
@@ -1395,5 +1400,5 @@ class AllZonedata(APIView):
        # filtered_data = [item for item in combined_data if ('location_city' not in item and location_city is None) or(item.get('location_city') == location_city)]
         
         sorted_data = sorted(combined_data, key=lambda x: x['location'])
-
+        
         return Response(sorted_data)

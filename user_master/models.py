@@ -253,6 +253,7 @@ class region(models.Model):
     
 class localtwohrscharges(models.Model):
     CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic") ,("Luxury", "Luxury"))
+    duty_hrs=models.CharField(max_length=100, null=True, blank=True)
     cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
     charge=models.IntegerField(null=True, blank=True)
     perour_ot=models.IntegerField(null=True, blank=True)
@@ -265,6 +266,7 @@ class localtwohrscharges(models.Model):
 
 class localfourhrscharges(models.Model):
     CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
+    duty_hrs=models.CharField(max_length=100, null=True, blank=True)
     cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
     charge=models.IntegerField(null=True, blank=True)
     perour_ot=models.IntegerField(null=True, blank=True)
@@ -276,6 +278,7 @@ class localfourhrscharges(models.Model):
     
 class localeigthhrscharges(models.Model):
     CARTYPE= (("Manual", "Manual"), ("Automatic", "Automatic"), ("Luxury", "Luxury"))
+    duty_hrs=models.CharField(max_length=100, null=True, blank=True)
     cartype=models.CharField(choices=CARTYPE, max_length=100, null=True, blank=True)
     charge=models.IntegerField(null=True, blank=True)
     perour_ot=models.IntegerField(null=True, blank=True)

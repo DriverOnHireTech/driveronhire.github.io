@@ -456,8 +456,9 @@ class Regionapi(APIView):
         return Response({'msg':'All Region List', 'data':serializer.data}, status=status.HTTP_200_OK)
 
 
-
+#Charges API endpoint
 class twohrscharges(APIView):
+    """2HRS driver service charges"""
     def get(self, request):
         try:
             _2hrs =localtwohrscharges.objects.all()
@@ -466,8 +467,47 @@ class twohrscharges(APIView):
         except chargestwohrsserailizer.DoesNotExist:
             return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
+class fourhrscharges(APIView):
+    """4HRS driver service charges"""
+    def get(self, request):
+        try:
+            fourhrs =localfourhrscharges.objects.all()
+            serializer = localfourhrschargesSerializer(fourhrs, many=True)
+            return Response({"msg":"Local 4hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
+        except localfourhrschargesSerializer.DoesNotExist:
+            return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+class eigthhrscharges(APIView):
+    """8HRS driver service charges"""
+    def get(self, request):
+        try:
+            fourhrs =localeigthhrscharges.objects.all()
+            serializer = Eigthhrschargesserializier(fourhrs, many=True)
+            return Response({"msg":"Local 8hrs charges","data":serializer.data}, status=status.HTTP_200_OK)
+        except Eigthhrschargesserializier.DoesNotExist:
+            return Response({'error': 'Data does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 """"Get location based on city query parameter"""
 class locatiobycity(APIView):
     def get(self, request):
         pass
+
+#All charges combine API
+class allservicecharges(APIView):
+    """All service charges here"""
+    def get(self, request):
+        two_hrs_charges = localtwohrscharges.objects.all()
+        four_hrs_charges = localfourhrscharges.objects.all()
+        eight_hrs_charges = localeigthhrscharges.objects.all()
+
+        two_hrs_serializer = chargestwohrsserailizer(two_hrs_charges, many=True)
+        four_hrs_serializer = localfourhrschargesSerializer(four_hrs_charges, many=True)
+        eight_hrs_serializer = Eigthhrschargesserializier(eight_hrs_charges, many=True)
+
+        combined_data = {
+            'two_hours': two_hrs_serializer.data,
+            'four_hours': four_hrs_serializer.data,
+            'eight_hours': eight_hrs_serializer.data
+        }
+
+        return Response({'msg':'All service charges','data':combined_data}, status=status.HTTP_200_OK)
