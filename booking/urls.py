@@ -8,7 +8,7 @@ urlpatterns = [
 
     path('booking/', views.MyBookingList.as_view(), name='booking'),
 
-    path('booking/<int:id>/', views.MyBookingList.as_view(), name='booking'),
+    path('booking/<int:id>/', views.GetSingleBooking.as_view(), name='single-booking'),
 
     path('allbooking/', views.getbooking.as_view(), name='all_booking'),
 

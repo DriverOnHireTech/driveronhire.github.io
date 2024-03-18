@@ -49,7 +49,6 @@ class MyBookingList(APIView):
         start_time_str = request.data['client_booking_time']
         start_time = datetime.strptime(start_time_str, '%H:%M')
         formatted_start_time = start_time.strftime('%I:%M %p')
-        print("formatted time: ", formatted_start_time)
         base_charge_web = get_base_charge(car_type, packege)
         pickup_location=request.data['pickup_location']
         drop_location=request.data['drop_location']
@@ -155,10 +154,9 @@ class MyBookingList(APIView):
                             )
                             # Send the message
                             try:
-
                                 response = messaging.send(message)
                             except Exception as e:
-                                print(f"Error sending notification to token {token}:{e}")
+                                pass
 
                 utils.agnbookingpro(self, message_number, booking_date, formatted_start_time)    
                 # serializer.save()
@@ -202,9 +200,8 @@ class MyBookingList(APIView):
                 # Send the message
                 try:
                     response = messaging.send(message)
-                    print(response)
                 except Exception as e:
-                    print(f"Error sending notification to token {token}: {e}")
+                    pass
 
             return Response({'message': 'Booking updated successfully'}, status=status.HTTP_200_OK)
 
@@ -256,6 +253,17 @@ class getbooking(APIView):
             return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
 """End endpoint"""
 
+"""Get single client booking"""
+class GetSingleBooking(APIView):
+    def get(self, request, id):
+        try:
+            booking_data= PlaceBooking.objects.get(id=id)
+            serializer=PlacebookingSerializer(booking_data)
+            return Response({'msg':'Single booking', 'data':serializer.data}, status=status.HTTP_200_OK)
+        except PlaceBooking.DoesNotExist:
+            return Response({'msg':'No booking found'}, status=status.HTTP_204_NO_CONTENT)
+"""End Single booking"""
+
 
 class Acceptedride(APIView):
     authentication_classes=[TokenAuthentication]
@@ -281,7 +289,6 @@ class Acceptedride(APIView):
             btime=booking.client_booking_time
             bhrs=booking.packege
             bcharge=booking.base_charges
-            print("all details:", client_mobile,bdate,btime,bhrs,bcharge)
 
             # booking time formate
             time_formate=datetime.now()
@@ -289,7 +296,6 @@ class Acceptedride(APIView):
 
             # Get driver information
             driver_mobile = user.phone
-            print("driver mobile: ", driver_mobile)
             driver_name = AddDriver.objects.get(driver_user=user)
 
             serializer= PlacebookingSerializer(booking, data=data, partial=True)
@@ -299,10 +305,8 @@ class Acceptedride(APIView):
                 serializer._validated_data['accepted_driver_name'] = user.first_name
                 serializer._validated_data['accepted_driver_number'] = user.phone
                 driver_name = AddDriver.objects.get(driver_user=user)
-                print("driver name: ", driver_name)
                 serializer.validated_data['driver'] = driver_name
                 whatsapp_number = client_mobile
-                print("whats app number: ", whatsapp_number)
                
                 data.setdefault("accepted_driver",user.id) 
                 #utils.driverdetailssent(self, whatsapp_number, driver_name, driver_mobile)
@@ -436,7 +440,6 @@ class ScheduleBookingView(APIView):
 
             if driver.exists():
                 devices = FCMDevice.objects.all()
-                print("Device data: ", devices)
 
                 registration_ids = []
                 for device in devices:
@@ -589,9 +592,7 @@ class Agentbookingview(APIView):
     authentication_classes=[TokenAuthentication]
     permission_classes=[IsAuthenticated]
     def post(self, request):
-        
         data=request.data
-        print(data)
         request_type=data['request_type']
         user=request.user
         if request_type=="Normal":
@@ -615,7 +616,6 @@ class Agentbookingview(APIView):
             start_time_str = request.data['start_time']
             start_time = datetime.strptime(start_time_str, '%H:%M')
             formatted_start_time = start_time.strftime('%I:%M %p')
-            print("formatted time: ", formatted_start_time)
             base_charge_age = get_base_charge(car_type, packege)
 
             pickup_zone = zone_get(pickup_location)
@@ -691,11 +691,9 @@ class Agentbookingview(APIView):
                         )
                             # Send the message
                         try:
-
                             response = messaging.send(message)
-                            print("Notification sent:", response) 
                         except Exception as e:
-                            print(f"Error sending notification to token {token}:{e}")
+                            pass
                 # serializer.save()
                 
                 utils.agnbookingpro(self, message_number, to_date, formatted_start_time)
@@ -755,9 +753,8 @@ class Agentbookingview(APIView):
                                 try:
 
                                     response = messaging.send(message)
-                                    print("Notification sent:", response) 
                                 except Exception as e:
-                                    print(f"Error sending notification to token {token}:{e}")
+                                    pass
                     else:
                         print("No favorite drivers found for this user.")
                
@@ -860,9 +857,8 @@ class AgentBookingReshedule(APIView):
                 # Send the message
                 try:
                     response = messaging.send(message)
-                    print(response)
                 except Exception as e:
-                    print(f"Error sending notification to token {token}: {e}")
+                    pass
 
             return Response({'message': 'Booking updated successfully'}, status=status.HTTP_200_OK)
 
@@ -940,7 +936,6 @@ class Agentbookingfilterquary(APIView):
             status=request.GET.get('status')
             bookingfor=request.GET.get('bookingfor')
             to_date=request.GET.get('to_date')
-            print("Booking number", mobile_number,status, bookingfor, to_date)
 
             if mobile_number and status and bookingfor and to_date:
                 pending_booking=AgentBooking.objects.filter(mobile_number=mobile_number, status=status, bookingfor=bookingfor, to_date=to_date)
@@ -1041,7 +1036,6 @@ class Agentbooking_accept(APIView):
     permission_classes=[IsAuthenticated]
     def patch(self, request, id):
         data = request.data
-        print("data: ", data)
         user = request.user
         driver_mobile = user.phone
         booking= AgentBooking.objects.get(id=id)
@@ -1289,7 +1283,7 @@ class TestDeclineBooking(APIView):
                 return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
             
         except:
-            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_202_ACCEPTED)
 
 
 # Test Agent decline booking api
@@ -1303,37 +1297,39 @@ class TestAgentDeclineBooking(APIView):
         one_hour_ago = datetime.now() - timedelta(hours=1)
 
         # Check if the user is a notified driver
-        #try:
-        is_notified_driver = NotifydriversAgent.objects.filter(driver=driver_ids[0]).exists()
-        notify_driver_data = NotifydriversAgent.objects.filter(driver=driver_ids[0])
-        
-        
-        if is_notified_driver:
+        try:
+            is_notified_driver = NotifydriversAgent.objects.filter(driver=driver_ids[0]).exists()
             
-            data_list = []
-            for booking_idd in notify_driver_data:
+            if is_notified_driver:
+                notify_driver_data = NotifydriversAgent.objects.filter(driver=driver_ids[0])
                 
-                booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & 
-                    Q(status="pending") & 
-                    Q(to_date__gte=tz.now().date()))
-                
-                decline_data = Declinebooking1.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
-                
-                if not decline_data:
-                    serializer = Agentbookingserailizer(booking, many=True)
-                    data_list.extend(serializer.data)
-                # serializer = PlacebookingSerializer(booking, many=True)
-                
-                # data_list.extend(serializer.data)
-                
-                
-            revers_recors= data_list[::-1]
+                data_list = []
+                for booking_idd in notify_driver_data:
+                    
+                    booking = AgentBooking.objects.filter(Q(id=booking_idd.agent_booking.id) & 
+                        Q(status="pending") & 
+                        Q(to_date__gte=tz.now().date()))
+                    
+                    decline_data = Declinebooking.objects.filter(agentbooking=booking_idd.agent_booking.id, refuse_driver_user=user).exists()
+                    
+                    if not decline_data:
+                        serializer = Agentbookingserailizer(booking, many=True)
+                        data_list.extend(serializer.data)
+                    # serializer = PlacebookingSerializer(booking, many=True)
+                    
+                    # data_list.extend(serializer.data)
+                    
+                    
+                revers_recors= data_list[::-1]
 
-            return Response({'data':revers_recors}, status=status.HTTP_200_OK)
-        
-        
-        else:
-            return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+                return Response({'data':revers_recors}, status=status.HTTP_200_OK)
+            
+            
+            else:
+                return Response({'error': 'Access forbidden. You are not a notified driver.'}, status=status.HTTP_403_FORBIDDEN)
+            
+        except:
+            return Response({'error': 'You dont have any booking data.'}, status=status.HTTP_202_ACCEPTED)
   
             
 class dashboardbooking(APIView):
@@ -1346,17 +1342,14 @@ class dashboardbooking(APIView):
         drop="drop"
         filter_booking=AgentBooking.objects.filter(bookingfor=bookingfor)
         local_booking_count=filter_booking.count()
-        print("Local count:", local_booking_count)
 
         #OutStation booking count
         outs_booking=AgentBooking.objects.filter(bookingfor=outstation_booking)
         outcount=outs_booking.count()
-        print("Out count:", outcount)
 
         #Drop Booking Count
         drop_booking=AgentBooking.objects.filter(bookingfor=drop)
         dropcount=drop_booking.count()
-        print("Drop booking:", dropcount)
 
         #serializer=Agentbookingserailizer(filter_booking,many=True)
         return Response({'msg':'Local booking', 'local_booking_count':local_booking_count, 'outcount':outcount, 'dropcount':dropcount})
